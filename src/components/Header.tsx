@@ -2,9 +2,10 @@ import { useState } from 'react';
 import logo from "@/assets/logo.svg";
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import { Menu, MenuButton, MenuItem } from "@/components/mui/MenuDropdown.tsx";
-import { Typography } from "@mui/material";
 import { Dropdown } from '@mui/base/Dropdown';
 import clsx from "clsx";
+import { useAuth0 } from "@auth0/auth0-react";
+import Button from "@mui/material/Button";
 
 const Header = () => {
   // mobile menu
@@ -18,6 +19,9 @@ const Header = () => {
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   }
+
+  // auth0
+  const { loginWithRedirect, isAuthenticated } = useAuth0();
 
   return (
       <header
@@ -52,18 +56,24 @@ const Header = () => {
             <div className="w-0 h-8 mx-8 border-x-[1px] border-white"></div>
             {/*  user  */}
             <a className="flex items-center justify-around cursor-pointer" onClick={toggleDropdown}>
-              <Dropdown open={dropdownOpen}>
-                <MenuButton className={clsx("h-10 flex justify-center items-center")}>
-                  <AccountCircleOutlinedIcon/>
-                  <Typography className={clsx("ml-1 hidden lg:flex text-blue")}>1759714344@qq.com</Typography>
-                </MenuButton>
-                <Menu onBlur={() => toggleDropdown()} className={clsx(!dropdownOpen && "hidden")}>
-                  <MenuItem onClick={() => console.log("Profile")}>Profile</MenuItem>
-                  <MenuItem onClick={() => console.log("settings")}>Language settings</MenuItem>
-                  <MenuItem onClick={() => console.log("Log out")}>Log out</MenuItem>
-                </Menu>
-              </Dropdown>
-              <span className="ml-1 hidden lg:flex"></span>
+              {isAuthenticated ? (
+                  <Dropdown open={dropdownOpen}>
+                    <MenuButton className={clsx("h-10 flex justify-center items-center")}>
+                      <AccountCircleOutlinedIcon/>
+                      <span className={"ml-1 hidden lg:flex"}>1759714344@qq.com</span>
+                    </MenuButton>
+                    <Menu onBlur={toggleDropdown} className={clsx(!dropdownOpen && "hidden")}>
+                      <MenuItem onClick={() => console.log("Profile")}>Profile</MenuItem>
+                      <MenuItem onClick={() => console.log("settings")}>Language settings</MenuItem>
+                      <MenuItem onClick={() => console.log("Log out")}>Log out</MenuItem>
+                    </Menu>
+                  </Dropdown>
+              ) : (
+                  <Button variant="text" sx={{ fontWeight: "bold", fontSize: "15px", color: "white" }}
+                          onClick={async () => await loginWithRedirect()}>
+                    Login
+                  </Button>
+              )}
             </a>
           </div>
 
@@ -84,7 +94,11 @@ const Header = () => {
               id="menu"
               className={`absolute top-0 bottom-0 left-0 flex-col self-end w-full min-h-screen py-1 pt-40 pl-12 space-y-3 text-lg text-white uppercase bg-black ${mobileMenuOpen ? 'flex' : 'hidden'}`}
           >
-            <a href="/login" className="hover:text-pink-500">Login</a>
+            {isAuthenticated ? (
+                <a href="/logout" className="hover:text-pink-500">Logout</a>
+            ) : (
+                <a href="/login" className="hover:text-pink-500">Login</a>
+            )}
             <a href="/about" className="hover:text-pink-500">About</a>
             <a href="/articles" className="hover:text-pink-500">Articles</a>
             <a href="/docs" className="hover:text-pink-500">Docs</a>

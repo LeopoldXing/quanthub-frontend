@@ -7,9 +7,10 @@ const Auth0ProviderWithNavigate = ({ children }: { children: React.ReactNode }) 
   const domain = import.meta.env.VITE_AUTH0_DOMAIN;
   const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
   const redirectUri = import.meta.env.VITE_AUTH0_CALLBACK_URL;
+  const audience = import.meta.env.VITE_AUTH0_AUDIENCE;
 
-  if (!domain || !clientId || !redirectUri) {
-    throw new Error("Unable to initialize auth0");
+  if (!domain || !clientId || !redirectUri || !audience) {
+    throw new Error(`Unable to initialize auth0, domain=${domain}, clientId=${clientId}, redirectUri=${redirectUri}, audience=${audience}`);
   }
 
   const onRedirectCallback = (appState?: AppState, user?: User) => {
