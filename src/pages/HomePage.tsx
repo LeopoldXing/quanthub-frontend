@@ -5,11 +5,11 @@ import pythonPic from "@/assets/frontpage/python.svg";
 import qtData from "@/assets/frontpage/fetchDataDemo.svg";
 import Button from "@mui/material/Button";
 import { useAuth0 } from "@auth0/auth0-react";
-import ArticleOverview from "@/components/ArticleOverview.tsx";
+import ArticleGridOverview from "@/components/ArticleGridOverview.tsx";
 
 const HomePage = () => {
   // auth0
-  const { loginWithPopup, isAuthenticated } = useAuth0();
+  const { loginWithPopup } = useAuth0();
 
   return (
       /*  Layout container  */
@@ -102,15 +102,15 @@ const HomePage = () => {
               {/*  article container  */}
               <div
                   className="w-full min-h-[600px] mt-16 grid lg:grid-cols-2 xl:grid-cols-3 gap-10 items-center bg-yellow-200">
-                <ArticleOverview/>
-                <ArticleOverview/>
-                <ArticleOverview/>
-                <ArticleOverview/>
-                <ArticleOverview/>
-                <ArticleOverview/>
-                <ArticleOverview/>
-                <ArticleOverview/>
-                <ArticleOverview/>
+                <ArticleGridOverview/>
+                <ArticleGridOverview/>
+                <ArticleGridOverview/>
+                <ArticleGridOverview/>
+                <ArticleGridOverview/>
+                <ArticleGridOverview/>
+                <ArticleGridOverview/>
+                <ArticleGridOverview/>
+                <ArticleGridOverview/>
               </div>
             </div>
           </div>

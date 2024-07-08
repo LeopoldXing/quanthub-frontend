@@ -1,4 +1,4 @@
-const ArticleOverview = () => {
+const ArticleGridOverview = () => {
   return (
       <div className="w-100px h-175px bg-cyan-600">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid aspernatur dicta dolor magnam neque, odio odit
@@ -14,4 +14,4 @@ const ArticleOverview = () => {
   );
 };
 
-export default ArticleOverview;
+export default ArticleGridOverview;

@@ -67,8 +67,9 @@ const Header = () => {
                         <span className={"ml-1 hidden lg:flex"}>1759714344@qq.com</span>
                       </MenuButton>
                       <Menu onBlur={toggleDropdown} className={clsx(!dropdownOpen && "hidden")}>
-                        <MenuItem onClick={() => console.log("Profile")}>Profile</MenuItem>
-                        <MenuItem onClick={() => console.log("settings")}>Language settings</MenuItem>
+                        <MenuItem onClick={() => navigate("/user-profile")}>Profile</MenuItem>
+                        <MenuItem onClick={() => console.log("settings")}>Settings</MenuItem>
+                        <MenuItem onClick={() => navigate("/my/articles")}>My articles</MenuItem>
                         <MenuItem onClick={() => logout()}>Log out</MenuItem>
                       </Menu>
                     </Dropdown>
