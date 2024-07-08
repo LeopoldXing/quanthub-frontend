@@ -57,7 +57,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-        <div className="w-screen pt-10 bg-gradient-to-br from-[#d9e2ec] to-[#f0f4f8]">
+        <div className="w-full pt-10 bg-gradient-to-br from-[#d9e2ec] to-[#f0f4f8]">
           {/*  Part 2: brief ad  */}
           <div className="max-w-[1600px] mx-auto px-10 pb-10 md:px-28 flex flex-col justify-start items-center">
             {/*  strategy research platform  */}
@@ -96,19 +96,19 @@ const HomePage = () => {
                 <a className="block text-blue-500 cursor-pointer">Read more</a>
               </div>
               {/*  picture  */}
-              <div className="hidden w-full mt-12 xl:block">
+              <div className="hidden mt-12 xl:block">
                 <img src={qtData} alt="qhdata"/>
               </div>
             </div>
           </div>
           {/*  Part 3: Hot articles  */}
-          <div className="w-screen pb-20 bg-gradient-to-b from-[#3a4b8f] to-[#21305e]">
+          <div className="w-full pb-20 bg-gradient-to-b from-[#3a4b8f] to-[#21305e]">
             <div className="max-w-[1600px] mx-auto px-10 mt-10 md:px-28 flex flex-col justify-start items-center">
               {/*  title  */}
               <div className="mt-36 text-white font-bold text-4xl">Trending Articles</div>
               {/*  article container  */}
               <div
-                  className="w-full min-h-[600px] mt-16 grid lg:grid-cols-2 xl:grid-cols-3 gap-12 items-center">
+                  className="w-full min-h-[600px] mt-16 grid lg:grid-cols-2 xl:grid-cols-3 gap-12">
                 <ArticleGridOverview abstract={article.abstract} title={article.title} articleLink={article.link}/>
                 <ArticleGridOverview abstract={article.abstract} title={article.title} articleLink={article.link}/>
                 <ArticleGridOverview abstract={article.abstract} title={article.title} articleLink={article.link}/>
