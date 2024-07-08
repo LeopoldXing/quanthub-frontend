@@ -2,7 +2,7 @@ const Footer = () => {
   return (
       <footer className="bg-[#21305e]">
         {/*  Container  */}
-        <div className="max-w-[1700px] mx-auto px-10 py-10 md:px-28">
+        <div className="max-w-[1600px] mx-auto px-10 py-10 md:px-28">
           {/*  Footer Flex Container  */}
           <div
               className="flex flex-col items-center mb-8 space-y-6 md:flex-row md:space-y-0 md:justify-between md:items-start">

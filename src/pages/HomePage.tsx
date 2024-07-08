@@ -19,7 +19,7 @@ const HomePage = () => {
         <div className="w-screen bg-[#21305e]">
           {/*  Part 1: Text & Banner  */}
           <div
-              className="max-w-[1700px] min-h-[700px] mx-auto px-10 py-8 md:py-0 md:px-28 flex justify-between items-center">
+              className="max-w-[1550px] min-h-[700px] mx-auto px-10 py-8 md:py-0 md:px-28 flex justify-between items-center">
             {/*  Text button on the left  */}
             <div className="w-full -mt-16 pr-12 xl:w-1/2">
               <div className="text-6xl font-bold text-white text-wrap leading-normal">Start Your Trading Journey In
@@ -52,7 +52,7 @@ const HomePage = () => {
         </div>
         <div className="w-screen pt-10 bg-gradient-to-br from-[#d9e2ec] to-[#f0f4f8]">
           {/*  Part 2: brief ad  */}
-          <div className="max-w-[1700px] mx-auto px-10 md:px-28 flex flex-col justify-start items-center">
+          <div className="max-w-[1600px] mx-auto px-10 pb-10 md:px-28 flex flex-col justify-start items-center">
             {/*  strategy research platform  */}
             <div className="flex justify-between items-center">
               {/*  picture  */}
@@ -95,10 +95,10 @@ const HomePage = () => {
             </div>
           </div>
           {/*  Part 3: Hot articles  */}
-          <div className="w-screen pb-28 bg-gradient-to-b from-[#3a4b8f] to-[#21305e]">
-            <div className="max-w-[1700px] mx-auto px-10 mt-10 md:px-28 flex flex-col justify-start items-center">
+          <div className="w-screen pb-20 bg-gradient-to-b from-[#3a4b8f] to-[#21305e]">
+            <div className="max-w-[1600px] mx-auto px-10 mt-10 md:px-28 flex flex-col justify-start items-center">
               {/*  title  */}
-              <div className="mt-32 text-white font-bold text-4xl">Trending Articles</div>
+              <div className="mt-36 text-white font-bold text-4xl">Trending Articles</div>
               {/*  article container  */}
               <div
                   className="w-full min-h-[600px] mt-16 grid lg:grid-cols-2 xl:grid-cols-3 gap-10 items-center bg-yellow-200">

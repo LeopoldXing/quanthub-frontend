@@ -29,7 +29,7 @@ const Header = () => {
   return (
       <header className="w-screen h-20 bg-[#21305e]">
         {/*  container  */}
-        <div className="max-w-[1700px] h-20 mx-auto px-10 md:px-28 flex items-center justify-between text-white">
+        <div className="max-w-[1600px] h-20 mx-auto px-10 md:px-28 flex items-center justify-between text-white">
           {/*  Logo  */}
           <a href="/"><img src={logo} alt="logo" className="h-16"/></a>
 
