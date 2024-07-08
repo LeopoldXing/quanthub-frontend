@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import AuthCallbackPage from "@/pages/AuthCallbackPage.tsx";
 import Layout from "@/layouts/layout.tsx";
 import HomePage from "./pages/HomePage.tsx";
-import DocumentationPage from "@/pages/DocumentationPage.tsx";
+import DocsPage from "@/pages/DocsPage.tsx";
 import AboutPage from "@/pages/AboutPage.tsx";
 
 const AppRoutes = () => {
@@ -12,7 +12,7 @@ const AppRoutes = () => {
         <Route path="/auth-callback" element={<AuthCallbackPage/>}/>
         <Route path="/user-profile" element={<Layout><span>USER PROFILE PAGE</span></Layout>}/>
         <Route path="/about" element={<Layout><AboutPage/></Layout>}/>
-        <Route path="/docs" element={<Layout><DocumentationPage/></Layout>}/>
+        <Route path="/docs" element={<Layout><DocsPage/></Layout>}/>
         <Route path="/articles" element={<Layout><span>ARTICLES PAGE</span></Layout>}/>
         <Route path="*" element={<Navigate to={"/"}/>}/>
       </Routes>
