@@ -64,7 +64,7 @@ const HomePage = () => {
             <div className="flex justify-between items-center">
               {/*  picture  */}
               <div className="hidden w-full mt-12 xl:block">
-                <img src={pythonPic} alt="python demo"/>
+                <img src={pythonPic} alt="python demo" className="xl:min-w-[350px] 2xl:min-w-[450px]"/>
               </div>
               {/*  description  */}
               <div>
@@ -97,7 +97,7 @@ const HomePage = () => {
               </div>
               {/*  picture  */}
               <div className="hidden mt-12 xl:block">
-                <img src={qtData} alt="qhdata"/>
+                <img src={qtData} alt="qhdata" className="xl:min-w-[300px] 2xl:min-w-[450px]"/>
               </div>
             </div>
           </div>

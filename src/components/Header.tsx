@@ -68,7 +68,6 @@ const Header = () => {
                       </MenuButton>
                       <Menu onBlur={toggleDropdown} className={clsx(!dropdownOpen && "hidden")}>
                         <MenuItem onClick={() => navigate("/user-profile")}>Profile</MenuItem>
-                        <MenuItem onClick={() => console.log("settings")}>Settings</MenuItem>
                         <MenuItem onClick={() => navigate("/my/articles")}>My articles</MenuItem>
                         <MenuItem onClick={() => logout()}>Log out</MenuItem>
                       </Menu>

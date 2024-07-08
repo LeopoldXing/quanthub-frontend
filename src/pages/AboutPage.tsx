@@ -51,17 +51,18 @@ const AboutPage = () => {
             fullest. Most importantly, our goal is to become a company with high per capita revenue.
           </p>
 
-          <p className="leading-normal font-bold">
+          <p className="leading-normal">
             We are willing to invest sufficient time and effort to find long-term partners who share our vision and
             values.
+          </p>
+          <p className="leading-normal font-bold">
+            We look forward to your joining us and creating a legend together!
           </p>
         </p>
         {/*  paragraph 4  */}
         <p className="mt-10">
-          <p className="leading-normal">We look forward to your joining us and creating a legend together!</p>
-
           <p className="leading-normal">
-            Interested candidates, please send your resume to our company email: <span
+            If you wish to join us, please send your resume to our company email: <span
               className="font-bold">hr@quanhub.com</span><br/>
             Email Subject: <span className="font-bold"> Name + Position Applied + Source of Information</span>
           </p>
