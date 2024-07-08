@@ -50,21 +50,9 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-        <div className="w-screen bg-gradient-to-br from-[#d9e2ec] to-[#f0f4f8] pb-10">
-          {/*  Part 2: Hot articles  */}
+        <div className="w-screen pt-10 bg-gradient-to-br from-[#d9e2ec] to-[#f0f4f8]">
+          {/*  Part 2: brief ad  */}
           <div className="max-w-[1700px] mx-auto px-10 md:px-28 flex flex-col justify-start items-center">
-            {/*  title  */}
-            <div className="mt-32 text-black font-bold text-4xl">Trending Articles</div>
-            {/*  article container  */}
-            <div
-                className="w-full min-h-[600px] mt-16 pb-10 grid lg:grid-cols-2 xl:grid-cols-3 gap-10 items-center bg-yellow-200">
-              <ArticleOverview/>
-              <ArticleOverview/>
-              <ArticleOverview/>
-            </div>
-          </div>
-          {/*  Part 3: Sponsor  */}
-          <div className="max-w-[1700px] mx-auto px-10 md:px-28 flex flex-col justify-start items-center mt-16">
             {/*  strategy research platform  */}
             <div className="flex justify-between items-center">
               {/*  picture  */}
@@ -86,7 +74,7 @@ const HomePage = () => {
               </div>
             </div>
             {/*  QHData data  */}
-            <div className="mt-12 flex justify-between items-center">
+            <div className="mt-8 flex justify-between items-center">
               {/*  description  */}
               <div className="xl:pl-12 xl:pr-12">
                 {/*  title  */}
@@ -103,6 +91,26 @@ const HomePage = () => {
               {/*  picture  */}
               <div className="hidden w-full mt-12 xl:block">
                 <img src={qtData} alt="qhdata"/>
+              </div>
+            </div>
+          </div>
+          {/*  Part 3: Hot articles  */}
+          <div className="w-screen pb-28 bg-gradient-to-b from-[#3a4b8f] to-[#21305e]">
+            <div className="max-w-[1700px] mx-auto px-10 mt-10 md:px-28 flex flex-col justify-start items-center">
+              {/*  title  */}
+              <div className="mt-32 text-white font-bold text-4xl">Trending Articles</div>
+              {/*  article container  */}
+              <div
+                  className="w-full min-h-[600px] mt-16 grid lg:grid-cols-2 xl:grid-cols-3 gap-10 items-center bg-yellow-200">
+                <ArticleOverview/>
+                <ArticleOverview/>
+                <ArticleOverview/>
+                <ArticleOverview/>
+                <ArticleOverview/>
+                <ArticleOverview/>
+                <ArticleOverview/>
+                <ArticleOverview/>
+                <ArticleOverview/>
               </div>
             </div>
           </div>
