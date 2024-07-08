@@ -7,7 +7,7 @@ const Footer = () => {
   return (
       <footer className="bg-[#21305e]">
         {/*  Container  */}
-        <div className="max-w-[1600px] mx-auto px-10 pt-10 pb-6 md:px-28">
+        <div className="max-w-[1600px] mx-auto px-6 pt-10 pb-24 md:px-28">
           {/*  Footer Flex Container  */}
           <div
               className="flex flex-col items-center space-y-6 md:flex-row md:space-y-0 md:justify-between md:items-start">
@@ -15,7 +15,11 @@ const Footer = () => {
             <div className="-mt-2 flex flex-col items-center space-y-8 md:items-start md:space-y-4">
               {/*  Logo  */}
               <div className="h-8 mb-2">
-                <a href="/"><span className="font-bold text-white text-4xl text-center hover:cursor-pointer">Quant Hub Community</span></a>
+                <a href="/">
+                  <span className="font-bold text-white text-4xl text-center hover:cursor-pointer">
+                    Quant Hub Community
+                  </span>
+                </a>
               </div>
               {/*  Menu Container  */}
               <div
