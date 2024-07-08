@@ -1,16 +1,21 @@
+import facebook from "@/assets/icons/icon-facebook.svg";
+import twitter from "@/assets/icons/icon-twitter.svg";
+import pinterest from "@/assets/icons/icon-pinterest.svg";
+import instagram from "@/assets/icons/icon-instagram.svg";
+
 const Footer = () => {
   return (
       <footer className="bg-[#21305e]">
         {/*  Container  */}
-        <div className="max-w-[1600px] mx-auto px-10 py-10 md:px-28">
+        <div className="max-w-[1600px] mx-auto px-10 pt-10 pb-6 md:px-28">
           {/*  Footer Flex Container  */}
           <div
-              className="flex flex-col items-center mb-8 space-y-6 md:flex-row md:space-y-0 md:justify-between md:items-start">
+              className="flex flex-col items-center space-y-6 md:flex-row md:space-y-0 md:justify-between md:items-start">
             {/*  Menu & Logo Container  */}
-            <div className="flex flex-col items-center space-y-8 md:items-start md:space-y-4">
+            <div className="-mt-2 flex flex-col items-center space-y-8 md:items-start md:space-y-4">
               {/*  Logo  */}
-              <div className="h-8 mb-6 mt-5">
-                <a href="./index.html"><span className="font-bold text-white text-4xl text-center hover:cursor-pointer">Quant Hub Community</span></a>
+              <div className="h-8 mb-2">
+                <a href="/"><span className="font-bold text-white text-4xl text-center hover:cursor-pointer">Quant Hub Community</span></a>
               </div>
               {/*  Menu Container  */}
               <div
@@ -45,25 +50,25 @@ const Footer = () => {
                 {/*  Icon 1  */}
                 <div className="h-8 group">
                   <a href="#">
-                    <img src="assets/icons/icon-facebook.svg" alt="" className="h-6"/>
+                    <img src={facebook} alt="" className="h-6"/>
                   </a>
                 </div>
                 {/*  Icon 2  */}
                 <div className="h-8 group">
                   <a href="#">
-                    <img src="assets/icons/icon-twitter.svg" alt="" className="h-6"/>
+                    <img src={twitter} alt="" className="h-6"/>
                   </a>
                 </div>
                 {/*  Icon 3  */}
                 <div className="h-8 group">
                   <a href="#">
-                    <img src="assets/icons/icon-pinterest.svg" alt="" className="h-6"/>
+                    <img src={pinterest} alt="" className="h-6"/>
                   </a>
                 </div>
                 {/*  Icon 4  */}
                 <div className="h-8 group">
                   <a href="#">
-                    <img src="assets/icons/icon-instagram.svg" alt="" className="h-6"/>
+                    <img src={instagram} alt="" className="h-6"/>
                   </a>
                 </div>
               </div>
