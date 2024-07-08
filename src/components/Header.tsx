@@ -27,7 +27,7 @@ const Header = () => {
   const { loginWithRedirect, loginWithPopup, isAuthenticated, logout } = useAuth0();
 
   return (
-      <header className="w-screen h-20 bg-[#21305e]">
+      <header className="w-full h-20 bg-[#21305e]">
         {/*  container  */}
         <div className="max-w-[1600px] h-20 mx-auto px-10 md:px-28 flex items-center justify-between text-white">
           {/*  Logo  */}

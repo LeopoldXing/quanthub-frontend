@@ -20,15 +20,15 @@ const HomePage = () => {
 
   return (
       /*  Layout container  */
-      <div className="min-h-screen w-screen">
+      <div className="min-h-screen w-full">
         <Header/>
         {/*  Home page container - with background color  */}
-        <div className="w-screen bg-[#21305e]">
+        <div className="bg-[#21305e]">
           {/*  Part 1: Text & Banner  */}
           <div
               className="max-w-[1550px] min-h-[700px] mx-auto px-10 py-8 md:py-0 md:px-28 flex justify-between items-center">
             {/*  Text button on the left  */}
-            <div className="w-full -mt-16 pr-12 xl:w-1/2">
+            <div className="-mt-16 pr-12 xl:w-1/2">
               <div className="text-6xl font-bold text-white text-wrap leading-normal">Start Your Trading Journey In
                 QuantHub
               </div>
