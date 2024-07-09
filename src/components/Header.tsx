@@ -12,13 +12,13 @@ const Header = () => {
   const navigate = useNavigate();
 
   // mobile menu
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const toggleMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
   // dropdown
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   }
