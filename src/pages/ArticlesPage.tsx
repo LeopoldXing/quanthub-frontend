@@ -87,10 +87,10 @@ const ArticlesPage = () => {
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
         {/*  title  */}
-        <div className="w-full flex flex-col justify-start items-center md:flex-row md:justify-start md:items-end md:gap-16">
+        <div className="w-full flex flex-col justify-start items-center lg:flex-row lg:justify-start lg:items-end lg:gap-16">
           <div className="text-4xl font-bold">Blogs</div>
           {/*  buttons  */}
-          <div className="mt-8 md:mt-0">
+          <div className="mt-8 lg:mt-0">
             <Button variant="text" onClick={() => handleSectionClick("article")} size="small" sx={{
               mr: "40px",
               flex: "flex",
@@ -116,23 +116,23 @@ const ArticlesPage = () => {
         </div>
 
         {/*  search bar  */}
-        <div className="md:hidden w-full">
+        <div className="lg:hidden w-full">
           <SearchBox handleKeywordChange={handleKeywordChange} handleSearch={handleSearch}/>
         </div>
 
         {/*  category bar  */}
-        <div className="md:hidden w-full mt-6 flex justify-end items-center">
+        <div className="lg:hidden w-full mt-6 flex justify-end items-center">
           <CategorySelectBox categoryList={[{ id: "1", name: "quant" }, { id: "2", name: "kmt model" }]}
                              onUpdate={handleCategoryChange}/>
         </div>
 
         {/*  selected tag area  */}
-        <div className="md:hidden w-full mt-6">
+        <div className="lg:hidden w-full mt-6">
           <SelectedTagPool selectedTagList={searchParams.selectedTagList} handleDeleteTag={handleDeleteTag}/>
         </div>
 
         {/*  sorting panel  */}
-        <div className="md:hidden w-full mt-5">
+        <div className="lg:hidden w-full mt-5">
           <ArticleSortingPanel onSort={handleSort}/>
         </div>
 
@@ -140,16 +140,16 @@ const ArticlesPage = () => {
         <div className="w-full flex justify-between items-start gap-16">
           {/*  left  */}
           <div className="w-2/3">
-            <div className="hidden md:block w-full">
+            <div className="hidden lg:block w-full">
               <SearchBox handleKeywordChange={handleKeywordChange} handleSearch={handleSearch}/>
             </div>
             {/*  selected tag area  */}
-            <div className="hidden md:block w-full mt-6">
+            <div className="hidden lg:block w-full mt-6">
               <SelectedTagPool selectedTagList={searchParams.selectedTagList} handleDeleteTag={handleDeleteTag}/>
             </div>
 
             {/*  sorting panel  */}
-            <div className="hidden mt-7 md:block">
+            <div className="hidden mt-7 lg:block">
               <ArticleSortingPanel onSort={handleSort}/>
             </div>
 
@@ -173,12 +173,12 @@ const ArticlesPage = () => {
           {/*  right extra info  */}
           <div className="w-1/3">
             {/*  category bar  */}
-            <div className="hidden w-full mt-16 md:flex justify-end items-center">
+            <div className="hidden w-full mt-16 lg:flex justify-end items-center">
               <CategorySelectBox categoryList={[{ id: "1", name: "quant" }, { id: "2", name: "kmt model" }]}
                                  onUpdate={handleCategoryChange}/>
             </div>
             {/*  tag pool  */}
-            <div className="hidden md:block w-full mt-8">
+            <div className="hidden lg:block w-full mt-8">
               <div className="w-full mb-4 flex justify-between items-center">
                 <div className="text-start text-xl font-bold">Popular tags</div>
                 <button><LoopIcon/></button>
