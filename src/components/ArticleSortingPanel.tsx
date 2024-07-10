@@ -78,9 +78,9 @@ const ArticleSortingPanel = ({ onSort }: ArticleSortingPanelProps) => {
                 }}
                 endIcon={publishIcon}
                 onClick={() => {
-                  onSort("publish_date", directionChangeSequence[(publishSortDirectionPointer + 1) % 3]);
+                  onSort("publish_date", directionChangeSequence[publishSortDirectionPointer === 0 ? 1 : 0]);
                   setStrategy("publish_date");
-                  setPublishSortDirectionPointer(prevState => prevState + 1);
+                  setPublishSortDirectionPointer(prevState => prevState === 0 ? 1 : 0);
                   setUpdateSortDirectionPointer(2);
                 }}
             >
@@ -99,9 +99,9 @@ const ArticleSortingPanel = ({ onSort }: ArticleSortingPanelProps) => {
               }}
               endIcon={updateIcon}
               onClick={() => {
-                onSort("update_date", directionChangeSequence[(updateSortDirectionPointer + 1) % 3]);
+                onSort("update_date", directionChangeSequence[updateSortDirectionPointer === 0 ? 1 : 0]);
                 setStrategy("update_date");
-                setUpdateSortDirectionPointer(prevState => prevState + 1);
+                setUpdateSortDirectionPointer(prevState => prevState === 0 ? 1 : 0);
                 setPublishSortDirectionPointer(2);
               }}
           >
