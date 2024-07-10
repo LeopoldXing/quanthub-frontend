@@ -9,6 +9,7 @@ import SelectedTagPool from "@/components/SelectedTagPool.tsx";
 import ArticleSortingPanel from "@/components/ArticleSortingPanel.tsx";
 import TagPool from "@/components/TagPool.tsx";
 import LoopIcon from '@mui/icons-material/Loop';
+import AddIcon from '@mui/icons-material/Add';
 
 type SearchParamType = {
   keyword: string;
@@ -84,35 +85,60 @@ const ArticlesPage = () => {
     debouncedSearch()
   }, [searchParams.selectedCategoryList, searchParams.selectedCategoryList]);
 
+
+  /*  create new article  */
+  const handleCreateArticleButtonClick = () => {
+
+  }
+
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
         {/*  title  */}
-        <div className="w-full flex flex-col justify-start items-center lg:flex-row lg:justify-start lg:items-end lg:gap-16">
-          <div className="text-4xl font-bold">Blogs</div>
-          {/*  buttons  */}
-          <div className="mt-8 lg:mt-0">
-            <Button variant="text" onClick={() => handleSectionClick("article")} size="small" sx={{
-              mr: "40px",
-              flex: "flex",
-              alignItems: "center",
-              color: `${isAnnouncementSection ? "#000000" : "#27ae60"}`
-            }}>
-              <ArticleIcon sx={{ mr: "5px" }}/>
-              <Typography sx={{ fontSize: "14px" }} fontWeight={isAnnouncementSection ? "" : "bold"}>
-                Articles
-              </Typography>
-            </Button>
-            <Button variant="text" onClick={() => handleSectionClick("announcement")} size="small" sx={{
-              flex: "flex",
-              alignItems: "center",
-              color: `${isAnnouncementSection ? "#27ae60" : "#000000"}`
-            }}>
-              <PublicIcon sx={{ mr: "5px" }}/>
-              <Typography sx={{ fontSize: "14px" }} fontWeight={isAnnouncementSection ? "bold" : ""}>
-                Announcements
-              </Typography>
+        <div className="w-full flex justify-between items-center">
+          <div
+              className="w-full flex flex-col justify-start items-center lg:flex-row lg:justify-start lg:items-end lg:gap-16">
+            <div className="text-4xl font-bold">Blogs</div>
+            {/*  buttons  */}
+            <div className="mt-8 lg:mt-0">
+              <Button variant="text" onClick={() => handleSectionClick("article")} size="small" sx={{
+                mr: "40px",
+                flex: "flex",
+                alignItems: "center",
+                color: `${isAnnouncementSection ? "#000000" : "#27ae60"}`
+              }}>
+                <ArticleIcon sx={{ mr: "5px" }}/>
+                <Typography sx={{ fontSize: "14px" }} fontWeight={isAnnouncementSection ? "" : "bold"}>
+                  Articles
+                </Typography>
+              </Button>
+              <Button variant="text" onClick={() => handleSectionClick("announcement")} size="small" sx={{
+                flex: "flex",
+                alignItems: "center",
+                color: `${isAnnouncementSection ? "#27ae60" : "#000000"}`
+              }}>
+                <PublicIcon sx={{ mr: "5px" }}/>
+                <Typography sx={{ fontSize: "14px" }} fontWeight={isAnnouncementSection ? "bold" : ""}>
+                  Announcements
+                </Typography>
+              </Button>
+            </div>
+          </div>
+          {/*  add article  */}
+          <div className="hidden lg:block w-52">
+            <Button variant="contained" sx={{ paddingY: "10px", textWrap: "nowrap", fontSize: "small" }}
+                    onClick={handleCreateArticleButtonClick}>
+              <AddIcon sx={{ mr: "5px" }} fontSize="small"/>
+              <Typography sx={{ fontSize: "14px" }}>Write something</Typography>
             </Button>
           </div>
+        </div>
+
+        {/*  add article  */}
+        <div className="lg:hidden w-full mt-10 flex justify-end items-center">
+          <Button sx={{ textWrap: "nowrap", fontSize: "small" }} onClick={handleCreateArticleButtonClick}>
+            <AddIcon sx={{ mr: "5px" }} fontSize="small"/>
+            <Typography sx={{ fontSize: "14px" }}>Write something</Typography>
+          </Button>
         </div>
 
         {/*  search bar  */}
