@@ -8,7 +8,7 @@ type SelectedTagPoolProps = {
 const SelectedTagPool = ({ selectedTagList, handleDeleteTag }: SelectedTagPoolProps) => {
   return (
       selectedTagList.length > 0 && (
-          <div className="w-full flex items-center justify-start gap-2">
+          <div className="w-full flex items-center justify-start gap-2 flex-wrap">
             {selectedTagList.map((tag) => (
                 <Chip key={tag.id} label={tag.name} onDelete={() => handleDeleteTag(tag.id)}/>
             ))}

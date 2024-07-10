@@ -1,5 +1,5 @@
 import Button from "@mui/material/Button";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ArticleIcon from '@mui/icons-material/Article';
 import PublicIcon from '@mui/icons-material/Public';
 import { debounce, Typography } from "@mui/material";
@@ -7,9 +7,11 @@ import SearchBox from "@/components/SearchBox.tsx";
 import CategorySelectBox from "@/components/mui/CategorySelectBox.tsx";
 import SelectedTagPool from "@/components/SelectedTagPool.tsx";
 import ArticleSortingPanel from "@/components/ArticleSortingPanel.tsx";
-import TagPool from "@/components/TagPool.tsx";
+import TagPool, { HandleSelectedTagChange } from "@/components/TagPool.tsx";
 import LoopIcon from '@mui/icons-material/Loop';
 import AddIcon from '@mui/icons-material/Add';
+import { tags1 } from "@/lib/dummyData.ts";
+import "@/global.css";
 
 type SearchParamType = {
   keyword: string;
@@ -69,7 +71,32 @@ const ArticlesPage = () => {
   }
   // tags - select
   const handleSelectTag = (tag: Tag): void => {
-    console.log(tag);
+    setSearchParams(prevState => {
+      const prevTagList = prevState.selectedTagList;
+      if (prevTagList.findIndex(prevTag => prevTag.id === tag.id) === -1) {
+        prevTagList.push(tag);
+      }
+      return { ...prevState, selectedTagList: prevTagList };
+    })
+  }
+  // tags - update TagPool
+  const tagPoolRef = useRef<HandleSelectedTagChange>(null);
+  useEffect(() => {
+    if (tagPoolRef.current) {
+      tagPoolRef.current.changeSelectedTags(searchParams.selectedTagList);
+    }
+  }, [searchParams.selectedTagList]);
+  // tags - shuffle
+  const [isSpinning, setIsSpinning] = useState<boolean>(false);
+  const handleRefreshIconSpin = () => {
+    setIsSpinning(true);
+    setTimeout(() => {
+      setIsSpinning(false);
+    }, 500); // animation will last 1s
+  };
+  const [currentTagList, setCurrentTagList] = useState<Array<Tag>>(tags1);
+  const handleRefreshTags = (): void => {
+    console.log("shuffle tag list");
   }
 
 
@@ -204,13 +231,19 @@ const ArticlesPage = () => {
                                  onUpdate={handleCategoryChange}/>
             </div>
             {/*  tag pool  */}
-            <div className="hidden lg:block w-full mt-8">
+            <div className="hidden lg:block mt-8">
               <div className="w-full mb-4 flex justify-between items-center">
                 <div className="text-start text-xl font-bold">Popular tags</div>
-                <button><LoopIcon/></button>
+                <button onClick={() => {
+                  handleRefreshIconSpin();
+                  handleRefreshTags();
+                }} className={isSpinning ? 'spin-once' : ''}>
+                  <LoopIcon sx={{ height: "28px", width: "28px" }}/>
+                </button>
               </div>
-              <TagPool tagList={[{ id: "1", name: "quant" }, { id: "2", name: "kmt model" }]}
-                       onSelect={handleSelectTag}/>
+              <div className="mt-8">
+                <TagPool tagList={currentTagList} onSelect={handleSelectTag} ref={tagPoolRef}/>
+              </div>
             </div>
           </div>
         </div>
