@@ -1,21 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 
 interface SearchBoxProps {
-  handleSearch: (keyword: string) => void;
+  handleKeywordChange: (keyword: string) => void;
+  handleSearch: () => void;
 }
 
-const SearchBox: React.FC<SearchBoxProps> = ({ handleSearch }) => {
-  const [keyword, setKeyword] = useState<string>("");
-
+const SearchBox: React.FC<SearchBoxProps> = ({ handleKeywordChange, handleSearch }) => {
   return (
-      <div className="w-full h-12 mt-16 pb-2 flex justify-between border-b border-gray-300">
+      <div className="w-full h-12 mt-16 pb-1 flex justify-between items-center border-b border-gray-300">
         <input
             type="text"
             placeholder="search articles / titles / authors"
-            onChange={(e) => setKeyword(e.target.value)}
+            onChange={(e) => handleKeywordChange(e.target.value)}
             className="w-full h-12 text-lg border-none bg-transparent placeholder:font-thin focus:outline-none"
         />
-        <button id="search-button" onClick={() => handleSearch(keyword)}>
+        <button id="search-button" onClick={handleSearch}>
           <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-8 text-gray-300 duration-200 hover:scale-110"

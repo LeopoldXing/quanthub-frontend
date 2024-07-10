@@ -18,10 +18,10 @@ const DocsPage = () => {
             To access the QHData API, you need to authenticate your requests using an API key. You can obtain your API
             key by registering on our platform and subscribing to one of our data plans.
           </p>
-          <p className="leading-normal mt-2">
+          <div className="leading-normal mt-2">
             <span className="font-bold">API Key Header:</span> <code className="bg-gray-200 px-2 py-1 rounded">Authorization:
             Bearer YOUR_API_KEY</code>
-          </p>
+          </div>
         </div>
 
         {/*  section 2: Endpoints  */}
@@ -31,22 +31,22 @@ const DocsPage = () => {
           {/*  endpoint: Get Market Data  */}
           <div className="mt-6">
             <p className="text-xl font-semibold">2.1 Get Market Data</p>
-            <p className="leading-normal mt-2">
+            <div className="leading-normal mt-2">
               <span className="font-bold">Endpoint:</span> <code
                 className="bg-gray-200 px-2 py-1 rounded">/api/v1/market-data</code>
-            </p>
-            <p className="leading-normal mt-2">
+            </div>
+            <div className="leading-normal mt-2">
               <span className="font-bold">Method:</span> GET
-            </p>
-            <p className="leading-normal mt-2">
+            </div>
+            <div className="leading-normal mt-2">
               <span className="font-bold">Parameters:</span>
               <ul className="list-disc list-inside">
                 <li><span className="font-bold">symbol</span> (string): The stock symbol (e.g., AAPL)</li>
                 <li><span className="font-bold">date</span> (string): The date for the data (format: YYYY-MM-DD)</li>
               </ul>
-            </p>
-            <p className="leading-normal mt-2">
-              <span className="font-bold">Response:</span>
+            </div>
+            <div className="leading-normal mt-2">
+              <span className="block mb-3 font-bold">Response:</span>
               <pre className="bg-gray-100 p-4 rounded">
                 {`{
   "symbol": "AAPL",
@@ -58,20 +58,20 @@ const DocsPage = () => {
   "volume": 72538291
 }`}
               </pre>
-            </p>
+            </div>
           </div>
 
           {/*  endpoint: Get Historical Data  */}
           <div className="mt-6">
             <p className="text-xl font-semibold">2.2 Get Historical Data</p>
-            <p className="leading-normal mt-2">
+            <div className="leading-normal mt-2">
               <span className="font-bold">Endpoint:</span> <code
                 className="bg-gray-200 px-2 py-1 rounded">/api/v1/historical-data</code>
-            </p>
-            <p className="leading-normal mt-2">
+            </div>
+            <div className="leading-normal mt-2">
               <span className="font-bold">Method:</span> GET
-            </p>
-            <p className="leading-normal mt-2">
+            </div>
+            <div className="leading-normal mt-2">
               <span className="font-bold">Parameters:</span>
               <ul className="list-disc list-inside">
                 <li><span className="font-bold">symbol</span> (string): The stock symbol (e.g., AAPL)</li>
@@ -81,9 +81,9 @@ const DocsPage = () => {
                 <li><span className="font-bold">end_date</span> (string): The end date for the data (format: YYYY-MM-DD)
                 </li>
               </ul>
-            </p>
-            <p className="leading-normal mt-2">
-              <span className="font-bold">Response:</span>
+            </div>
+            <div className="leading-normal mt-2">
+              <span className="block mb-3 font-bold">Response:</span>
               <pre className="bg-gray-100 p-4 rounded">
                 {`[
   {
@@ -106,7 +106,7 @@ const DocsPage = () => {
   }
 ]`}
               </pre>
-            </p>
+            </div>
           </div>
         </div>
 
@@ -136,9 +136,9 @@ const DocsPage = () => {
             To ensure fair usage and stability of our service, the QHData API imposes rate limits on the number of
             requests that can be made within a certain timeframe.
           </p>
-          <p className="leading-normal mt-2">
+          <div className="leading-normal mt-2">
             <span className="font-bold">Request Limit:</span> 1000 requests per hour
-          </p>
+          </div>
           <p className="leading-normal mt-2">
             If you exceed the rate limit, you will receive a <span
               className="font-bold">429 Too Many Requests</span> response. Please wait for the rate limit to reset

@@ -42,7 +42,7 @@ const Header = () => {
                 <div className="mx-2 group-hover:border-b group-hover:border-blue-50"></div>
               </div>
               <div className="group">
-                <a href="/articles" className="hover:text-[#f0e68c]">Articles</a>
+                <a href="/articles" className="hover:text-[#f0e68c]">Blogs</a>
                 <div className="mx-2 group-hover:border-b group-hover:border-blue-50"></div>
               </div>
               <div className="group">
@@ -108,7 +108,7 @@ const Header = () => {
                      onClick={async () => await loginWithRedirect()}>Login</a>
               )}
               <a href="/about" className="hover:text-pink-500">About</a>
-              <a href="/articles" className="hover:text-pink-500">Articles</a>
+              <a href="/articles" className="hover:text-pink-500">Blogs</a>
               <a href="/docs" className="hover:text-pink-500">Docs</a>
               <a href="/support" className="hover:text-pink-500">Support</a>
             </div>

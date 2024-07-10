@@ -1,9 +1,10 @@
 const AboutPage = () => {
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
-        {/*  title  */}
+        {/* title */}
         <div className="text-4xl font-bold">About US</div>
-        {/*  paragraph  */}
+
+        {/* paragraph */}
         <p className="mt-12 leading-normal">
           QuanHub Technologies Ltd., founded in 2015, focuses on providing IT solutions for quantitative investment
           research. We have created the QuanHub Quantitative Research Platform tailored for quant enthusiasts, offering
@@ -15,8 +16,9 @@ const AboutPage = () => {
           data (QHData) services to thousands of quant institutions. We have earned several certifications, including
           the National High-Tech Enterprise and Beijing Specialized and New Small and Medium Enterprise.
         </p>
-        {/*  paragraph 2  */}
-        <p className="mt-10">
+
+        {/* paragraph 2 */}
+        <div className="mt-10">
           <p className="leading-10">The QuanHub Quantitative Research Platform has served over 400,000 users in its
             8-year history.</p>
 
@@ -42,9 +44,10 @@ const AboutPage = () => {
           </p>
 
           <p className="leading-10">Our annual transaction volume exceeds trillions.</p>
-        </p>
-        {/*  paragraph 3  */}
-        <p className="mt-10">
+        </div>
+
+        {/* paragraph 3 */}
+        <div className="mt-10">
           <p className="leading-normal">
             We are committed to continually strengthening our research team and trading technology. Our colleagues are
             exceptional, humble, cautious, rigorous, diligent, and responsible, always supporting each other to the
@@ -58,9 +61,10 @@ const AboutPage = () => {
           <p className="leading-normal font-bold">
             We look forward to your joining us and creating a legend together!
           </p>
-        </p>
-        {/*  paragraph 4  */}
-        <p className="mt-10">
+        </div>
+
+        {/* paragraph 4 */}
+        <div className="mt-10">
           <p className="leading-normal">
             If you wish to join us, please send your resume to our company email: <span
               className="font-bold">hr@quanhub.com</span><br/>
@@ -68,9 +72,10 @@ const AboutPage = () => {
           </p>
 
           <p className="leading-normal">We are eager to welcome you to our team!</p>
-        </p>
-        {/*  paragraph 5  */}
-        <p className="mt-10">
+        </div>
+
+        {/* paragraph 5 */}
+        <div className="mt-10">
           <p className="text-xl font-bold leading-10">Addresses:</p>
 
           <p className="leading-loose">New York: 123 Wall Street, Financial District, Manhattan, NY</p>
@@ -78,7 +83,7 @@ const AboutPage = () => {
           <p className="leading-loose">Chicago: 789 Wacker Drive, Loop, IL</p>
           <p className="leading-loose">Los Angeles: 101 Hollywood Boulevard, Hollywood, CA</p>
           <p className="leading-loose">Houston: 234 Main Street, Downtown, TX</p>
-        </p>
+        </div>
       </div>
   );
 };
