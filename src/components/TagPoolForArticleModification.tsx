@@ -1,43 +1,45 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { useRef, useState } from "react";
 import { Chip, Input, InputAdornment } from "@mui/material";
 import Button from "@mui/material/Button";
 import { v4 as uuidv4 } from 'uuid';
+import Notification, { HandleNotificationOpen } from "@/components/mui/Notification.tsx";
 
 type TagPoolProps = {
   tagList: Array<Tag>;
   onSelect: (tag: Tag) => void;
 };
 
-export interface HandleSelectedTagChange {
-  changeSelectedTags: (updatedSelectedTagList: Array<Tag>) => void;
-}
-
-const TagPoolForArticleModification = forwardRef<HandleSelectedTagChange, TagPoolProps>(({
-                                                                                           tagList,
-                                                                                           onSelect
-                                                                                         }, ref) => {
+const TagPoolForArticleModification = ({
+                                         tagList,
+                                         onSelect
+                                       }: TagPoolProps) => {
   const [localTagList, setLocalTagList] = useState<Tag[]>(tagList);
   const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>([]);
   const [newTagList, setNewTagList] = useState<Array<Tag>>([]);
   const [newTagInput, setNewTagInput] = useState<string>("");
+  // notificationRef
+  const notificationRef = useRef<HandleNotificationOpen>(null);
 
-  useImperativeHandle(ref, () => ({
-    changeSelectedTags(updatedSelectedTagList: Array<Tag>) {
-      setSelectedTagList(updatedSelectedTagList);
-    }
-  }));
 
   /*  create tag  */
   const handleTagCreate = () => {
-    const newTagIndex = tagList.findIndex(tag => tag.name === newTagInput);
-    const selectedTagIndex = selectedTagList.findIndex(selectedTag => selectedTag.name === newTagInput);
-    if (newTagIndex === -1 && selectedTagIndex === -1) {
-      const newTag = { id: uuidv4(), name: newTagInput };
-      setNewTagList(prevState => [...prevState, newTag]);
-      setSelectedTagList(prevState => [...prevState, newTag]);
-      setLocalTagList(prevState => [...prevState, newTag]);
+    if (!newTagInput || newTagInput.length === 0) return;
+    if (newTagList.length < 10) {
+      const newTagIndex = tagList.findIndex(tag => tag.name === newTagInput);
+      const selectedTagIndex = selectedTagList.findIndex(selectedTag => selectedTag.name === newTagInput);
+      if (newTagIndex === -1 && selectedTagIndex === -1) {
+        const newTag = { id: uuidv4(), name: newTagInput };
+        setNewTagList(prevState => [...prevState, newTag]);
+        setSelectedTagList(prevState => [...prevState, newTag]);
+        setLocalTagList(prevState => [...prevState, newTag]);
+      }
+      setNewTagInput("");
+    } else {
+      if (notificationRef.current) {
+        notificationRef.current.openNotification(true);
+      }
     }
-    setNewTagInput("");
+    window.document.getElementById("new_tag_create_input")?.focus();
   }
 
   /*  handle tag click  */
@@ -78,6 +80,7 @@ const TagPoolForArticleModification = forwardRef<HandleSelectedTagChange, TagPoo
         {/*  add customized tags  */}
         <div className="mt-6 flex justify-start items-center gap-5">
           <Input
+              id="new_tag_create_input"
               endAdornment={<InputAdornment position="end">{newTagList.length}/10</InputAdornment>}
               aria-describedby="create-tag-input"
               inputProps={{
@@ -88,9 +91,11 @@ const TagPoolForArticleModification = forwardRef<HandleSelectedTagChange, TagPoo
               onChange={e => setNewTagInput(e.target.value)}
           />
           <Button variant="outlined" color="primary" size="small" onClick={handleTagCreate}>Create</Button>
+          <Notification ref={notificationRef} message="only 10 new tags allowed!" duration={6000} horizontal="right"
+                        vertical="top" serverity="warning"/>
         </div>
       </div>
   );
-});
+};
 
 export default TagPoolForArticleModification;
