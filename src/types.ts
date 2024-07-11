@@ -8,6 +8,24 @@ type Tag = {
   name: string;
 }
 
+type User = {
+  id: string;
+  username: string;
+  password?: string;
+  email?: string;
+  phoneNumber?: string;
+  role: string;
+}
+
+type Comment = {
+  id: string;
+  content: string;
+  user: User;
+  publishDatetime: Date;
+  articleId: string;
+  status: string;
+}
+
 type ArticleOverviewInfo = {
   id: string;
   title: string;
