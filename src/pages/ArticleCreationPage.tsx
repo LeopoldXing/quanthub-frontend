@@ -1,14 +1,19 @@
-import ArticleModificationForm from "@/components/forms/ArticleModificationForm.tsx";
+import ArticleModificationForm, {
+  HandleArticleModificationFormSubmission
+} from "@/components/forms/ArticleModificationForm.tsx";
 import Button from "@mui/material/Button";
 import { categories, tags } from "@/lib/dummyData.ts";
 import SingleCategorySelectBox from "@/components/mui/SingleCategorySelectBox.tsx";
 import FileUploadButton from "@/components/mui/FileUploadButton.tsx";
 import TagPoolForArticleModification from "@/components/TagPoolForArticleModification.tsx";
+import { useRef } from "react";
 
 const ArticleCreationPage = () => {
+  /*  article modification form ref  */
+  const formRef = useRef<HandleArticleModificationFormSubmission>(null);
+
   /*  preview  */
   const handlePreviewButtonClick = () => {
-
   }
 
   /*  publish  */
@@ -35,7 +40,7 @@ const ArticleCreationPage = () => {
         </div>
         {/*  content  */}
         <div className="mt-10">
-          <ArticleModificationForm mode="create" initialData={{ author: { username: "lll" } }}/>
+          <ArticleModificationForm mode="create" initialData={{ author: { username: "lll" } }} ref={formRef}/>
         </div>
         {/*  tags and files and category  */}
         <div className="w-full mt-10 flex flex-col justify-start items-center gap-10">

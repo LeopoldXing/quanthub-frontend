@@ -16,24 +16,24 @@ const TagPoolForArticleModification = ({
   const [localTagList, setLocalTagList] = useState<Tag[]>(tagList);
   const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>([]);
   const [newTagList, setNewTagList] = useState<Array<Tag>>([]);
-  const [newTagInput, setNewTagInput] = useState<string>("");
+  const [newTagName, setNewTagName] = useState<string>("");
   // notificationRef
   const notificationRef = useRef<HandleNotificationOpen>(null);
 
 
   /*  create tag  */
   const handleTagCreate = () => {
-    if (!newTagInput || newTagInput.length === 0) return;
+    if (!newTagName || newTagName.length === 0) return;
     if (newTagList.length < 10) {
-      const newTagIndex = tagList.findIndex(tag => tag.name === newTagInput);
-      const selectedTagIndex = selectedTagList.findIndex(selectedTag => selectedTag.name === newTagInput);
+      const newTagIndex = tagList.findIndex(tag => tag.name === newTagName);
+      const selectedTagIndex = selectedTagList.findIndex(selectedTag => selectedTag.name === newTagName);
       if (newTagIndex === -1 && selectedTagIndex === -1) {
-        const newTag = { id: uuidv4(), name: newTagInput };
+        const newTag = { id: uuidv4(), name: newTagName };
         setNewTagList(prevState => [...prevState, newTag]);
         setSelectedTagList(prevState => [...prevState, newTag]);
         setLocalTagList(prevState => [...prevState, newTag]);
       }
-      setNewTagInput("");
+      setNewTagName("");
     } else {
       if (notificationRef.current) {
         notificationRef.current.openNotification(true);
@@ -87,8 +87,8 @@ const TagPoolForArticleModification = ({
                 'aria-label': 'create tag',
               }}
               placeholder="create tag"
-              value={newTagInput}
-              onChange={e => setNewTagInput(e.target.value)}
+              value={newTagName}
+              onChange={e => setNewTagName(e.target.value)}
           />
           <Button variant="outlined" color="primary" size="small" onClick={handleTagCreate}>Create</Button>
           <Notification ref={notificationRef} message="only 10 new tags allowed!" duration={6000} horizontal="right"

@@ -29,7 +29,7 @@ type Comment = {
 type ArticleOverviewInfo = {
   id: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   tags: Tag[];
   category: Category;
   description: string;
@@ -47,4 +47,24 @@ type ArticleOverviewInfo = {
   updateTimestamp: bigint;
   publishTillToday: string;
   updateTillToday: string;
+}
+
+type ArticleInfo = {
+  id: string;
+  title: string;
+  subtitle?: string;
+  tags: Tag[];
+  category: Category;
+  content: string;
+  coverImageLink?: string;
+}
+
+type ArticleModificationFormData = {
+  title: string;
+  subtitle?: string;
+  content: string;
+  category?: Category;
+  pictureLinkList?: string[];
+  attachmentLink?: string;
+  selectedTagList?: Tag[];
 }

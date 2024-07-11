@@ -4,7 +4,11 @@ import EditorMenuControls from "@/components/mui/RichTextEditor/EditorMenuContro
 import { exampleContent } from "@/lib/dummyData.ts";
 import { Box, TextField } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
-import { useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
+
+export interface HandleArticleModificationFormSubmission {
+  getFormData: () => ArticleModificationFormData;
+}
 
 type ArticleModificationFormProps = {
   initialData: {
@@ -23,17 +27,20 @@ type ArticleModificationFormProps = {
   mode?: "create" | "update"
 }
 
-const ArticleModificationForm = ({ initialData, mode = "create" }: ArticleModificationFormProps) => {
+const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmission, ArticleModificationFormProps>(({
+                                                                                                                     initialData,
+                                                                                                                     mode = "create"
+                                                                                                                   }, ref) => {
   /*  form data  */
-  const [articleData, setArticleData] = useState<{
-    title: string;
-    subtitle?: string;
-    content: string;
-    category?: Category;
-    pictureLinkList?: string[];
-    attachmentLink?: string;
-    selectedTagList?: Tag[];
-  }>({ title: "", content: "" });
+  const [articleData, setArticleData] = useState<ArticleModificationFormData>({ title: "", content: "" });
+
+
+  /*  send form data  */
+  useImperativeHandle(ref, () => ({
+    getFormData() {
+      return articleData;
+    }
+  }));
 
   return (
       <Box width="100%" component="form" noValidate autoComplete="off">
@@ -74,6 +81,6 @@ const ArticleModificationForm = ({ initialData, mode = "create" }: ArticleModifi
         </div>
       </Box>
   );
-};
+});
 
 export default ArticleModificationForm;
