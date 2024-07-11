@@ -1,11 +1,6 @@
 import { useImperativeHandle, useState, forwardRef } from "react";
 import { Chip } from "@mui/material";
 
-type Tag = {
-  id: string;
-  name: string;
-};
-
 type TagPoolProps = {
   tagList: Array<Tag>;
   onSelect: (tag: Tag) => void;
@@ -15,7 +10,7 @@ export interface HandleSelectedTagChange {
   changeSelectedTags: (updatedSelectedTagList: Array<Tag>) => void;
 }
 
-const TagPool = forwardRef<HandleSelectedTagChange, TagPoolProps>(({ tagList, onSelect }, ref) => {
+const TagPoolForArticleModification = forwardRef<HandleSelectedTagChange, TagPoolProps>(({ tagList, onSelect }, ref) => {
   const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>([]);
 
   useImperativeHandle(ref, () => ({
@@ -31,6 +26,7 @@ const TagPool = forwardRef<HandleSelectedTagChange, TagPoolProps>(({ tagList, on
                 <Chip
                     key={tag.id}
                     label={tag.name}
+                    variant="outlined"
                     disabled={selectedTagList.findIndex(selectedTag => selectedTag.id === tag.id) > -1}
                     onClick={() => {
                       if (selectedTagList.findIndex(prevTag => prevTag.id === tag.id) === -1) {
@@ -45,4 +41,4 @@ const TagPool = forwardRef<HandleSelectedTagChange, TagPoolProps>(({ tagList, on
   );
 });
 
-export default TagPool;
+export default TagPoolForArticleModification;

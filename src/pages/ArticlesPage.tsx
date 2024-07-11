@@ -7,7 +7,7 @@ import SearchBox from "@/components/SearchBox.tsx";
 import MultiCategorySelectBox from "@/components/mui/MultiCategorySelectBox.tsx";
 import SelectedTagPool from "@/components/SelectedTagPool.tsx";
 import ArticleSortingPanel from "@/components/ArticleSortingPanel.tsx";
-import TagPool, { HandleSelectedTagChange } from "@/components/TagPool.tsx";
+import TagPoolForSearching, { HandleSelectedTagChange } from "@/components/TagPoolForSearching.tsx";
 import LoopIcon from '@mui/icons-material/Loop';
 import AddIcon from '@mui/icons-material/Add';
 import { categories, fakeArticleOverviewList, tags } from "@/lib/dummyData.ts";
@@ -251,7 +251,7 @@ const ArticlesPage = () => {
                 </button>
               </div>
               <div className="mt-8">
-                <TagPool tagList={currentTagList} onSelect={handleSelectTag} ref={tagPoolRef}/>
+                <TagPoolForSearching tagList={currentTagList} onSelect={handleSelectTag} ref={tagPoolRef}/>
               </div>
             </div>
           </div>

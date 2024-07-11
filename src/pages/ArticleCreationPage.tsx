@@ -1,9 +1,10 @@
 import ArticleModificationForm from "@/components/forms/ArticleModificationForm.tsx";
 import Button from "@mui/material/Button";
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import { categories } from "@/lib/dummyData.ts";
+import { categories, tags } from "@/lib/dummyData.ts";
 import SingleCategorySelectBox from "@/components/mui/SingleCategorySelectBox.tsx";
 import FileUploadButton from "@/components/mui/FileUploadButton.tsx";
+import TagPoolForSearching from "@/components/TagPoolForSearching.tsx";
+import TagPoolForArticleModification from "@/components/TagPoolForArticleModification.tsx";
 
 const ArticleCreationPage = () => {
   /*  preview  */
@@ -54,8 +55,6 @@ const ArticleCreationPage = () => {
               <button
                   className="w-full flex flex-1 justify-center items-center border border-dashed border-gray-300"
                   onClick={handleFileUploadButtonClick}>
-                {/*<AttachFileIcon/>
-                <span className="text-nowrap text-gray-600">File Upload</span>*/}
                 <FileUploadButton/>
                 <div/>
               </button>
@@ -74,14 +73,13 @@ const ArticleCreationPage = () => {
             <button
                 className="w-full flex flex-1 justify-center items-center gap-2 border border-dashed border-gray-300"
                 onClick={handleFileUploadButtonClick}>
-              <AttachFileIcon/>
-              <span className="text-nowrap text-gray-600">File Upload</span>
+              <FileUploadButton/>
             </button>
           </div>
 
           {/*  tags  */}
-          <div>
-
+          <div className="w-full mt-10">
+            <TagPoolForArticleModification tagList={tags} onSelect={() => {}}/>
           </div>
         </div>
       </div>
