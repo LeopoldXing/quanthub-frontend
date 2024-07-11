@@ -4,6 +4,7 @@ import EditorMenuControls from "@/components/mui/RichTextEditor/EditorMenuContro
 import { exampleContent } from "@/lib/dummyData.ts";
 import { Box, TextField } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
+import { useState } from "react";
 
 type ArticleModificationFormProps = {
   initialData: {
@@ -23,6 +24,17 @@ type ArticleModificationFormProps = {
 }
 
 const ArticleModificationForm = ({ initialData, mode = "create" }: ArticleModificationFormProps) => {
+  /*  form data  */
+  const [articleData, setArticleData] = useState<{
+    title: string;
+    subtitle?: string;
+    content: string;
+    category?: Category;
+    pictureLinkList?: string[];
+    attachmentLink?: string;
+    selectedTagList?: Tag[];
+  }>({ title: "", content: "" });
+
   return (
       <Box width="100%" component="form" noValidate autoComplete="off">
         {/*  Title  */}
@@ -35,6 +47,7 @@ const ArticleModificationForm = ({ initialData, mode = "create" }: ArticleModifi
               id="title"
               name="title"
               size="small"
+              onChange={e => setArticleData(prevState => ({ ...prevState, title: e.target.value }))}
               autoFocus
           />
           <InputLabel htmlFor="sub_title" size="small">Sub Title*</InputLabel>
@@ -45,6 +58,7 @@ const ArticleModificationForm = ({ initialData, mode = "create" }: ArticleModifi
               id="sub_title"
               name="subTitle"
               size="small"
+              onChange={e => setArticleData(prevState => ({ ...prevState, subtitle: e.target.value }))}
           />
         </Box>
         {/*  Rich Text Editor  */}

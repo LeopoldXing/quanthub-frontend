@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import { categories, tags } from "@/lib/dummyData.ts";
 import SingleCategorySelectBox from "@/components/mui/SingleCategorySelectBox.tsx";
 import FileUploadButton from "@/components/mui/FileUploadButton.tsx";
-import TagPoolForSearching from "@/components/TagPoolForSearching.tsx";
 import TagPoolForArticleModification from "@/components/TagPoolForArticleModification.tsx";
 
 const ArticleCreationPage = () => {
@@ -78,8 +77,14 @@ const ArticleCreationPage = () => {
           </div>
 
           {/*  tags  */}
-          <div className="w-full mt-10">
-            <TagPoolForArticleModification tagList={tags} onSelect={() => {}}/>
+          <div className="w-full mt-1">
+            <div className="w-full flex flex-col justify-start items-start gap-4">
+              <div className="text-nowrap text-xl font-bold">Tags</div>
+              <div className="w-full mt-3">
+                <TagPoolForArticleModification tagList={tags} onSelect={() => {
+                }}/>
+              </div>
+            </div>
           </div>
         </div>
       </div>
