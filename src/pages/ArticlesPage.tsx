@@ -4,13 +4,13 @@ import ArticleIcon from '@mui/icons-material/Article';
 import PublicIcon from '@mui/icons-material/Public';
 import { debounce, Typography } from "@mui/material";
 import SearchBox from "@/components/SearchBox.tsx";
-import CategorySelectBox from "@/components/mui/CategorySelectBox.tsx";
+import MultiCategorySelectBox from "@/components/mui/MultiCategorySelectBox.tsx";
 import SelectedTagPool from "@/components/SelectedTagPool.tsx";
 import ArticleSortingPanel from "@/components/ArticleSortingPanel.tsx";
 import TagPool, { HandleSelectedTagChange } from "@/components/TagPool.tsx";
 import LoopIcon from '@mui/icons-material/Loop';
 import AddIcon from '@mui/icons-material/Add';
-import { fakeArticleOverviewList, tags1 } from "@/lib/dummyData.ts";
+import { categories, fakeArticleOverviewList, tags } from "@/lib/dummyData.ts";
 import "@/global.css";
 import ArticleOverviewList from "@/components/ArticleOverviewList.tsx";
 import Pagination from "@mui/material/Pagination";
@@ -99,7 +99,7 @@ const ArticlesPage = () => {
       setIsSpinning(false);
     }, 500); // animation will last 0.5s
   };
-  const [currentTagList, setCurrentTagList] = useState<Array<Tag>>(tags1);
+  const [currentTagList, setCurrentTagList] = useState<Array<Tag>>(tags);
   const handleRefreshTags = (): void => {
     console.log("shuffle tag list");
   }
@@ -181,8 +181,8 @@ const ArticlesPage = () => {
 
         {/*  category bar  */}
         <div className="lg:hidden w-full mt-6 flex justify-end items-center">
-          <CategorySelectBox categoryList={[{ id: "1", name: "quant" }, { id: "2", name: "kmt model" }]}
-                             onUpdate={handleCategoryChange}/>
+          <MultiCategorySelectBox categoryList={categories}
+                                  onUpdate={handleCategoryChange}/>
         </div>
 
         {/*  selected tag area  */}
@@ -236,8 +236,8 @@ const ArticlesPage = () => {
           <div className="hidden lg:block lg:w-1/3">
             {/*  category bar  */}
             <div className="hidden w-full mt-16 lg:flex justify-end items-center">
-              <CategorySelectBox categoryList={[{ id: "1", name: "quant" }, { id: "2", name: "kmt model" }]}
-                                 onUpdate={handleCategoryChange}/>
+              <MultiCategorySelectBox categoryList={categories}
+                                      onUpdate={handleCategoryChange}/>
             </div>
             {/*  tag pool  */}
             <div className="hidden lg:block mt-8">

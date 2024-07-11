@@ -363,7 +363,7 @@ export const fakeArticleOverviewList: Array<ArticleOverviewInfo> = [
 ];
 
 /*  tag list  */
-export const tags1: Array<Tag> = [
+export const tags: Array<Tag> = [
   { id: "1", name: "quant" },
   { id: "2", name: "kmt model" },
   { id: "3", name: "machine learning" },
@@ -388,7 +388,7 @@ export const tags1: Array<Tag> = [
   { id: "22", name: "derivatives" }
 ];
 
-export const tags2: Array<Tag> = [
+export const categories: Array<Category> = [
   { id: "23", name: "high-frequency trading" },
   { id: "24", name: "statistical arbitrage" },
   { id: "25", name: "options pricing" },

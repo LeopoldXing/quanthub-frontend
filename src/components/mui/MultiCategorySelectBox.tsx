@@ -19,12 +19,12 @@ const MenuProps = {
   },
 };
 
-interface CategorySelectBoxProps {
+interface MultiCategorySelectBoxProps {
   categoryList: Array<Category>;
   onUpdate: (data: Array<Category>) => void;
 }
 
-export default function CategorySelectBox({ categoryList, onUpdate }: CategorySelectBoxProps) {
+export default function MultiCategorySelectBox({ categoryList, onUpdate }: MultiCategorySelectBoxProps) {
   const [selectedCategoryNameList, setSelectedCategoryNameList] = React.useState<Array<string>>([]);
   const [selectedCategoryList, setSelectedCategoryList] = useState<Array<Category>>([]);
 
