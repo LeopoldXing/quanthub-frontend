@@ -197,7 +197,7 @@ export default function MuiRichTextEditor({
                         size="small"
                         onClick={() => setIsEditable((currentState) => !currentState)}
                         selected={!isEditable}
-                        IconComponent={isEditable ? Lock : LockOpen}
+                        IconComponent={isEditable ? LockOpen : Lock}
                     />
 
                     <Button
