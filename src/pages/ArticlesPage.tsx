@@ -10,8 +10,10 @@ import ArticleSortingPanel from "@/components/ArticleSortingPanel.tsx";
 import TagPool, { HandleSelectedTagChange } from "@/components/TagPool.tsx";
 import LoopIcon from '@mui/icons-material/Loop';
 import AddIcon from '@mui/icons-material/Add';
-import { tags1 } from "@/lib/dummyData.ts";
+import { fakeArticleOverviewList, tags1 } from "@/lib/dummyData.ts";
 import "@/global.css";
+import ArticleOverviewList from "@/components/ArticleOverviewList.tsx";
+import Pagination from "@mui/material/Pagination";
 
 type SearchParamType = {
   keyword: string;
@@ -92,7 +94,7 @@ const ArticlesPage = () => {
     setIsSpinning(true);
     setTimeout(() => {
       setIsSpinning(false);
-    }, 500); // animation will last 1s
+    }, 500); // animation will last 0.5s
   };
   const [currentTagList, setCurrentTagList] = useState<Array<Tag>>(tags1);
   const handleRefreshTags = (): void => {
@@ -107,9 +109,10 @@ const ArticlesPage = () => {
   }
 
   /*  get search result from backend  */
-  const [articleOverviewList, setArticleOverviewList] = useState<Array<string>>([])
+  const [articleOverviewList, setArticleOverviewList] = useState<Array<ArticleOverviewInfo>>([])
   useEffect(() => {
-    debouncedSearch()
+    debouncedSearch();
+    setArticleOverviewList(fakeArticleOverviewList);
   }, [searchParams.selectedCategoryList, searchParams.selectedCategoryList]);
 
 
@@ -192,7 +195,7 @@ const ArticlesPage = () => {
         {/*  content container  */}
         <div className="w-full flex justify-between items-start gap-16">
           {/*  left  */}
-          <div className="w-2/3">
+          <div className="w-full lg:w-2/3">
             <div className="hidden lg:block w-full">
               <SearchBox handleKeywordChange={handleKeywordChange} handleSearch={handleSearch}/>
             </div>
@@ -207,24 +210,27 @@ const ArticlesPage = () => {
             </div>
 
             {/*  search result  */}
-            <div>
-              {articleOverviewList.length > 0 ? (
-                  articleOverviewList.map(article => (
-                      <div>
-                        {article}
-                      </div>
-                  ))
-              ) : (
-                  <div className="w-full flex justify-center items-center" style={{ height: "70vh" }}>
-                    <Typography fontWeight="normal" fontSize="xl" textAlign="center" paddingTop="5%">
-                      No Result Found!
-                    </Typography>
+            {articleOverviewList.length > 0 ? (
+                <div className="w-full">
+                  <div className="w-full py-10">
+                    <ArticleOverviewList articleOverviewInfoList={articleOverviewList}/>
                   </div>
-              )}
-            </div>
+                  {articleOverviewList.length > 5 && (
+                      <div className="w-full flex justify-center items-center">
+                        <Pagination count={10} shape="rounded"/>
+                      </div>
+                  )}
+                </div>
+            ) : (
+                <div className="w-full flex justify-center items-center" style={{ height: "70vh" }}>
+                  <Typography fontWeight="normal" fontSize="xl" textAlign="center" paddingTop="5%">
+                    No Result Found!
+                  </Typography>
+                </div>
+            )}
           </div>
           {/*  right extra info  */}
-          <div className="w-1/3">
+          <div className="hidden lg:block lg:w-1/3">
             {/*  category bar  */}
             <div className="hidden w-full mt-16 lg:flex justify-end items-center">
               <CategorySelectBox categoryList={[{ id: "1", name: "quant" }, { id: "2", name: "kmt model" }]}

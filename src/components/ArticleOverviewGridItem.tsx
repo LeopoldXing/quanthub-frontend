@@ -1,6 +1,6 @@
 import Button from "@mui/material/Button";
 
-const ArticleGridOverview = ({ title, abstract, articleLink }: {
+const ArticleOverviewGridItem = ({ title, abstract, articleLink }: {
   title: string,
   abstract: string,
   articleLink: string
@@ -28,4 +28,4 @@ const ArticleGridOverview = ({ title, abstract, articleLink }: {
   );
 };
 
-export default ArticleGridOverview;
+export default ArticleOverviewGridItem;

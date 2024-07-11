@@ -5,7 +5,7 @@ import pythonPic from "@/assets/frontpage/python.svg";
 import qtData from "@/assets/frontpage/fetchDataDemo.svg";
 import Button from "@mui/material/Button";
 import { useAuth0 } from "@auth0/auth0-react";
-import ArticleGridOverview from "@/components/ArticleGridOverview.tsx";
+import ArticleOverviewGridItem from "@/components/ArticleOverviewGridItem.tsx";
 
 const HomePage = () => {
   // auth0
@@ -109,12 +109,12 @@ const HomePage = () => {
               {/*  article container  */}
               <div
                   className="w-full min-h-[600px] mt-16 grid lg:grid-cols-2 xl:grid-cols-3 gap-12">
-                <ArticleGridOverview abstract={article.abstract} title={article.title} articleLink={article.link}/>
-                <ArticleGridOverview abstract={article.abstract} title={article.title} articleLink={article.link}/>
-                <ArticleGridOverview abstract={article.abstract} title={article.title} articleLink={article.link}/>
-                <ArticleGridOverview abstract={article.abstract} title={article.title} articleLink={article.link}/>
-                <ArticleGridOverview abstract={article.abstract} title={article.title} articleLink={article.link}/>
-                <ArticleGridOverview abstract={article.abstract} title={article.title} articleLink={article.link}/>
+                <ArticleOverviewGridItem abstract={article.abstract} title={article.title} articleLink={article.link}/>
+                <ArticleOverviewGridItem abstract={article.abstract} title={article.title} articleLink={article.link}/>
+                <ArticleOverviewGridItem abstract={article.abstract} title={article.title} articleLink={article.link}/>
+                <ArticleOverviewGridItem abstract={article.abstract} title={article.title} articleLink={article.link}/>
+                <ArticleOverviewGridItem abstract={article.abstract} title={article.title} articleLink={article.link}/>
+                <ArticleOverviewGridItem abstract={article.abstract} title={article.title} articleLink={article.link}/>
               </div>
             </div>
           </div>
