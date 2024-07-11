@@ -14,6 +14,7 @@ import { fakeArticleOverviewList, tags1 } from "@/lib/dummyData.ts";
 import "@/global.css";
 import ArticleOverviewList from "@/components/ArticleOverviewList.tsx";
 import Pagination from "@mui/material/Pagination";
+import { useNavigate } from "react-router-dom";
 
 type SearchParamType = {
   keyword: string;
@@ -24,6 +25,8 @@ type SearchParamType = {
 }
 
 const ArticlesPage = () => {
+  const navigate = useNavigate();
+
   /*  section  */
   const [isAnnouncementSection, setIsAnnouncementSection] = useState<boolean>(false);
   const handleSectionClick = (section: string) => {
@@ -52,7 +55,7 @@ const ArticlesPage = () => {
     });
   }
   // category
-  const handleCategoryChange = (updatedCategoryList: Array<Category>) => {
+  const handleCategoryChange = (updatedCategoryList: Array<Category>): void => {
     setSearchParams(prevState => ({
       ...prevState,
       selectedCategoryList: updatedCategoryList
@@ -118,7 +121,7 @@ const ArticlesPage = () => {
 
   /*  create new article  */
   const handleCreateArticleButtonClick = () => {
-
+    navigate("/article/create");
   }
 
   return (
