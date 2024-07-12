@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 
 type ArticleSortingPanelProps = {
   onSort: (sortStrategy: "publish_date" | "update_date" | "recommended", sortDirection: "asc" | "desc" | "none") => void;
+  mode?: "public" | "individual";
 }
 
-const ArticleSortingPanel = ({ onSort }: ArticleSortingPanelProps) => {
+const ArticleSortingPanel = ({ onSort, mode = "public" }: ArticleSortingPanelProps) => {
   const directionChangeSequence = ["asc", "desc", "none"];
   const [publishSortDirectionPointer, setPublishSortDirectionPointer] = useState(2);
   const [updateSortDirectionPointer, setUpdateSortDirectionPointer] = useState(2);
@@ -40,12 +41,10 @@ const ArticleSortingPanel = ({ onSort }: ArticleSortingPanelProps) => {
     }
   }, [updateSortDirectionPointer]);
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   return (
       <div
           className="w-full flex justify-start items-center gap-5 border-b-[1px] border-gray-300">
-        {/*  default - sort by title  */}
+        {/*  default - sort popularity  */}
         <div className="py-2">
           <div className="h-8 py-0 pr-4 border-r-[1px] border-gray-300">
             <Button
@@ -62,7 +61,7 @@ const ArticleSortingPanel = ({ onSort }: ArticleSortingPanelProps) => {
                   setUpdateSortDirectionPointer(2);
                 }}
             >
-              Recommended
+              {mode === "public" ? "Recommended" : "Most Popular"}
             </Button>
           </div>
         </div>
@@ -78,6 +77,7 @@ const ArticleSortingPanel = ({ onSort }: ArticleSortingPanelProps) => {
                 }}
                 endIcon={publishIcon}
                 onClick={() => {
+                  // @ts-ignore
                   onSort("publish_date", directionChangeSequence[publishSortDirectionPointer === 0 ? 1 : 0]);
                   setStrategy("publish_date");
                   setPublishSortDirectionPointer(prevState => prevState === 0 ? 1 : 0);
@@ -99,6 +99,7 @@ const ArticleSortingPanel = ({ onSort }: ArticleSortingPanelProps) => {
               }}
               endIcon={updateIcon}
               onClick={() => {
+                // @ts-ignore
                 onSort("update_date", directionChangeSequence[updateSortDirectionPointer === 0 ? 1 : 0]);
                 setStrategy("update_date");
                 setUpdateSortDirectionPointer(prevState => prevState === 0 ? 1 : 0);

@@ -63,6 +63,14 @@ export type ArticleInfo = {
   coverImageLink?: string;
 }
 
+export type ArticleSearchParamType = {
+  keyword: string;
+  selectedCategoryList: Array<Category>;
+  selectedTagList: Array<Tag>;
+  sortStrategy: "publish_date" | "update_date" | "recommended";
+  sortDirection: "asc" | "desc" | "none";
+}
+
 export type ArticleModificationFormData = {
   title: string;
   subtitle?: string;

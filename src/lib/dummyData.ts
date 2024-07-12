@@ -1,6 +1,8 @@
 /*  article  */
+import { ArticleOverviewInfo, Category, Tag } from "@/types.ts";
+
 export const fakeArticleOverviewList: Array<ArticleOverviewInfo> = [
-  {
+  /*{
     id: "1",
     title: "Quantitative Trading Strategies for US Stocks",
     subtitle: "An Introduction",
@@ -359,7 +361,7 @@ export const fakeArticleOverviewList: Array<ArticleOverviewInfo> = [
     updateTimestamp: BigInt(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
     publishTillToday: "13 days ago",
     updateTillToday: "7 days ago"
-  }
+  }*/
 ];
 
 /*  tag list  */

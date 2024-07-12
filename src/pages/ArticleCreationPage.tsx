@@ -101,8 +101,8 @@ const ArticleCreationPage = () => {
 
   /*  cancel  */
   const handleCancel = async () => {
-    navigate("/articles");
-    window.scrollTo(0, 80);
+    navigate(-1);
+    /*window.scrollTo(0, 0);*/
   }
 
   const openCancelDialog = () => {
@@ -130,8 +130,8 @@ const ArticleCreationPage = () => {
       severity: "success",
     });
     setSavingAndLeaving(false);
-    navigate("/articles");
-    window.scrollTo(0, 0);
+    navigate(-1);
+    /*window.scrollTo(0, 0);*/
   }
 
   return (
