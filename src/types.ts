@@ -55,14 +55,18 @@ type ArticleInfo = {
   subtitle?: string;
   tags: Tag[];
   category: Category;
-  content: string;
+  contentHtml: string;
+  contentText?: string;
+  contentJson?: string;
   coverImageLink?: string;
 }
 
 type ArticleModificationFormData = {
   title: string;
   subtitle?: string;
-  content: string;
+  contentHtml: string;
+  contentText?: string;
+  contentJson?: string;
   category?: Category;
   pictureLinkList?: string[];
   attachmentLink?: string;

@@ -35,7 +35,7 @@ type MuiRichTextEditorProps = {
   initialContent?: string;
   variant?: "standard" | "outlined";
   renderControls?: () => import("react/jsx-runtime").JSX.Element;
-  onSaveDraft: (data: { contentText: string, contentHtml: string }) => void;
+  onSaveDraft: () => void;
 }
 
 const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditorProps>(({
@@ -226,10 +226,7 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
                     <Button
                         variant="contained"
                         size="small"
-                        onClick={() => onSaveDraft({
-                          contentText: rteRef.current?.editor?.getText() ?? "",
-                          contentHtml: rteRef.current?.editor?.getHTML() ?? ""
-                        })}>
+                        onClick={onSaveDraft}>
                       Save Draft
                     </Button>
                   </Stack>

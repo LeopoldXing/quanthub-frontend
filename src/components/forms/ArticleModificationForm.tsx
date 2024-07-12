@@ -7,7 +7,7 @@ import InputLabel from "@mui/material/InputLabel";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 
 export interface HandleArticleModificationFormSubmission {
-  getFormData: (contentType: "text" | "json" | "html") => ArticleModificationFormData;
+  getFormData: (contentType: "text" | "json" | "html" | "html&text") => ArticleModificationFormData;
 }
 
 type ArticleModificationFormProps = {
@@ -25,7 +25,7 @@ type ArticleModificationFormProps = {
     }
   };
   mode?: "create" | "update";
-  onSaveDraft: (data: { contentText: string, contentHtml: string }) => void;
+  onSaveDraft: () => void;
 }
 
 const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmission, ArticleModificationFormProps>(({
@@ -34,26 +34,35 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
                                                                                                                      onSaveDraft
                                                                                                                    }, ref) => {
   // form data
-  const [articleData, setArticleData] = useState<ArticleModificationFormData>({ title: "", content: "" });
+  const [articleData, setArticleData] = useState<ArticleModificationFormData>({ title: "", contentHtml: "" });
   // text editor ref
   const textEditorRef = useRef<handleRichTextEditorData>(null);
 
   /*  send form data  */
   useImperativeHandle(ref, () => ({
-    getFormData(contenType) {
-      let content: string = "";
+    getFormData(contentType) {
+      let contentText: string = "";
+      let contentHtml: string = "";
+      let contentJson: string = "";
       if (textEditorRef.current) {
-        if (contenType === "text") {
-          content = textEditorRef.current.getText();
-        } else if (contenType === "html") {
-          content = textEditorRef.current.getHtml();
-        } else if (contenType === "json") {
-          content = textEditorRef.current.getJson() || "";
+        if (contentType === "html&text") {
+          contentText = textEditorRef.current.getText();
+          contentHtml = textEditorRef.current.getHtml();
+        } else if (contentType === "text") {
+          contentText = textEditorRef.current.getText();
+        } else if (contentType === "html") {
+          contentHtml = textEditorRef.current.getHtml();
+        } else if (contentType === "json") {
+          contentJson = textEditorRef.current.getJson() || "";
         }
       }
-      return { ...articleData, content: content };
+      return { ...articleData, contentText, contentHtml, contentJson };
     }
   }));
+
+
+  /*  save draft  */
+
 
   return (
       <Box width="100%" component="form" noValidate autoComplete="off">

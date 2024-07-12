@@ -21,11 +21,12 @@ const ArticleCreationPage = () => {
     subtitle: "",
     tags: [],
     category: { id: uuidv4(), name: "" },
-    content: ""
+    contentHtml: "",
+    contentText: "",
   });
 
   /*  get current article data  */
-  const constructArticleData = (contentType: "html" | "json" | "text" = "text"): ArticleInfo => {
+  const constructArticleData = (contentType: "html" | "json" | "text" | "html&text" = "text"): ArticleInfo => {
     // get article form data
     const formData = articleFormRef.current?.getFormData(contentType);
     // get tag list
@@ -38,7 +39,9 @@ const ArticleCreationPage = () => {
       subtitle: formData?.subtitle || "",
       tags: selectedTagList || [],
       category: articleData.category,
-      content: formData?.content || "",
+      contentHtml: formData?.contentHtml || "",
+      contentText: formData?.contentText || "",
+      contentJson: formData?.contentJson || "",
       coverImageLink: formData?.coverImageLink || undefined
     }
   }
@@ -51,14 +54,15 @@ const ArticleCreationPage = () => {
 
   /*  publish  */
   const handlePublishButtonClick = () => {
-    const articleInfo = constructArticleData("html");
+    const articleInfo = constructArticleData("html&text");
     console.log(articleInfo);
   }
 
   /*  save draft  */
-  const handleSaveDraft = (content: { contentText: string, contentHtml: string }) => {
+  const handleSaveDraft = () => {
+    const formData = constructArticleData("html&text");
     console.log("save draft, content -> ")
-    console.log(content);
+    console.log(formData);
   }
 
   /*  handle file upload button click  */
@@ -99,12 +103,12 @@ const ArticleCreationPage = () => {
                 <span className="text-nowrap text-xl font-bold">Attachment</span>
                 <span className="ml-3 text-nowrap text-sm font-light text-gray-400">(File size limit: 100MB)</span>
               </div>
-              <button
+              <div
                   className="w-full flex flex-1 justify-center items-center border border-dashed border-gray-300"
                   onClick={handleFileUploadButtonClick}>
                 <FileUploadButton/>
                 <div/>
-              </button>
+              </div>
             </div>
           </div>
           <div className="w-full md:hidden flex flex-col justify-start items-start gap-4">
@@ -120,11 +124,11 @@ const ArticleCreationPage = () => {
               <span className="text-nowrap text-xl font-bold">Attachment</span>
               <span className="ml-3 text-nowrap text-sm font-light text-gray-400">(File size limit: 100MB)</span>
             </div>
-            <button
+            <div
                 className="w-full flex flex-1 justify-center items-center gap-2 border border-dashed border-gray-300"
                 onClick={handleFileUploadButtonClick}>
               <FileUploadButton/>
-            </button>
+            </div>
           </div>
 
           {/*  tags  */}
