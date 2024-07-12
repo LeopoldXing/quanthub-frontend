@@ -1,14 +1,17 @@
-type Category = {
+import { OverridableComponent } from "@mui/material/OverridableComponent";
+import { SvgIconTypeMap } from "@mui/material/SvgIcon/SvgIcon";
+
+export type Category = {
   id: string;
   name: string;
 }
 
-type Tag = {
+export type Tag = {
   id: string;
   name: string;
 }
 
-type User = {
+export type User = {
   id: string;
   username: string;
   password?: string;
@@ -17,7 +20,7 @@ type User = {
   role: string;
 }
 
-type ArticleComment = {
+export type ArticleComment = {
   id: string;
   content: string;
   user: User;
@@ -26,7 +29,7 @@ type ArticleComment = {
   status: string;
 }
 
-type ArticleOverviewInfo = {
+export type ArticleOverviewInfo = {
   id: string;
   title: string;
   subtitle?: string;
@@ -49,7 +52,7 @@ type ArticleOverviewInfo = {
   updateTillToday: string;
 }
 
-type ArticleInfo = {
+export type ArticleInfo = {
   id: string;
   title: string;
   subtitle?: string;
@@ -61,7 +64,7 @@ type ArticleInfo = {
   coverImageLink?: string;
 }
 
-type ArticleModificationFormData = {
+export type ArticleModificationFormData = {
   title: string;
   subtitle?: string;
   contentHtml: string;
@@ -72,4 +75,28 @@ type ArticleModificationFormData = {
   attachmentLink?: string;
   selectedTagList?: Tag[];
   coverImageLink?: string;
+}
+
+export type ConfirmBoxDataType = {
+  title: string;
+  description: string;
+  option1Text?: string;
+  option2Text?: string;
+  option1Variant?: 'text' | 'outlined' | 'contained';
+  option2Variant?: 'text' | 'outlined' | 'contained';
+  option1Color?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+  option2Color?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+  option1StartIcon?: OverridableComponent | undefined;
+  option2StartIcon?: OverridableComponent | undefined;
+  option1endIcon?: OverridableComponent | undefined;
+  option2endIcon?: OverridableComponent | undefined;
+}
+
+export type NotificationProps = {
+  duration?: number;
+  vertical?: "bottom" | "top";
+  horizontal?: "left" | "right" | "center";
+  message?: string;
+  severity?: "success" | "warning" | "error" | "info";
+  variant?: 'standard' | 'filled' | 'outlined';
 }

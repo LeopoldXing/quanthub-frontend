@@ -2,6 +2,9 @@ import Lock from "@mui/icons-material/Lock";
 import LockOpen from "@mui/icons-material/LockOpen";
 import TextFields from "@mui/icons-material/TextFields";
 import { Box, Button, Stack } from "@mui/material";
+import LoadingButton from '@mui/lab/LoadingButton';
+import DraftsIcon from '@mui/icons-material/Drafts';
+import DeleteIcon from '@mui/icons-material/Delete';
 import type { EditorOptions } from "@tiptap/core";
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import useExtensions from "./useExtensions";
@@ -29,6 +32,7 @@ export interface handleRichTextEditorData {
   getText: () => string;
   getJson: () => string;
   /*getFileList: () => File[];*/
+  getFileList: () => void;
 }
 
 type MuiRichTextEditorProps = {
@@ -36,13 +40,17 @@ type MuiRichTextEditorProps = {
   variant?: "standard" | "outlined";
   renderControls?: () => import("react/jsx-runtime").JSX.Element;
   onSaveDraft: () => void;
+  onCancel: () => void;
+  savingDraft: boolean
 }
 
 const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditorProps>(({
                                                                                           initialContent,
                                                                                           variant = "standard",
                                                                                           renderControls,
-                                                                                          onSaveDraft
+                                                                                          onSaveDraft,
+                                                                                          onCancel,
+                                                                                          savingDraft = false
                                                                                         }, ref) => {
   const extensions = useExtensions({
     placeholder: "Add your own content here...",
@@ -62,9 +70,9 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
     getJson() {
       return rteRef.current?.editor?.getJSON().text ?? "";
     },
-    /*getFileList(){
-      return
-    }*/
+    getFileList() {
+      console.log();
+    }
   }))
 
   const handleNewImageFiles = useCallback(
@@ -223,16 +231,26 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
                         IconComponent={isEditable ? LockOpen : Lock}
                     />
 
-                    <Button
+                    <LoadingButton
+                        startIcon={<DraftsIcon/>}
                         variant="contained"
                         size="small"
+                        loading={savingDraft}
                         onClick={onSaveDraft}>
                       Save Draft
+                    </LoadingButton>
+                    <Button
+                        startIcon={<DeleteIcon/>}
+                        variant="contained"
+                        color="error"
+                        size="small"
+                        onClick={onCancel}>
+                      Delete and Leave
                     </Button>
                   </Stack>
               ),
               RichTextContentProps: {
-                className: "min-h-[800px]"
+                className: "min-h-[600px]"
               }
             }}>
           {() => (

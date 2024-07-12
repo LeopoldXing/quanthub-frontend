@@ -3,6 +3,7 @@ import { Typography } from "@mui/material";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
+import { ArticleOverviewInfo } from "@/types.ts";
 
 const ArticleOverviewListItem = ({ articleOverviewInfo }: { articleOverviewInfo: ArticleOverviewInfo }) => {
   return (

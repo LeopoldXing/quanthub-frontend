@@ -3,6 +3,7 @@ import { Chip, Input, InputAdornment } from "@mui/material";
 import Button from "@mui/material/Button";
 import { v4 as uuidv4 } from 'uuid';
 import Notification, { HandleNotificationOpen } from "@/components/mui/Notification.tsx";
+import { Tag } from "@/types.ts";
 
 export interface HandleSelectedTagData {
   getSelectedTagList: () => Tag[];
@@ -104,7 +105,7 @@ const TagPoolForArticleModification = forwardRef<HandleSelectedTagData, TagPoolP
           />
           <Button variant="outlined" color="primary" size="small" onClick={handleTagCreate}>Create</Button>
           <Notification ref={notificationRef} message="only 10 new tags allowed!" duration={6000} horizontal="right"
-                        vertical="top" serverity="warning"/>
+                        vertical="top" severity="warning"/>
         </div>
       </div>
   );

@@ -1,16 +1,9 @@
 import { Alert, Snackbar } from "@mui/material";
 import { forwardRef, useImperativeHandle, useState } from "react";
+import { NotificationProps } from "@/types.ts";
 
 export interface HandleNotificationOpen {
   openNotification: (indicator: boolean) => void;
-}
-
-type NotificationProps = {
-  duration?: number;
-  vertical?: "bottom" | "top";
-  horizontal?: "left" | "right" | "center";
-  message?: string;
-  serverity?: "success" | "warning" | "error" | "info";
 }
 
 const Notification = forwardRef<HandleNotificationOpen, NotificationProps>(({
@@ -18,7 +11,8 @@ const Notification = forwardRef<HandleNotificationOpen, NotificationProps>(({
                                                                               vertical = "top",
                                                                               horizontal = "right",
                                                                               message = "This is a notification.",
-                                                                              serverity = "info"
+                                                                              severity = "info",
+                                                                              variant = "filled"
                                                                             }, ref) => {
   const [notificationOpen, setNotificationOpen] = useState<boolean>(false);
 
@@ -36,13 +30,13 @@ const Notification = forwardRef<HandleNotificationOpen, NotificationProps>(({
       <Snackbar
           open={notificationOpen}
           autoHideDuration={duration}
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          anchorOrigin={{ vertical: vertical, horizontal: horizontal }}
           onClose={handleClose}
       >
         <Alert
             onClose={handleClose}
-            severity={serverity}
-            variant="filled"
+            severity={severity}
+            variant={variant}
             sx={{ width: '100%' }}
         >
           {message}

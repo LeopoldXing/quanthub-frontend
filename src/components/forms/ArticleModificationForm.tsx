@@ -5,6 +5,7 @@ import { exampleContent } from "@/lib/dummyData.ts";
 import { Box, TextField } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { ArticleComment, ArticleModificationFormData } from "@/types.ts";
 
 export interface HandleArticleModificationFormSubmission {
   getFormData: (contentType: "text" | "json" | "html" | "html&text") => ArticleModificationFormData;
@@ -26,12 +27,16 @@ type ArticleModificationFormProps = {
   };
   mode?: "create" | "update";
   onSaveDraft: () => void;
+  onCancel: () => void;
+  savingDraft?: boolean;
 }
 
 const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmission, ArticleModificationFormProps>(({
                                                                                                                      initialData,
                                                                                                                      mode = "create",
-                                                                                                                     onSaveDraft
+                                                                                                                     onSaveDraft,
+                                                                                                                     onCancel,
+                                                                                                                     savingDraft = false
                                                                                                                    }, ref) => {
   // form data
   const [articleData, setArticleData] = useState<ArticleModificationFormData>({ title: "", contentHtml: "" });
@@ -101,6 +106,8 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
               initialContent={mode === "create" ? exampleContent : initialData.content}
               ref={textEditorRef}
               onSaveDraft={onSaveDraft}
+              onCancel={onCancel}
+              savingDraft={savingDraft}
           />
         </div>
       </Box>
