@@ -13,7 +13,7 @@ import FileUploadButton from "@/components/mui/FileUploadButton.tsx";
 import TagPoolForArticleModification, { HandleSelectedTagData } from "@/components/TagPoolForArticleModification.tsx";
 import { v4 as uuidv4 } from 'uuid';
 import MuiConfirmBox from "@/components/mui/MuiConfirmBox.tsx";
-import { ArticleInfo, Category, ConfirmBoxDataType } from "@/types.ts";
+import { ArticleInfo, ButtonStyleType, Category } from "@/types.ts";
 import { sleep } from "@/utils/GlobalUtils.ts";
 import { useNavigate } from "react-router-dom";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -61,7 +61,7 @@ const ArticleCreationPage = () => {
 
   /*  dialog  */
   const [confirmBoxOpen, setConfirmBoxOpen] = useState<boolean>(false);
-  const confirmBoxInitialData: ConfirmBoxDataType = {
+  const confirmBoxInitialData: ButtonStyleType = {
     title: "Confirm action?",
     description: "",
     option1Text: "Cancel",
@@ -72,18 +72,18 @@ const ArticleCreationPage = () => {
     option2Color: "primary",
     option1StartIcon: undefined,
     option2StartIcon: undefined,
-    option1endIcon: undefined,
-    option2endIcon: undefined
+    option1EndIcon: undefined,
+    option2EndIcon: undefined
   };
-  const [confirmBoxData, setConfirmBoxData] = useState<ConfirmBoxDataType>(confirmBoxInitialData);
-  const [confirmAction, setConfirmAction] = useState<() => void>(() => () => { });
+  const [confirmBoxData, setConfirmBoxData] = useState<ButtonStyleType>(confirmBoxInitialData);
+  const [confirmAction, setConfirmAction] = useState<() => Promise<void>>(() => async () => { });
 
   const handleDialogClose = () => {
     setConfirmBoxOpen(false);
   }
 
-  const onConfirm = () => {
-    confirmAction();
+  const onConfirm = async () => {
+    await confirmAction();
   }
 
   /*  preview  */
@@ -92,25 +92,32 @@ const ArticleCreationPage = () => {
     console.log(articleInfo);
   }
 
-
   /*  publish  */
-  const handlePublish = () => {
-    setConfirmBoxData(confirmBoxInitialData);
+  const handlePublish = async () => {
     const articleInfo = constructArticleData("html&text");
     console.log(articleInfo);
+    await sleep(2000);
+    navigate("/articles");
+    showNotification({
+      message: "Your article is published.",
+      severity: "success",
+    });
+    window.scrollTo(0, 0);
   }
+
   const openPublishConfirmDialog = () => {
     setConfirmBoxData(prevState => ({
       ...prevState,
       title: "Publish this article?",
       description: "By confirming, this article will be published and made available to all users. Are you sure you want to proceed?",
       option2Text: "Publish",
-      option2endIcon: <SendIcon/>
+      option2Color: "primary",
+      option2StartIcon: undefined,
+      option2EndIcon: <SendIcon/>
     }));
     setConfirmAction(() => handlePublish);
     setConfirmBoxOpen(true);
   }
-
 
   /*  save draft  */
   const [savingDraft, setSavingDraft] = useState<boolean>(false);
@@ -120,11 +127,10 @@ const ArticleCreationPage = () => {
     await sleep(1000);
     setSavingDraft(false);
     showNotification({
-      message: "Draft saved. ",
-      severity: "success"
+      message: "Draft saved.",
+      severity: "success",
     });
   }
-
 
   /*  handle file upload button click  */
   const handleFileUpload = () => {
@@ -132,12 +138,12 @@ const ArticleCreationPage = () => {
     console.log(articleInfo);
   }
 
-
   /*  cancel  */
-  const handleCancel = () => {
+  const handleCancel = async () => {
     navigate("/articles");
-    window.scrollTo(0, 0);
+    window.scrollTo(0, 80);
   }
+
   const openCancelDialog = () => {
     setConfirmBoxData(prevState => ({
       ...prevState,
@@ -146,12 +152,12 @@ const ArticleCreationPage = () => {
       option1Color: "primary",
       option2Text: "Leave",
       option2Color: "error",
-      option2StartIcon: <DeleteIcon/>
+      option2StartIcon: <DeleteIcon/>,
+      option2EndIcon: undefined
     }));
     setConfirmAction(() => handleCancel);
     setConfirmBoxOpen(true);
   }
-
 
   // save and leave
   const [savingAndLeaving, setSavingAndLeaving] = useState<boolean>(false);
@@ -159,9 +165,9 @@ const ArticleCreationPage = () => {
     setSavingAndLeaving(true);
     await sleep(1000);
     showNotification({
-      message: "Draft saved. ",
-      severity: "success"
-    })
+      message: "Draft saved.",
+      severity: "success",
+    });
     setSavingAndLeaving(false);
     navigate("/articles");
     window.scrollTo(0, 0);
@@ -171,7 +177,6 @@ const ArticleCreationPage = () => {
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
         {/*  title  */}
         <div className="w-full space-y-10 md:space-y-0 md:flex justify-between items-center">
-
           <div className="lg:hidden text-4xl font-bold">Create Article</div>
           <div className="hidden lg:flex items-end justify-start gap-16">
             <div className="text-4xl font-bold">Create Article</div>
@@ -183,7 +188,6 @@ const ArticleCreationPage = () => {
               Save and Leave
             </LoadingButton>
           </div>
-
           <div className="flex flex-nowrap justify-start md:justify-center items-center gap-4">
             <Button variant="outlined" onClick={handlePreview} endIcon={<PreviewOutlinedIcon/>}
                     color="secondary">Preview</Button>
@@ -191,7 +195,6 @@ const ArticleCreationPage = () => {
                     color="primary">Publish</Button>
           </div>
         </div>
-
         {/*  save and leave  */}
         <div className="lg:hidden mt-10">
           <LoadingButton variant="text" onClick={() => handleSaveAndLeave()} loading={savingAndLeaving}
@@ -202,7 +205,6 @@ const ArticleCreationPage = () => {
             Save and Leave
           </LoadingButton>
         </div>
-
         {/*  content  */}
         <div className="w-full mt-10">
           <ArticleModificationForm mode="create" initialData={{ author: { username: "lll" } }} ref={articleFormRef}
@@ -252,7 +254,6 @@ const ArticleCreationPage = () => {
               <FileUploadButton/>
             </div>
           </div>
-
           {/*  tags  */}
           <div className="w-full mt-1">
             <div className="w-full flex flex-col justify-start items-start gap-4">
@@ -263,8 +264,7 @@ const ArticleCreationPage = () => {
             </div>
           </div>
         </div>
-
-        <MuiConfirmBox open={confirmBoxOpen} handleClose={handleDialogClose} data={confirmBoxData}
+        <MuiConfirmBox open={confirmBoxOpen} handleClose={handleDialogClose} buttonStyle={confirmBoxData}
                        onConfirm={onConfirm}/>
       </div>
   );

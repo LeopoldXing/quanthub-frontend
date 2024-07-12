@@ -1,5 +1,6 @@
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { SvgIconTypeMap } from "@mui/material/SvgIcon/SvgIcon";
+import React from "react";
 
 export type Category = {
   id: string;
@@ -77,20 +78,20 @@ export type ArticleModificationFormData = {
   coverImageLink?: string;
 }
 
-export type ConfirmBoxDataType = {
+export type ButtonStyleType = {
   title: string;
   description: string;
-  option1Text?: string;
-  option2Text?: string;
-  option1Variant?: 'text' | 'outlined' | 'contained';
-  option2Variant?: 'text' | 'outlined' | 'contained';
-  option1Color?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
-  option2Color?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
-  option1StartIcon?: OverridableComponent | undefined;
-  option2StartIcon?: OverridableComponent | undefined;
-  option1endIcon?: OverridableComponent | undefined;
-  option2endIcon?: OverridableComponent | undefined;
-}
+  option1Text: string;
+  option2Text: string;
+  option1Variant: 'text' | 'outlined' | 'contained';
+  option2Variant: 'text' | 'outlined' | 'contained';
+  option1Color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+  option2Color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+  option1StartIcon?: React.ReactNode;
+  option2StartIcon?: React.ReactNode;
+  option1EndIcon?: React.ReactNode;
+  option2EndIcon?: React.ReactNode;
+};
 
 export type NotificationProps = {
   duration?: number;

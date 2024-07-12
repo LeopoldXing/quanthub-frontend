@@ -1,30 +1,36 @@
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
-import { ConfirmBoxDataType } from "@/types.ts";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { useState } from "react";
+import { ButtonStyleType } from "@/types.ts";
 
 type MuiConfirmBoxProps = {
   open: boolean;
   handleClose: () => void;
-  onConfirm: () => void;
-  data: ConfirmBoxDataType;
+  onConfirm: () => Promise<void>;
+  buttonStyle: ButtonStyleType;
 };
 
 const MuiConfirmBox = ({
-                         open, handleClose, onConfirm, data = {
-    title: "Confirm action?",
-    description: "",
-    option1Text: "Cancel",
-    option2Text: "Confirm",
-    option1Variant: "outlined",
-    option2Variant: "contained",
-    option1Color: "error",
-    option2Color: "primary",
-    option1StartIcon: undefined,
-    option2StartIcon: undefined,
-    option1endIcon: undefined,
-    option2endIcon: undefined
-  }
+                         open,
+                         handleClose,
+                         onConfirm,
+                         buttonStyle = {
+                           title: "Confirm action?",
+                           description: "",
+                           option1Text: "Cancel",
+                           option2Text: "Confirm",
+                           option1Variant: "text",
+                           option2Variant: "contained",
+                           option1Color: "error",
+                           option2Color: "primary",
+                           option1StartIcon: undefined,
+                           option2StartIcon: undefined,
+                           option1EndIcon: undefined,
+                           option2EndIcon: undefined
+                         }
                        }: MuiConfirmBoxProps) => {
+  const [loading, setLoading] = useState<boolean>(false);
 
   return (
       <Dialog
@@ -34,11 +40,11 @@ const MuiConfirmBox = ({
           aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title" sx={{ marginTop: "15px", marginLeft: "10px" }}>
-          <Typography fontSize="large" fontWeight="bold">{data.title}</Typography>
+          <Typography fontSize="large" fontWeight="bold">{buttonStyle.title}</Typography>
         </DialogTitle>
         <DialogContent sx={{ marginTop: "20px", marginX: "10px" }}>
           <DialogContentText id="alert-dialog-description" sx={{ fontSize: "medium", fontWeight: "lighter" }}>
-            {data.description}
+            {buttonStyle.description}
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{
@@ -49,23 +55,35 @@ const MuiConfirmBox = ({
           marginY: "10px",
           marginRight: "25px",
         }}>
-          <Button color={data.option1Color}
-                  variant={data.option1Variant}
-                  startIcon={data.option1StartIcon}
-                  endIcon={data.option1endIcon}
-                  onClick={handleClose}
+          <Button
+              color={buttonStyle.option1Color}
+              variant={buttonStyle.option1Variant}
+              startIcon={buttonStyle.option1StartIcon}
+              endIcon={buttonStyle.option1EndIcon}
+              onClick={handleClose}
+              disabled={loading}
           >
-            {data.option1Text}
+            {buttonStyle.option1Text}
           </Button>
-          <Button variant={data.option2Variant} color={data.option2Color} autoFocus startIcon={data.option2StartIcon}
-                  endIcon={data.option2endIcon}
-                  onClick={() => {
-                    handleClose();
-                    onConfirm();
-                  }}
+          <LoadingButton
+              variant={buttonStyle.option2Variant}
+              color={buttonStyle.option2Color}
+              autoFocus
+              startIcon={buttonStyle.option2StartIcon}
+              endIcon={buttonStyle.option2EndIcon}
+              loading={loading}
+              onClick={async () => {
+                setLoading(true);
+                try {
+                  await onConfirm();
+                } finally {
+                  setLoading(false);
+                  handleClose();
+                }
+              }}
           >
-            {data.option2Text}
-          </Button>
+            {buttonStyle.option2Text}
+          </LoadingButton>
         </DialogActions>
       </Dialog>
   );
