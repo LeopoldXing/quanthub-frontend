@@ -17,7 +17,7 @@ type User = {
   role: string;
 }
 
-type Comment = {
+type ArticleComment = {
   id: string;
   content: string;
   user: User;
@@ -67,4 +67,5 @@ type ArticleModificationFormData = {
   pictureLinkList?: string[];
   attachmentLink?: string;
   selectedTagList?: Tag[];
+  coverImageLink?: string;
 }

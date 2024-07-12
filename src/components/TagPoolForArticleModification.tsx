@@ -1,24 +1,36 @@
-import { useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Chip, Input, InputAdornment } from "@mui/material";
 import Button from "@mui/material/Button";
 import { v4 as uuidv4 } from 'uuid';
 import Notification, { HandleNotificationOpen } from "@/components/mui/Notification.tsx";
 
+export interface HandleSelectedTagData {
+  getSelectedTagList: () => Tag[];
+}
+
 type TagPoolProps = {
   tagList: Array<Tag>;
-  onSelect: (tag: Tag) => void;
+  onSelect?: (tag: Tag) => void;
 };
 
-const TagPoolForArticleModification = ({
-                                         tagList,
-                                         onSelect
-                                       }: TagPoolProps) => {
+const TagPoolForArticleModification = forwardRef<HandleSelectedTagData, TagPoolProps>(({
+                                                                                         tagList,
+                                                                                         onSelect
+                                                                                       }, ref) => {
   const [localTagList, setLocalTagList] = useState<Tag[]>(tagList);
   const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>([]);
   const [newTagList, setNewTagList] = useState<Array<Tag>>([]);
   const [newTagName, setNewTagName] = useState<string>("");
   // notificationRef
   const notificationRef = useRef<HandleNotificationOpen>(null);
+
+
+  /*  send selected tag list  */
+  useImperativeHandle(ref, () => ({
+    getSelectedTagList() {
+      return selectedTagList;
+    }
+  }));
 
 
   /*  create tag  */
@@ -47,7 +59,7 @@ const TagPoolForArticleModification = ({
     const selectedTagIndex = selectedTagList.findIndex(prevTag => prevTag.id === tag.id);
     if (selectedTagIndex === -1) {
       setSelectedTagList(prevState => [...prevState, tag]);
-      onSelect(tag);
+      onSelect && onSelect(tag);
     } else {
       setSelectedTagList(prevState => prevState.filter((_, index) => index !== selectedTagIndex));
       const newTagIndex = newTagList.findIndex(newTag => newTag.name === tag.name);
@@ -96,6 +108,6 @@ const TagPoolForArticleModification = ({
         </div>
       </div>
   );
-};
+});
 
 export default TagPoolForArticleModification;

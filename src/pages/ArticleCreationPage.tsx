@@ -5,27 +5,66 @@ import Button from "@mui/material/Button";
 import { categories, tags } from "@/lib/dummyData.ts";
 import SingleCategorySelectBox from "@/components/mui/SingleCategorySelectBox.tsx";
 import FileUploadButton from "@/components/mui/FileUploadButton.tsx";
-import TagPoolForArticleModification from "@/components/TagPoolForArticleModification.tsx";
-import { useRef } from "react";
+import TagPoolForArticleModification, { HandleSelectedTagData } from "@/components/TagPoolForArticleModification.tsx";
+import { useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 const ArticleCreationPage = () => {
-  /*  article modification form ref  */
-  const formRef = useRef<HandleArticleModificationFormSubmission>(null);
+  // article modification form ref
+  const articleFormRef = useRef<HandleArticleModificationFormSubmission>(null);
+  // tag pool ref
+  const tagPoolRef = useRef<HandleSelectedTagData>(null);
+  // article data
+  const [articleData, setArticleData] = useState<ArticleInfo>({
+    id: uuidv4(),
+    title: "",
+    subtitle: "",
+    tags: [],
+    category: { id: uuidv4(), name: "" },
+    content: ""
+  });
+
+  /*  get current article data  */
+  const constructArticleData = (contentType: "html" | "json" | "text" = "text"): ArticleInfo => {
+    // get article form data
+    const formData = articleFormRef.current?.getFormData(contentType);
+    // get tag list
+    const selectedTagList = tagPoolRef.current?.getSelectedTagList();
+
+    // construct article data
+    return {
+      id: uuidv4(),
+      title: formData?.title || "",
+      subtitle: formData?.subtitle || "",
+      tags: selectedTagList || [],
+      category: articleData.category,
+      content: formData?.content || "",
+      coverImageLink: formData?.coverImageLink || undefined
+    }
+  }
 
   /*  preview  */
   const handlePreviewButtonClick = () => {
+    const articleInfo = constructArticleData("html");
+    console.log(articleInfo);
   }
 
   /*  publish  */
   const handlePublishButtonClick = () => {
-
+    const articleInfo = constructArticleData("html");
+    console.log(articleInfo);
   }
 
   /*  save draft  */
+  const handleSaveDraft = (content: { contentText: string, contentHtml: string }) => {
+    console.log("save draft, content -> ")
+    console.log(content);
+  }
 
   /*  handle file upload button click  */
   const handleFileUploadButtonClick = () => {
-
+    const articleInfo = constructArticleData("html");
+    console.log(articleInfo);
   }
 
   return (
@@ -40,7 +79,8 @@ const ArticleCreationPage = () => {
         </div>
         {/*  content  */}
         <div className="mt-10">
-          <ArticleModificationForm mode="create" initialData={{ author: { username: "lll" } }} ref={formRef}/>
+          <ArticleModificationForm mode="create" initialData={{ author: { username: "lll" } }} ref={articleFormRef}
+                                   onSaveDraft={handleSaveDraft}/>
         </div>
         {/*  tags and files and category  */}
         <div className="w-full mt-10 flex flex-col justify-start items-center gap-10">
@@ -48,8 +88,11 @@ const ArticleCreationPage = () => {
           <div className="w-full hidden md:flex justify-between items-center gap-8">
             <div className="w-full min-h-24 flex flex-col justify-start items-start gap-4">
               <div className="text-nowrap text-xl font-bold">Category</div>
-              <SingleCategorySelectBox categoryList={categories} onUpdate={() => {
-              }}/>
+              <SingleCategorySelectBox categoryList={categories}
+                                       onUpdate={(category?: Category) => category && setArticleData(prevArticleData => ({
+                                         ...prevArticleData,
+                                         category: category
+                                       }))}/>
             </div>
             <div className="w-full min-h-28 flex flex-col justify-start items-start gap-4">
               <div className="w-full">
@@ -66,8 +109,11 @@ const ArticleCreationPage = () => {
           </div>
           <div className="w-full md:hidden flex flex-col justify-start items-start gap-4">
             <div className="text-nowrap text-xl font-bold">Category</div>
-            <SingleCategorySelectBox categoryList={categories} onUpdate={() => {
-            }}/>
+            <SingleCategorySelectBox categoryList={categories}
+                                     onUpdate={(category?: Category) => category && setArticleData(prevArticleData => ({
+                                       ...prevArticleData,
+                                       category: category
+                                     }))}/>
           </div>
           <div className="w-full min-h-28 md:hidden flex flex-col justify-start items-start gap-4">
             <div className="w-full">
@@ -86,8 +132,7 @@ const ArticleCreationPage = () => {
             <div className="w-full flex flex-col justify-start items-start gap-4">
               <div className="text-nowrap text-xl font-bold">Tags</div>
               <div className="w-full mt-3">
-                <TagPoolForArticleModification tagList={tags} onSelect={() => {
-                }}/>
+                <TagPoolForArticleModification tagList={tags} ref={tagPoolRef}/>
               </div>
             </div>
           </div>

@@ -1,13 +1,13 @@
-import MuiRichTextEditor from "@/components/mui/RichTextEditor/MuiRichTextEditor.tsx";
+import MuiRichTextEditor, { handleRichTextEditorData } from "@/components/mui/RichTextEditor/MuiRichTextEditor.tsx";
 import { MenuControlsContainer } from "mui-tiptap";
 import EditorMenuControls from "@/components/mui/RichTextEditor/EditorMenuControls.tsx";
 import { exampleContent } from "@/lib/dummyData.ts";
 import { Box, TextField } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 
 export interface HandleArticleModificationFormSubmission {
-  getFormData: () => ArticleModificationFormData;
+  getFormData: (contentType: "text" | "json" | "html") => ArticleModificationFormData;
 }
 
 type ArticleModificationFormProps = {
@@ -21,24 +21,37 @@ type ArticleModificationFormProps = {
     metaData?: {
       likes: bigint;
       views: bigint;
-      comments: Comment[];
+      comments: ArticleComment[];
     }
   };
-  mode?: "create" | "update"
+  mode?: "create" | "update";
+  onSaveDraft: (data: { contentText: string, contentHtml: string }) => void;
 }
 
 const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmission, ArticleModificationFormProps>(({
                                                                                                                      initialData,
-                                                                                                                     mode = "create"
+                                                                                                                     mode = "create",
+                                                                                                                     onSaveDraft
                                                                                                                    }, ref) => {
-  /*  form data  */
+  // form data
   const [articleData, setArticleData] = useState<ArticleModificationFormData>({ title: "", content: "" });
-
+  // text editor ref
+  const textEditorRef = useRef<handleRichTextEditorData>(null);
 
   /*  send form data  */
   useImperativeHandle(ref, () => ({
-    getFormData() {
-      return articleData;
+    getFormData(contenType) {
+      let content: string = "";
+      if (textEditorRef.current) {
+        if (contenType === "text") {
+          content = textEditorRef.current.getText();
+        } else if (contenType === "html") {
+          content = textEditorRef.current.getHtml();
+        } else if (contenType === "json") {
+          content = textEditorRef.current.getJson() || "";
+        }
+      }
+      return { ...articleData, content: content };
     }
   }));
 
@@ -77,6 +90,8 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
                   </MenuControlsContainer>
               )}
               initialContent={mode === "create" ? exampleContent : initialData.content}
+              ref={textEditorRef}
+              onSaveDraft={onSaveDraft}
           />
         </div>
       </Box>

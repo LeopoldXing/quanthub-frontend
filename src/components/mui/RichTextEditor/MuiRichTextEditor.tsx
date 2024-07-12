@@ -3,15 +3,15 @@ import LockOpen from "@mui/icons-material/LockOpen";
 import TextFields from "@mui/icons-material/TextFields";
 import { Box, Button, Stack } from "@mui/material";
 import type { EditorOptions } from "@tiptap/core";
-import { useCallback, useRef, useState } from "react";
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import useExtensions from "./useExtensions";
 import {
+  insertImages,
   LinkBubbleMenu,
   MenuButton,
   RichTextEditor,
-  TableBubbleMenu,
-  insertImages,
   type RichTextEditorRef,
+  TableBubbleMenu,
 } from "mui-tiptap";
 
 function fileListToImageFiles(fileList: FileList): File[] {
@@ -24,23 +24,48 @@ function fileListToImageFiles(fileList: FileList): File[] {
   });
 }
 
+export interface handleRichTextEditorData {
+  getHtml: () => string;
+  getText: () => string;
+  getJson: () => string;
+  /*getFileList: () => File[];*/
+}
+
 type MuiRichTextEditorProps = {
   initialContent?: string;
   variant?: "standard" | "outlined";
-  renderControls?: () => import("react/jsx-runtime").JSX.Element
+  renderControls?: () => import("react/jsx-runtime").JSX.Element;
+  onSaveDraft: (data: { contentText: string, contentHtml: string }) => void;
 }
 
-export default function MuiRichTextEditor({
-                                            initialContent,
-                                            variant = "standard",
-                                            renderControls
-                                          }: MuiRichTextEditorProps) {
+const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditorProps>(({
+                                                                                          initialContent,
+                                                                                          variant = "standard",
+                                                                                          renderControls,
+                                                                                          onSaveDraft
+                                                                                        }, ref) => {
   const extensions = useExtensions({
     placeholder: "Add your own content here...",
   });
   const rteRef = useRef<RichTextEditorRef>(null);
   const [isEditable, setIsEditable] = useState(true);
   const [showMenuBar, setShowMenuBar] = useState(true);
+
+  // send text editor data
+  useImperativeHandle(ref, () => ({
+    getHtml() {
+      return rteRef.current?.editor?.getHTML() ?? "";
+    },
+    getText() {
+      return rteRef.current?.editor?.getText() ?? "";
+    },
+    getJson() {
+      return rteRef.current?.editor?.getJSON().text ?? "";
+    },
+    /*getFileList(){
+      return
+    }*/
+  }))
 
   const handleNewImageFiles = useCallback(
       (files: File[], insertPosition?: number): void => {
@@ -125,8 +150,6 @@ export default function MuiRichTextEditor({
           [handleNewImageFiles]
       );
 
-  const [submittedContent, setSubmittedContent] = useState("");
-
   return (
       <Box
           sx={{
@@ -203,11 +226,10 @@ export default function MuiRichTextEditor({
                     <Button
                         variant="contained"
                         size="small"
-                        onClick={() => {
-                          setSubmittedContent(
-                              rteRef.current?.editor?.getHTML() ?? ""
-                          );
-                        }}>
+                        onClick={() => onSaveDraft({
+                          contentText: rteRef.current?.editor?.getText() ?? "",
+                          contentHtml: rteRef.current?.editor?.getHTML() ?? ""
+                        })}>
                       Save Draft
                     </Button>
                   </Stack>
@@ -225,4 +247,6 @@ export default function MuiRichTextEditor({
         </RichTextEditor>
       </Box>
   );
-}
+});
+
+export default MuiRichTextEditor;

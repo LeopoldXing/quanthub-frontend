@@ -19,7 +19,7 @@ const MenuProps = {
 
 interface SingleCategorySelectBoxProps {
   categoryList: Array<Category>;
-  onUpdate: (data: Category) => void;
+  onUpdate: (data?: Category) => void;
   height?: string;
 }
 
@@ -30,14 +30,13 @@ export default function SingleCategorySelectBox({ categoryList, onUpdate, height
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const handleChange = (event) => {
-    console.log(event);
     const { target: { value } } = event;
     setSelectedCategoryName(value);
-    setSelectedCategory(categoryList.find(category => category.name === selectedCategoryName));
+    setSelectedCategory(categoryList.find(category => category.name === value));
   };
 
   useEffect(() => {
-    onUpdate(selectedCategory!);
+    onUpdate(selectedCategory);
   }, [selectedCategory]);
 
   return (
