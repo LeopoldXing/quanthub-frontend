@@ -87,16 +87,22 @@ export type ArticleModificationFormData = {
 export type ButtonStyleType = {
   title: string;
   description: string;
-  option1Text: string;
-  option2Text: string;
-  option1Variant: 'text' | 'outlined' | 'contained';
-  option2Variant: 'text' | 'outlined' | 'contained';
-  option1Color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
-  option2Color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
-  option1StartIcon?: React.ReactNode;
-  option2StartIcon?: React.ReactNode;
-  option1EndIcon?: React.ReactNode;
-  option2EndIcon?: React.ReactNode;
+  cancelOptionText: string;
+  confirmOptionText: string;
+  option3Text?:string;
+  cancelOptionVariant: 'text' | 'outlined' | 'contained';
+  confirmOptionVariant: 'text' | 'outlined' | 'contained';
+  option3Variant?: 'text' | 'outlined' | 'contained';
+  cancelOptionColor: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+  confirmOptionColor: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+  option3Color?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+  cancelOptionStartIcon?: React.ReactNode;
+  confirmOptionStartIcon?: React.ReactNode;
+  option3StartIcon?: React.ReactNode;
+  confirmOptionEndIcon?: React.ReactNode;
+  cancelOptionEndIcon?: React.ReactNode;
+  option3EndIcon?: React.ReactNode;
+  option3Action?: () => Promise<void>
 };
 
 export type NotificationProps = {

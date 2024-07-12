@@ -18,16 +18,16 @@ const MuiConfirmBox = ({
                          buttonStyle = {
                            title: "Confirm action?",
                            description: "",
-                           option1Text: "Cancel",
-                           option2Text: "Confirm",
-                           option1Variant: "text",
-                           option2Variant: "contained",
-                           option1Color: "error",
-                           option2Color: "primary",
-                           option1StartIcon: undefined,
-                           option2StartIcon: undefined,
-                           option1EndIcon: undefined,
-                           option2EndIcon: undefined
+                           cancelOptionText: "Cancel",
+                           confirmOptionText: "Confirm",
+                           cancelOptionVariant: "text",
+                           confirmOptionVariant: "contained",
+                           cancelOptionColor: "error",
+                           confirmOptionColor: "primary",
+                           cancelOptionStartIcon: undefined,
+                           confirmOptionStartIcon: undefined,
+                           cancelOptionEndIcon: undefined,
+                           confirmOptionEndIcon: undefined,
                          }
                        }: MuiConfirmBoxProps) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -51,27 +51,48 @@ const MuiConfirmBox = ({
           display: "flex",
           justifyContent: "end",
           alignItems: "center",
-          gap: 3,
+          gap: 1,
           marginY: "10px",
           marginRight: "25px",
         }}>
           <Button
-              color={buttonStyle.option1Color}
-              variant={buttonStyle.option1Variant}
-              startIcon={buttonStyle.option1StartIcon}
-              endIcon={buttonStyle.option1EndIcon}
+              color={buttonStyle.cancelOptionColor}
+              variant={buttonStyle.cancelOptionVariant}
+              startIcon={buttonStyle.cancelOptionStartIcon}
+              endIcon={buttonStyle.confirmOptionEndIcon}
               onClick={handleClose}
               disabled={loading}
+              sx={{ fontSize: "small" }}
+              size="small"
           >
-            {buttonStyle.option1Text}
+            {buttonStyle.cancelOptionText}
           </Button>
+          {buttonStyle.option3Text && (
+              <Button color={buttonStyle.option3Color}
+                      variant={buttonStyle.option3Variant}
+                      startIcon={buttonStyle.option3StartIcon}
+                      endIcon={buttonStyle.option3EndIcon}
+                      onClick={async () => {
+                        if (buttonStyle.option3Action) {
+                          await buttonStyle.option3Action();
+                        }
+                        handleClose();
+                      }}
+                      size="small"
+                      sx={{ fontSize: "small" }}
+                      disabled={loading}>
+                {buttonStyle.option3Text}
+              </Button>
+          )}
           <LoadingButton
-              variant={buttonStyle.option2Variant}
-              color={buttonStyle.option2Color}
+              variant={buttonStyle.confirmOptionVariant}
+              color={buttonStyle.confirmOptionColor}
               autoFocus
-              startIcon={buttonStyle.option2StartIcon}
-              endIcon={buttonStyle.option2EndIcon}
+              startIcon={buttonStyle.confirmOptionStartIcon}
+              endIcon={buttonStyle.cancelOptionEndIcon}
               loading={loading}
+              size="small"
+              sx={{ fontSize: "small" }}
               onClick={async () => {
                 setLoading(true);
                 try {
@@ -82,7 +103,7 @@ const MuiConfirmBox = ({
                 }
               }}
           >
-            {buttonStyle.option2Text}
+            {buttonStyle.confirmOptionText}
           </LoadingButton>
         </DialogActions>
       </Dialog>

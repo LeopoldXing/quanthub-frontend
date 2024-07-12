@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 type ArticleSortingPanelProps = {
   onSort: (sortStrategy: "publish_date" | "update_date" | "recommended", sortDirection: "asc" | "desc" | "none") => void;
-  mode?: "public" | "individual";
+  mode?: "public" | "user" | "admin";
 }
 
 const ArticleSortingPanel = ({ onSort, mode = "public" }: ArticleSortingPanelProps) => {

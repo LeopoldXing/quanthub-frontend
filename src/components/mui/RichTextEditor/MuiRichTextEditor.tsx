@@ -242,7 +242,7 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
                         <span className="hidden md:block">Save draft</span>
                       </div>
                     </LoadingButton>
-                    <Button
+{/*                    <Button
                         variant="contained"
                         color="error"
                         size="small"
@@ -251,7 +251,7 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
                         <DeleteIcon fontSize="small"/>
                         <span className="hidden md:block">Delete and Leave</span>
                       </div>
-                    </Button>
+                    </Button>*/}
                   </Stack>
               ),
               RichTextContentProps: {

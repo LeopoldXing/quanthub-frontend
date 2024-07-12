@@ -14,7 +14,7 @@ import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 
 type ArticleSearchModuleProps = {
-  mode?: "public" | "individual";
+  mode?: "public" | "user" | "admin";
 }
 
 const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
