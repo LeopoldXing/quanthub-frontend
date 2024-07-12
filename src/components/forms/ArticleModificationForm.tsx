@@ -1,14 +1,22 @@
 import MuiRichTextEditor, { handleRichTextEditorData } from "@/components/mui/RichTextEditor/MuiRichTextEditor.tsx";
 import { MenuControlsContainer } from "mui-tiptap";
 import EditorMenuControls from "@/components/mui/RichTextEditor/EditorMenuControls.tsx";
-import { exampleContent } from "@/lib/dummyData.ts";
+import { categories, exampleContent, tags } from "@/lib/dummyData.ts";
 import { Box, TextField } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { ArticleComment, ArticleModificationFormData } from "@/types.ts";
+import { ArticleComment, Category } from "@/types.ts";
+import {
+  articleModificationFormSchema,
+  ArticleModificationFormZodDataType
+} from "@/components/forms/schemas/ArticleModificationFormSchema.ts";
+import SingleCategorySelectBox from "@/components/mui/SingleCategorySelectBox.tsx";
+import FileUploadButton from "@/components/mui/FileUploadButton.tsx";
+import TagPoolForArticleModification, { HandleSelectedTagData } from "@/components/TagPoolForArticleModification.tsx";
 
 export interface HandleArticleModificationFormSubmission {
-  getFormData: (contentType: "text" | "json" | "html" | "html&text") => ArticleModificationFormData;
+  getArticleContent: (contentType: "text" | "json" | "html" | "html&text") => ArticleModificationFormZodDataType;
+  submit: () => ArticleModificationFormZodDataType | undefined;
 }
 
 type ArticleModificationFormProps = {
@@ -28,7 +36,7 @@ type ArticleModificationFormProps = {
   mode?: "create" | "update";
   onSaveDraft: () => void;
   onCancel: () => void;
-  savingDraft?: boolean;
+  isSavingDraft?: boolean;
 }
 
 const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmission, ArticleModificationFormProps>(({
@@ -36,38 +44,89 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
                                                                                                                      mode = "create",
                                                                                                                      onSaveDraft,
                                                                                                                      onCancel,
-                                                                                                                     savingDraft = false
+                                                                                                                     isSavingDraft = false
                                                                                                                    }, ref) => {
   // form data
-  const [articleData, setArticleData] = useState<ArticleModificationFormData>({ title: "", contentHtml: "" });
+  const [formData, setFormData] = useState<ArticleModificationFormZodDataType>({
+    title: "",
+    subtitle: null,
+    contentHtml: null,
+    contentText: null,
+    contextJson: null,
+    categoryName: null,
+    pictureLinkList: [],
+    attachmentLink: null,
+    tagNameList: []
+  });
   // text editor ref
   const textEditorRef = useRef<handleRichTextEditorData>(null);
-
-  /*  send form data  */
-  useImperativeHandle(ref, () => ({
-    getFormData(contentType) {
-      let contentText: string = "";
-      let contentHtml: string = "";
-      let contentJson: string = "";
-      if (textEditorRef.current) {
-        if (contentType === "html&text") {
-          contentText = textEditorRef.current.getText();
-          contentHtml = textEditorRef.current.getHtml();
-        } else if (contentType === "text") {
-          contentText = textEditorRef.current.getText();
-        } else if (contentType === "html") {
-          contentHtml = textEditorRef.current.getHtml();
-        } else if (contentType === "json") {
-          contentJson = textEditorRef.current.getJson() || "";
-        }
+  // tag pool ref
+  const tagPoolRef = useRef<HandleSelectedTagData>(null);
+  // get article content
+  const fetchArticleContent = (contentType: "text" | "json" | "html" | "html&text") => {
+    let contentText: string = "";
+    let contentHtml: string = "";
+    let contentJson: string = "";
+    if (textEditorRef.current) {
+      if (contentType === "html&text") {
+        contentText = textEditorRef.current.getText();
+        contentHtml = textEditorRef.current.getHtml();
+      } else if (contentType === "text") {
+        contentText = textEditorRef.current.getText();
+      } else if (contentType === "html") {
+        contentHtml = textEditorRef.current.getHtml();
+      } else if (contentType === "json") {
+        contentJson = textEditorRef.current.getJson() || "";
       }
-      return { ...articleData, contentText, contentHtml, contentJson };
+    }
+    return { contentText, contentHtml, contentJson };
+  }
+  // validate form data
+  const [errors, setErrors] = useState<{ [key in keyof ArticleModificationFormZodDataType]?: string }>({});
+  const validateFormData = (data: ArticleModificationFormZodDataType): boolean => {
+    const result = articleModificationFormSchema.safeParse(data);
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+      setErrors({
+        title: fieldErrors.title?.[0],
+        subtitle: fieldErrors.subtitle?.[0],
+        contentHtml: fieldErrors.contentHtml?.[0],
+      });
+      return false;
+    } else {
+      setErrors({});
+      return true;
+    }
+  };
+
+  /*  interfaces expose to other component  */
+  useImperativeHandle(ref, () => ({
+    getArticleContent(contentType) {
+      return { ...formData, ...fetchArticleContent(contentType) };
+    },
+    submit() {
+      // get article content
+      const articleContent = fetchArticleContent("html&text");
+      // get selected tags
+      const selectedTagList = tagPoolRef.current?.getSelectedTagList();
+      setFormData(prevState => ({
+        ...prevState,
+        contentHtml: articleContent.contentHtml,
+        contentText: articleContent.contentText,
+        tagNameList: selectedTagList?.map(selectedTag => selectedTag.name) || null
+      }))
+      if (validateFormData(formData)) {
+        return formData;
+      }
+      return undefined;
     }
   }));
 
-
-  /*  save draft  */
-
+  /*  handle file upload button click  */
+  const handleFileUpload = () => {
+    console.log("文件上传");
+    console.log(formData);
+  }
 
   return (
       <Box width="100%" component="form" noValidate autoComplete="off">
@@ -81,7 +140,9 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
               id="title"
               name="title"
               size="small"
-              onChange={e => setArticleData(prevState => ({ ...prevState, title: e.target.value }))}
+              error={!!errors.title}
+              helperText={errors.title}
+              onChange={e => setFormData(prevState => ({ ...prevState, title: e.target.value }))}
               autoFocus
           />
           <InputLabel htmlFor="sub_title" size="small">Sub Title*</InputLabel>
@@ -92,7 +153,9 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
               id="sub_title"
               name="subTitle"
               size="small"
-              onChange={e => setArticleData(prevState => ({ ...prevState, subtitle: e.target.value }))}
+              error={!!errors.subtitle}
+              helperText={errors.subtitle}
+              onChange={e => setFormData(prevState => ({ ...prevState, subtitle: e.target.value }))}
           />
         </Box>
         {/*  Rich Text Editor  */}
@@ -107,8 +170,64 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
               ref={textEditorRef}
               onSaveDraft={onSaveDraft}
               onCancel={onCancel}
-              savingDraft={savingDraft}
+              isSavingDraft={isSavingDraft}
           />
+        </div>
+
+
+        {/*  tags and files and category  */}
+        <div className="w-full mt-10 flex flex-col justify-start items-center gap-10">
+          {/*  files and category  */}
+          <div className="w-full hidden md:flex justify-between items-center gap-8">
+            <div className="w-full min-h-24 flex flex-col justify-start items-start gap-4">
+              <div className="text-nowrap text-xl font-bold">Category</div>
+              <SingleCategorySelectBox categoryList={categories}
+                                       onUpdate={(category?: Category) => category && setFormData(prevArticleData => ({
+                                         ...prevArticleData,
+                                         category: category
+                                       }))}/>
+            </div>
+            <div className="w-full min-h-28 flex flex-col justify-start items-start gap-4">
+              <div className="w-full">
+                <span className="text-nowrap text-xl font-bold">Attachment</span>
+                <span className="ml-3 text-nowrap text-sm font-light text-gray-400">(File size limit: 100MB)</span>
+              </div>
+              <div
+                  className="w-full flex flex-1 justify-center items-center border border-dashed border-gray-300"
+                  onClick={handleFileUpload}>
+                <FileUploadButton/>
+                <div/>
+              </div>
+            </div>
+          </div>
+          <div className="w-full md:hidden flex flex-col justify-start items-start gap-4">
+            <div className="text-nowrap text-xl font-bold">Category</div>
+            <SingleCategorySelectBox categoryList={categories}
+                                     onUpdate={(category?: Category) => category && setFormData(prevArticleData => ({
+                                       ...prevArticleData,
+                                       category: category
+                                     }))}/>
+          </div>
+          <div className="w-full min-h-28 md:hidden flex flex-col justify-start items-start gap-4">
+            <div className="w-full">
+              <span className="text-nowrap text-xl font-bold">Attachment</span>
+              <span className="ml-3 text-nowrap text-sm font-light text-gray-400">(File size limit: 100MB)</span>
+            </div>
+            <div
+                className="w-full flex flex-1 justify-center items-center gap-2 border border-dashed border-gray-300"
+                onClick={handleFileUpload}>
+              <FileUploadButton/>
+            </div>
+          </div>
+          {/*  tags  */}
+          <div className="w-full mt-1">
+            <div className="w-full flex flex-col justify-start items-start gap-4">
+              <div className="text-nowrap text-xl font-bold">Tags</div>
+              <div className="w-full mt-3">
+                <TagPoolForArticleModification tagList={tags} ref={tagPoolRef}/>
+              </div>
+            </div>
+          </div>
         </div>
       </Box>
   );

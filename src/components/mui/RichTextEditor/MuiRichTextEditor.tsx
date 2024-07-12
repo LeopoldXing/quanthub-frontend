@@ -41,7 +41,7 @@ type MuiRichTextEditorProps = {
   renderControls?: () => import("react/jsx-runtime").JSX.Element;
   onSaveDraft: () => void;
   onCancel: () => void;
-  savingDraft: boolean
+  isSavingDraft: boolean
 }
 
 const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditorProps>(({
@@ -50,7 +50,7 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
                                                                                           renderControls,
                                                                                           onSaveDraft,
                                                                                           onCancel,
-                                                                                          savingDraft = false
+                                                                                          isSavingDraft = false
                                                                                         }, ref) => {
   const extensions = useExtensions({
     placeholder: "Add your own content here...",
@@ -235,7 +235,7 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
                     <LoadingButton
                         variant="contained"
                         size="small"
-                        loading={savingDraft}
+                        loading={isSavingDraft}
                         onClick={onSaveDraft}>
                       <div className="flex justify-center items-center md:gap-2">
                         <DraftsIcon fontSize="small"/>

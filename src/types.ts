@@ -1,5 +1,3 @@
-import { OverridableComponent } from "@mui/material/OverridableComponent";
-import { SvgIconTypeMap } from "@mui/material/SvgIcon/SvgIcon";
 import React from "react";
 
 export type Category = {

@@ -7,13 +7,8 @@ import SendIcon from '@mui/icons-material/Send';
 import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { categories, tags } from "@/lib/dummyData.ts";
-import SingleCategorySelectBox from "@/components/mui/SingleCategorySelectBox.tsx";
-import FileUploadButton from "@/components/mui/FileUploadButton.tsx";
-import TagPoolForArticleModification, { HandleSelectedTagData } from "@/components/TagPoolForArticleModification.tsx";
-import { v4 as uuidv4 } from 'uuid';
 import MuiConfirmBox from "@/components/mui/MuiConfirmBox.tsx";
-import { ArticleInfo, ButtonStyleType, Category } from "@/types.ts";
+import { ButtonStyleType } from "@/types.ts";
 import { sleep } from "@/utils/GlobalUtils.ts";
 import { useNavigate } from "react-router-dom";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -23,45 +18,12 @@ const ArticleCreationPage = () => {
   const navigate = useNavigate();
   // article modification form ref
   const articleFormRef = useRef<HandleArticleModificationFormSubmission>(null);
-  // tag pool ref
-  const tagPoolRef = useRef<HandleSelectedTagData>(null);
-  // article data
-  const [articleData, setArticleData] = useState<ArticleInfo>({
-    id: uuidv4(),
-    title: "",
-    subtitle: "",
-    tags: [],
-    category: { id: uuidv4(), name: "" },
-    contentHtml: "",
-    contentText: "",
-  });
   // notification
   const { showNotification } = useNotification();
 
-  /*  get current article data  */
-  const constructArticleData = (contentType: "html" | "json" | "text" | "html&text" = "text"): ArticleInfo => {
-    // get article form data
-    const formData = articleFormRef.current?.getFormData(contentType);
-    // get tag list
-    const selectedTagList = tagPoolRef.current?.getSelectedTagList();
-
-    // construct article data
-    return {
-      id: uuidv4(),
-      title: formData?.title || "",
-      subtitle: formData?.subtitle || "",
-      tags: selectedTagList || [],
-      category: articleData.category,
-      contentHtml: formData?.contentHtml || "",
-      contentText: formData?.contentText || "",
-      contentJson: formData?.contentJson || "",
-      coverImageLink: formData?.coverImageLink || undefined
-    }
-  }
-
   /*  dialog  */
   const [confirmBoxOpen, setConfirmBoxOpen] = useState<boolean>(false);
-  const confirmBoxInitialData: ButtonStyleType = {
+  const [confirmBoxData, setConfirmBoxData] = useState<ButtonStyleType>({
     title: "Confirm action?",
     description: "",
     option1Text: "Cancel",
@@ -74,8 +36,7 @@ const ArticleCreationPage = () => {
     option2StartIcon: undefined,
     option1EndIcon: undefined,
     option2EndIcon: undefined
-  };
-  const [confirmBoxData, setConfirmBoxData] = useState<ButtonStyleType>(confirmBoxInitialData);
+  });
   const [confirmAction, setConfirmAction] = useState<() => Promise<void>>(() => async () => { });
 
   const handleDialogClose = () => {
@@ -88,21 +49,27 @@ const ArticleCreationPage = () => {
 
   /*  preview  */
   const handlePreview = () => {
-    const articleInfo = constructArticleData("html");
-    console.log(articleInfo);
+    console.log("preview")
+    console.log(articleFormRef.current?.submit());
   }
 
   /*  publish  */
   const handlePublish = async () => {
-    const articleInfo = constructArticleData("html&text");
-    console.log(articleInfo);
-    await sleep(2000);
-    navigate("/articles");
-    showNotification({
-      message: "Your article is published.",
-      severity: "success",
-    });
-    window.scrollTo(0, 0);
+    const formData = articleFormRef.current?.submit();
+    if(formData) {
+      await sleep(2000);
+      navigate("/articles");
+      showNotification({
+        message: "Your article is published.",
+        severity: "success",
+      });
+      window.scrollTo(0, 0);
+    } else {
+      showNotification({
+        message: "Please check your input",
+        severity: "warning",
+      });
+    }
   }
 
   const openPublishConfirmDialog = () => {
@@ -123,7 +90,6 @@ const ArticleCreationPage = () => {
   const [savingDraft, setSavingDraft] = useState<boolean>(false);
   const handleSaveDraft = async () => {
     setSavingDraft(true);
-    const formData = constructArticleData("html&text");
     await sleep(1000);
     setSavingDraft(false);
     showNotification({
@@ -132,11 +98,6 @@ const ArticleCreationPage = () => {
     });
   }
 
-  /*  handle file upload button click  */
-  const handleFileUpload = () => {
-    const articleInfo = constructArticleData("html");
-    console.log(articleInfo);
-  }
 
   /*  cancel  */
   const handleCancel = async () => {
@@ -205,65 +166,13 @@ const ArticleCreationPage = () => {
             Save and Leave
           </LoadingButton>
         </div>
-        {/*  content  */}
+        {/*  Form  */}
         <div className="w-full mt-10">
           <ArticleModificationForm mode="create" initialData={{ author: { username: "lll" } }} ref={articleFormRef}
-                                   onSaveDraft={handleSaveDraft} onCancel={openCancelDialog} savingDraft={savingDraft}/>
+                                   onSaveDraft={handleSaveDraft} onCancel={openCancelDialog}
+                                   isSavingDraft={savingDraft}/>
         </div>
-        {/*  tags and files and category  */}
-        <div className="w-full mt-10 flex flex-col justify-start items-center gap-10">
-          {/*  files and category  */}
-          <div className="w-full hidden md:flex justify-between items-center gap-8">
-            <div className="w-full min-h-24 flex flex-col justify-start items-start gap-4">
-              <div className="text-nowrap text-xl font-bold">Category</div>
-              <SingleCategorySelectBox categoryList={categories}
-                                       onUpdate={(category?: Category) => category && setArticleData(prevArticleData => ({
-                                         ...prevArticleData,
-                                         category: category
-                                       }))}/>
-            </div>
-            <div className="w-full min-h-28 flex flex-col justify-start items-start gap-4">
-              <div className="w-full">
-                <span className="text-nowrap text-xl font-bold">Attachment</span>
-                <span className="ml-3 text-nowrap text-sm font-light text-gray-400">(File size limit: 100MB)</span>
-              </div>
-              <div
-                  className="w-full flex flex-1 justify-center items-center border border-dashed border-gray-300"
-                  onClick={handleFileUpload}>
-                <FileUploadButton/>
-                <div/>
-              </div>
-            </div>
-          </div>
-          <div className="w-full md:hidden flex flex-col justify-start items-start gap-4">
-            <div className="text-nowrap text-xl font-bold">Category</div>
-            <SingleCategorySelectBox categoryList={categories}
-                                     onUpdate={(category?: Category) => category && setArticleData(prevArticleData => ({
-                                       ...prevArticleData,
-                                       category: category
-                                     }))}/>
-          </div>
-          <div className="w-full min-h-28 md:hidden flex flex-col justify-start items-start gap-4">
-            <div className="w-full">
-              <span className="text-nowrap text-xl font-bold">Attachment</span>
-              <span className="ml-3 text-nowrap text-sm font-light text-gray-400">(File size limit: 100MB)</span>
-            </div>
-            <div
-                className="w-full flex flex-1 justify-center items-center gap-2 border border-dashed border-gray-300"
-                onClick={handleFileUpload}>
-              <FileUploadButton/>
-            </div>
-          </div>
-          {/*  tags  */}
-          <div className="w-full mt-1">
-            <div className="w-full flex flex-col justify-start items-start gap-4">
-              <div className="text-nowrap text-xl font-bold">Tags</div>
-              <div className="w-full mt-3">
-                <TagPoolForArticleModification tagList={tags} ref={tagPoolRef}/>
-              </div>
-            </div>
-          </div>
-        </div>
+
         <MuiConfirmBox open={confirmBoxOpen} handleClose={handleDialogClose} buttonStyle={confirmBoxData}
                        onConfirm={onConfirm}/>
       </div>
