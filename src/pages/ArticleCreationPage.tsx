@@ -5,6 +5,7 @@ import ArticleModificationForm, {
 import Button from "@mui/material/Button";
 import SendIcon from '@mui/icons-material/Send';
 import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { categories, tags } from "@/lib/dummyData.ts";
 import SingleCategorySelectBox from "@/components/mui/SingleCategorySelectBox.tsx";
@@ -12,11 +13,14 @@ import FileUploadButton from "@/components/mui/FileUploadButton.tsx";
 import TagPoolForArticleModification, { HandleSelectedTagData } from "@/components/TagPoolForArticleModification.tsx";
 import { v4 as uuidv4 } from 'uuid';
 import MuiConfirmBox from "@/components/mui/MuiConfirmBox.tsx";
-import { ArticleInfo, Category, ConfirmBoxDataType, NotificationProps } from "@/types.ts";
-import Notification, { HandleNotificationOpen } from "@/components/mui/Notification.tsx";
+import { ArticleInfo, Category, ConfirmBoxDataType } from "@/types.ts";
 import { sleep } from "@/utils/GlobalUtils.ts";
+import { useNavigate } from "react-router-dom";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { useNotification } from "@/contexts/NotificationContext.tsx";
 
 const ArticleCreationPage = () => {
+  const navigate = useNavigate();
   // article modification form ref
   const articleFormRef = useRef<HandleArticleModificationFormSubmission>(null);
   // tag pool ref
@@ -31,6 +35,8 @@ const ArticleCreationPage = () => {
     contentHtml: "",
     contentText: "",
   });
+  // notification
+  const { showNotification } = useNotification();
 
   /*  get current article data  */
   const constructArticleData = (contentType: "html" | "json" | "text" | "html&text" = "text"): ArticleInfo => {
@@ -71,18 +77,6 @@ const ArticleCreationPage = () => {
   };
   const [confirmBoxData, setConfirmBoxData] = useState<ConfirmBoxDataType>(confirmBoxInitialData);
   const [confirmAction, setConfirmAction] = useState<() => void>(() => () => { });
-
-
-  /*  notification  */
-  const notificationRef = useRef<HandleNotificationOpen>(null);
-  const [notificationProps, setNotificationProps] = useState<NotificationProps>({
-    duration: 6000,
-    vertical: "top",
-    horizontal: "right",
-    message: "This is a notification.",
-    severity: "info",
-    variant: "filled"
-  });
 
   const handleDialogClose = () => {
     setConfirmBoxOpen(false);
@@ -125,14 +119,10 @@ const ArticleCreationPage = () => {
     const formData = constructArticleData("html&text");
     await sleep(1000);
     setSavingDraft(false);
-    setNotificationProps(prevState => ({
-      ...prevState,
+    showNotification({
       message: "Draft saved. ",
-      severity: "success",
-    }));
-    if (notificationRef.current) {
-      notificationRef.current.openNotification(true);
-    }
+      severity: "success"
+    });
   }
 
 
@@ -145,8 +135,8 @@ const ArticleCreationPage = () => {
 
   /*  cancel  */
   const handleCancel = () => {
-    setConfirmBoxData(confirmBoxInitialData);
-    console.log("cancel");
+    navigate("/articles");
+    window.scrollTo(0, 0);
   }
   const openCancelDialog = () => {
     setConfirmBoxData(prevState => ({
@@ -163,11 +153,37 @@ const ArticleCreationPage = () => {
   }
 
 
+  // save and leave
+  const [savingAndLeaving, setSavingAndLeaving] = useState<boolean>(false);
+  const handleSaveAndLeave = async () => {
+    setSavingAndLeaving(true);
+    await sleep(1000);
+    showNotification({
+      message: "Draft saved. ",
+      severity: "success"
+    })
+    setSavingAndLeaving(false);
+    navigate("/articles");
+    window.scrollTo(0, 0);
+  }
+
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
         {/*  title  */}
         <div className="w-full space-y-10 md:space-y-0 md:flex justify-between items-center">
-          <div className="text-4xl font-bold">Create Article</div>
+
+          <div className="lg:hidden text-4xl font-bold">Create Article</div>
+          <div className="hidden lg:flex items-end justify-start gap-16">
+            <div className="text-4xl font-bold">Create Article</div>
+            <LoadingButton variant="text" onClick={() => handleSaveAndLeave()} loading={savingAndLeaving}
+                           startIcon={<ExitToAppIcon/>} sx={{
+              color: "black",
+              marginBottom: "1px"
+            }}>
+              Save and Leave
+            </LoadingButton>
+          </div>
+
           <div className="flex flex-nowrap justify-start md:justify-center items-center gap-4">
             <Button variant="outlined" onClick={handlePreview} endIcon={<PreviewOutlinedIcon/>}
                     color="secondary">Preview</Button>
@@ -175,8 +191,20 @@ const ArticleCreationPage = () => {
                     color="primary">Publish</Button>
           </div>
         </div>
+
+        {/*  save and leave  */}
+        <div className="lg:hidden mt-10">
+          <LoadingButton variant="text" onClick={() => handleSaveAndLeave()} loading={savingAndLeaving}
+                         startIcon={<ExitToAppIcon/>} sx={{
+            color: "black",
+            marginBottom: "1px"
+          }}>
+            Save and Leave
+          </LoadingButton>
+        </div>
+
         {/*  content  */}
-        <div className="mt-10">
+        <div className="w-full mt-10">
           <ArticleModificationForm mode="create" initialData={{ author: { username: "lll" } }} ref={articleFormRef}
                                    onSaveDraft={handleSaveDraft} onCancel={openCancelDialog} savingDraft={savingDraft}/>
         </div>
@@ -238,9 +266,6 @@ const ArticleCreationPage = () => {
 
         <MuiConfirmBox open={confirmBoxOpen} handleClose={handleDialogClose} data={confirmBoxData}
                        onConfirm={onConfirm}/>
-        <Notification ref={notificationRef} message={notificationProps.message} duration={notificationProps.duration}
-                      horizontal={notificationProps.horizontal}
-                      vertical={notificationProps.vertical} severity={notificationProps.severity}/>
       </div>
   );
 };

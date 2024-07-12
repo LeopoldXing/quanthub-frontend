@@ -7,6 +7,7 @@ import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import { FilledInput } from "@mui/material";
 import { useEffect, useState } from "react";
+import { Category } from "@/types.ts";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

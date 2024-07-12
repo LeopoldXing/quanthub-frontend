@@ -1,9 +1,9 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { Chip, Input, InputAdornment } from "@mui/material";
 import Button from "@mui/material/Button";
 import { v4 as uuidv4 } from 'uuid';
-import Notification, { HandleNotificationOpen } from "@/components/mui/Notification.tsx";
 import { Tag } from "@/types.ts";
+import { useNotification } from "@/contexts/NotificationContext.tsx";
 
 export interface HandleSelectedTagData {
   getSelectedTagList: () => Tag[];
@@ -22,9 +22,8 @@ const TagPoolForArticleModification = forwardRef<HandleSelectedTagData, TagPoolP
   const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>([]);
   const [newTagList, setNewTagList] = useState<Array<Tag>>([]);
   const [newTagName, setNewTagName] = useState<string>("");
-  // notificationRef
-  const notificationRef = useRef<HandleNotificationOpen>(null);
-
+  // notification
+  const { showNotification } = useNotification();
 
   /*  send selected tag list  */
   useImperativeHandle(ref, () => ({
@@ -48,9 +47,13 @@ const TagPoolForArticleModification = forwardRef<HandleSelectedTagData, TagPoolP
       }
       setNewTagName("");
     } else {
-      if (notificationRef.current) {
-        notificationRef.current.openNotification(true);
-      }
+      showNotification({
+        message: "You can only create 10 new tags. ",
+        duration: 6000,
+        horizontal: "right",
+        vertical: "top",
+        severity: "warning"
+      })
     }
     window.document.getElementById("new_tag_create_input")?.focus();
   }
@@ -104,8 +107,6 @@ const TagPoolForArticleModification = forwardRef<HandleSelectedTagData, TagPoolP
               onChange={e => setNewTagName(e.target.value)}
           />
           <Button variant="outlined" color="primary" size="small" onClick={handleTagCreate}>Create</Button>
-          <Notification ref={notificationRef} message="only 10 new tags allowed!" duration={6000} horizontal="right"
-                        vertical="top" severity="warning"/>
         </div>
       </div>
   );

@@ -170,7 +170,8 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
               "& h1, & h2, & h3, & h4, & h5, & h6": {
                 scrollMarginTop: showMenuBar ? 50 : 0,
               },
-            }
+            },
+            width: "100%"
           }}
       >
         <RichTextEditor
@@ -232,25 +233,29 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
                     />
 
                     <LoadingButton
-                        startIcon={<DraftsIcon/>}
                         variant="contained"
                         size="small"
                         loading={savingDraft}
                         onClick={onSaveDraft}>
-                      Save Draft
+                      <div className="flex justify-center items-center md:gap-2">
+                        <DraftsIcon fontSize="small"/>
+                        <span className="hidden md:block">Save draft</span>
+                      </div>
                     </LoadingButton>
                     <Button
-                        startIcon={<DeleteIcon/>}
                         variant="contained"
                         color="error"
                         size="small"
                         onClick={onCancel}>
-                      Delete and Leave
+                      <div className="flex justify-center items-center md:gap-2">
+                        <DeleteIcon fontSize="small"/>
+                        <span className="hidden md:block">Delete and Leave</span>
+                      </div>
                     </Button>
                   </Stack>
               ),
               RichTextContentProps: {
-                className: "min-h-[600px]"
+                className: "min-h-[600px] w-full"
               }
             }}>
           {() => (

@@ -1,5 +1,6 @@
 import { useImperativeHandle, useState, forwardRef } from "react";
 import { Chip } from "@mui/material";
+import { Tag } from "@/types.ts";
 
 type TagPoolProps = {
   tagList: Array<Tag>;

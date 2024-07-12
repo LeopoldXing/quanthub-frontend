@@ -15,6 +15,7 @@ import "@/global.css";
 import ArticleOverviewList from "@/components/ArticleOverviewList.tsx";
 import Pagination from "@mui/material/Pagination";
 import { useNavigate } from "react-router-dom";
+import { ArticleOverviewInfo, Category, Tag } from "@/types.ts";
 
 type SearchParamType = {
   keyword: string;
