@@ -1,10 +1,9 @@
 import Lock from "@mui/icons-material/Lock";
 import LockOpen from "@mui/icons-material/LockOpen";
 import TextFields from "@mui/icons-material/TextFields";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import LoadingButton from '@mui/lab/LoadingButton';
 import DraftsIcon from '@mui/icons-material/Drafts';
-import DeleteIcon from '@mui/icons-material/Delete';
 import type { EditorOptions } from "@tiptap/core";
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import useExtensions from "./useExtensions";
@@ -39,17 +38,18 @@ type MuiRichTextEditorProps = {
   initialContent?: string;
   variant?: "standard" | "outlined";
   renderControls?: () => import("react/jsx-runtime").JSX.Element;
-  onSaveDraft: () => void;
-  onCancel: () => void;
-  isSavingDraft: boolean
+  onSaveDraft?: () => void;
+  onCancel?: () => void;
+  isSavingDraft?: boolean;
+  mode?: "edit" | "display";
 }
 
 const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditorProps>(({
                                                                                           initialContent,
+                                                                                          mode = "edit",
                                                                                           variant = "standard",
                                                                                           renderControls,
                                                                                           onSaveDraft,
-                                                                                          onCancel,
                                                                                           isSavingDraft = false
                                                                                         }, ref) => {
   const extensions = useExtensions({
@@ -68,7 +68,7 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
       return rteRef.current?.editor?.getText() ?? "";
     },
     getJson() {
-      return rteRef.current?.editor?.getJSON().text ?? "";
+      return JSON.parse(JSON.stringify(rteRef.current?.editor?.getJSON())) ?? "";
     },
     getFileList() {
       console.log();
@@ -178,71 +178,72 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
             ref={rteRef}
             extensions={extensions}
             content={initialContent}
-            editable={isEditable}
+            editable={mode === "edit" ? isEditable : false}
             editorProps={{
               handleDrop: handleDrop,
               handlePaste: handlePaste
             }}
             renderControls={renderControls}
-            RichTextFieldProps={{
-              // The "outlined" variant is the default (shown here only as
-              // example), but can be changed to "standard" to remove the outlined
-              // field border from the editor
-              variant: variant,
-              MenuBarProps: {
-                hide: !showMenuBar,
-              },
-              // Below is an example of adding a toggle within the outlined field
-              // for showing/hiding the editor menu bar, and a "submit" button for
-              // saving/viewing the HTML content
-              footer: (
-                  <Stack
-                      direction="row"
-                      spacing={2}
-                      sx={{
-                        borderTopStyle: "solid",
-                        borderTopWidth: 1,
-                        borderTopColor: (theme) => theme.palette.divider,
-                        py: 1,
-                        px: 1.5,
-                      }}>
-                    <MenuButton
-                        value="formatting"
-                        tooltipLabel={
-                          showMenuBar ? "Hide formatting" : "Show formatting"
-                        }
-                        size="small"
-                        onClick={() =>
-                            setShowMenuBar((currentState) => !currentState)
-                        }
-                        selected={showMenuBar}
-                        IconComponent={TextFields}
-                    />
+            RichTextFieldProps={mode === "edit" ? (
+                {
+                  // The "outlined" variant is the default (shown here only as
+                  // example), but can be changed to "standard" to remove the outlined
+                  // field border from the editor
+                  variant: variant,
+                  MenuBarProps: {
+                    hide: !showMenuBar
+                  },
+                  // Below is an example of adding a toggle within the outlined field
+                  // for showing/hiding the editor menu bar, and a "submit" button for
+                  // saving/viewing the HTML content
+                  footer: (
+                      <Stack
+                          direction="row"
+                          spacing={2}
+                          sx={{
+                            borderTopStyle: "solid",
+                            borderTopWidth: 1,
+                            borderTopColor: (theme) => theme.palette.divider,
+                            py: 1,
+                            px: 1.5,
+                          }}>
+                        <MenuButton
+                            value="formatting"
+                            tooltipLabel={
+                              showMenuBar ? "Hide formatting" : "Show formatting"
+                            }
+                            size="small"
+                            onClick={() =>
+                                setShowMenuBar((currentState) => !currentState)
+                            }
+                            selected={showMenuBar}
+                            IconComponent={TextFields}
+                        />
 
-                    <MenuButton
-                        value="formatting"
-                        tooltipLabel={
-                          isEditable
-                              ? "Prevent edits (use read-only mode)"
-                              : "Allow edits"
-                        }
-                        size="small"
-                        onClick={() => setIsEditable((currentState) => !currentState)}
-                        selected={!isEditable}
-                        IconComponent={isEditable ? LockOpen : Lock}
-                    />
+                        <MenuButton
+                            value="formatting"
+                            tooltipLabel={
+                              isEditable
+                                  ? "Prevent edits (use read-only mode)"
+                                  : "Allow edits"
+                            }
+                            size="small"
+                            onClick={() => setIsEditable((currentState) => !currentState)}
+                            selected={!isEditable}
+                            IconComponent={isEditable ? LockOpen : Lock}
+                        />
 
-                    <LoadingButton
-                        variant="contained"
-                        size="small"
-                        loading={isSavingDraft}
-                        onClick={onSaveDraft}>
-                      <div className="flex justify-center items-center md:gap-2">
-                        <DraftsIcon fontSize="small"/>
-                        <span className="hidden md:block">Save draft</span>
-                      </div>
-                    </LoadingButton>
-{/*                    <Button
+                        <LoadingButton
+                            variant="contained"
+                            size="small"
+                            loading={isSavingDraft}
+                            onClick={onSaveDraft}>
+                          <div className="flex justify-center items-center md:gap-2">
+                            <DraftsIcon fontSize="small"/>
+                            <span className="hidden md:block">Save draft</span>
+                          </div>
+                        </LoadingButton>
+                        {/*                    <Button
                         variant="contained"
                         color="error"
                         size="small"
@@ -252,12 +253,29 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
                         <span className="hidden md:block">Delete and Leave</span>
                       </div>
                     </Button>*/}
-                  </Stack>
-              ),
-              RichTextContentProps: {
-                className: "min-h-[600px] w-full"
-              }
-            }}>
+                      </Stack>
+                  ),
+                  RichTextContentProps: {
+                    className: "min-h-[600px] w-full"
+                  }
+                }
+            ) : (
+                {
+                  // The "outlined" variant is the default (shown here only as
+                  // example), but can be changed to "standard" to remove the outlined
+                  // field border from the editor
+                  variant: "standard",
+                  MenuBarProps: {
+                    hide: true
+                  },
+                  // Below is an example of adding a toggle within the outlined field
+                  // for showing/hiding the editor menu bar, and a "submit" button for
+                  // saving/viewing the HTML content
+                  RichTextContentProps: {
+                    className: "min-h-[600px] w-full"
+                  }
+                }
+            )}>
           {() => (
               <>
                 <LinkBubbleMenu/>

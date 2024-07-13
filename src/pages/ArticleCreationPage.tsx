@@ -12,6 +12,7 @@ import { sleep } from "@/utils/GlobalUtils.ts";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { fakeCompleteArticles } from "@/lib/dummyData.ts";
 
 const ArticleCreationPage = () => {
   const navigate = useNavigate();
@@ -57,16 +58,25 @@ const ArticleCreationPage = () => {
     const formData = articleFormRef.current?.submit();
     if (formData) {
       await sleep(2000);
-      navigate("/articles");
+      navigate("/article/detail", {
+        state: {
+          articleId: 1,
+          initialArticleData: fakeCompleteArticles[0]
+        }
+      });
       showNotification({
         message: "Your article is published.",
         severity: "success",
+        horizontal: "left",
+        vertical: "bottom"
       });
       window.scrollTo(0, 0);
     } else {
       showNotification({
         message: "Please check your input",
         severity: "warning",
+        horizontal: "left",
+        vertical: "bottom"
       });
     }
   }
@@ -79,7 +89,7 @@ const ArticleCreationPage = () => {
       confirmOptionText: "Publish",
       confirmOptionColor: "primary",
       confirmOptionStartIcon: undefined,
-      cancelOptionEndIcon: <SendIcon/>,
+      cancelOptionEndIcon: <SendIcon fontSize="small"/>,
       option3Text: undefined
     }));
     setConfirmAction(() => handlePublish);
@@ -95,6 +105,8 @@ const ArticleCreationPage = () => {
     showNotification({
       message: "Draft saved.",
       severity: "success",
+      horizontal: "left",
+      vertical: "bottom"
     });
   }
 
@@ -126,6 +138,8 @@ const ArticleCreationPage = () => {
     showNotification({
       message: "Draft saved.",
       severity: "success",
+      horizontal: "left",
+      vertical: "bottom"
     });
     navigate(-1);
     /*window.scrollTo(0, 0);*/
@@ -171,7 +185,7 @@ const ArticleCreationPage = () => {
           <div className="flex flex-nowrap justify-start md:justify-center items-center gap-4">
             <Button variant="outlined" onClick={handlePreview} endIcon={<PreviewOutlinedIcon/>}
                     color="secondary">Preview</Button>
-            <Button variant="contained" onClick={openPublishConfirmDialog} endIcon={<SendIcon/>}
+            <Button variant="contained" onClick={openPublishConfirmDialog} endIcon={<SendIcon fontSize="small"/>}
                     color="primary">Publish</Button>
           </div>
         </div>

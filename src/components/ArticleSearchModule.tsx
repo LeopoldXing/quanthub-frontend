@@ -169,7 +169,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
                         <Typography sx={{fontSize: "16px", fontWeight: "bold"}}>You don't have any articles, </Typography>
                         <Button variant="text" sx={{ paddingY: "10px", marginLeft: "-15px", textTransform: "none" }}
                                 onClick={() => navigate("/article/create")}>
-                          <Typography sx={{ fontSize: "16px", textWrap: "nowrap"}}>write something now!</Typography>
+                          <Typography sx={{ fontSize: "16px", textWrap: "nowrap"}}>write something!</Typography>
                         </Button>
                       </div>
                   )}

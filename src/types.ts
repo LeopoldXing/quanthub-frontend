@@ -1,4 +1,5 @@
 import React from "react";
+import { Comment } from "postcss";
 
 export type Category = {
   id: string;
@@ -43,15 +44,15 @@ export type ArticleOverviewInfo = {
   coverImageLink?: string;
   rate: number;
   commentsCount: number;
-  likes: number;
-  views: number;
+  likes: string;
+  views: string;
   publishTimestamp: bigint;
   updateTimestamp: bigint;
   publishTillToday: string;
   updateTillToday: string;
 }
 
-export type ArticleInfo = {
+export type CompleteArticleData = {
   id: string;
   title: string;
   subtitle?: string;
@@ -61,6 +62,19 @@ export type ArticleInfo = {
   contentText?: string;
   contentJson?: string;
   coverImageLink?: string;
+  rate: number;
+  comments: Comment[],
+  likes: string;
+  views: string;
+  author: {
+    id: string;
+    username: string;
+    role: string;
+  };
+  publishTimestamp: bigint;
+  updateTimestamp: bigint;
+  publishTillToday: string;
+  updateTillToday: string;
 }
 
 export type ArticleSearchParamType = {

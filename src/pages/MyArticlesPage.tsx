@@ -32,13 +32,8 @@ const MyArticlesPage = ({ isAdmin = false }: MyArticlesPageProps) => {
 
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
-        <Button startIcon={<ArrowBackIosIcon fontSize="small"/>}
-                sx={{ fontWeight: "bold", color: "black" }}
-                onClick={() => navigate(-1)}>
-          Back
-        </Button>
         {/*  title  */}
-        <div className="w-full mt-10 flex justify-between items-center">
+        <div className="w-full flex justify-between items-center">
           <div className="w-full lg:flex justify-start items-end lg:gap-16">
             <div className="text-4xl font-bold">My Blogs</div>
             {/*  admin buttons - small screen  */}

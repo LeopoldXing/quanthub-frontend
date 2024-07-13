@@ -1,7 +1,7 @@
 import MuiRichTextEditor, { handleRichTextEditorData } from "@/components/mui/RichTextEditor/MuiRichTextEditor.tsx";
 import { MenuControlsContainer } from "mui-tiptap";
 import EditorMenuControls from "@/components/mui/RichTextEditor/EditorMenuControls.tsx";
-import { categories, exampleContent, tags } from "@/lib/dummyData.ts";
+import { categories, exampleContentHtml, tags } from "@/lib/dummyData.ts";
 import { Box, TextField } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
@@ -76,7 +76,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
       } else if (contentType === "html") {
         contentHtml = textEditorRef.current.getHtml();
       } else if (contentType === "json") {
-        contentJson = textEditorRef.current.getJson() || "";
+        contentJson = JSON.parse(textEditorRef.current.getJson()) || "";
       }
     }
     return { contentText, contentHtml, contentJson };
@@ -166,7 +166,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
                     <EditorMenuControls/>
                   </MenuControlsContainer>
               )}
-              initialContent={mode === "create" ? exampleContent : initialData.content}
+              initialContent={mode === "create" ? exampleContentHtml : initialData.content}
               ref={textEditorRef}
               onSaveDraft={onSaveDraft}
               onCancel={onCancel}

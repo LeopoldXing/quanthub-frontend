@@ -1,5 +1,6 @@
 import ArticleOverviewListItem from "@/components/ArticleOverviewListItem.tsx";
 import { Divider } from "@mui/material";
+import { ArticleOverviewInfo } from "@/types.ts";
 
 type ArticleOverviewListProps = {
   articleOverviewInfoList: Array<ArticleOverviewInfo>

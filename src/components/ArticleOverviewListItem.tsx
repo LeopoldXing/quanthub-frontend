@@ -4,13 +4,23 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import { ArticleOverviewInfo } from "@/types.ts";
+import { useNavigate } from "react-router-dom";
 
 const ArticleOverviewListItem = ({ articleOverviewInfo }: { articleOverviewInfo: ArticleOverviewInfo }) => {
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    navigate("/article/detail", {
+      state: {
+        articleId: articleOverviewInfo.id
+      }
+    })
+  }
+
   return (
       <div className="w-full">
         {/*  title  */}
-        <div
-            className="w-full flex flex-col 2xl:flex-row justify-start items-start 2xl:justify-between 2xl:items-center gap-2 2xl:gap-0">
+        <a onClick={handleNavigate}
+           className="w-full flex flex-col 2xl:flex-row justify-start items-start 2xl:justify-between 2xl:items-center gap-2 2xl:gap-0 cursor-pointer">
           <div
               className="text-xl font-bold truncate max-w-md md:max-w-2xl lg:max-w-lg xl:max-w-lg 2xl:max-w-2xl">{articleOverviewInfo.title}</div>
           {/*  author & update time  */}
@@ -19,7 +29,7 @@ const ArticleOverviewListItem = ({ articleOverviewInfo }: { articleOverviewInfo:
             <Typography fontSize="20px">·</Typography>
             <Typography fontSize="13px">{articleOverviewInfo.updateTillToday}</Typography>
           </div>
-        </div>
+        </a>
         {/*  content  */}
         <div className="w-full mt-3 flex justify-between items-center gap-6">
           {/*  left  */}
@@ -29,9 +39,9 @@ const ArticleOverviewListItem = ({ articleOverviewInfo }: { articleOverviewInfo:
               <TagBar tagList={articleOverviewInfo.tags}/>
             </div>
             {/*  description  */}
-            <div className="w-full text-wrap">
+            <a className="block w-full text-wrap cursor-pointer" onClick={handleNavigate}>
               {articleOverviewInfo.description}
-            </div>
+            </a>
             {/*  meta data  */}
             <div className="w-full flex justify-start items-center gap-3">
               {/*  category  */}
