@@ -5,6 +5,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import { OutlinedInput } from "@mui/material";
 import { useEffect, useState } from "react";
+import { Category } from "@/types";
+import { v4 as uuid } from 'uuid';
 
 const ITEM_HEIGHT = 50;
 const ITEM_PADDING_TOP = 8;
@@ -19,25 +21,29 @@ const MenuProps = {
 
 interface SingleCategorySelectBoxProps {
   categoryList: Array<Category>;
-  onUpdate: (data?: Category) => void;
+  onUpdate?: (data: string) => void;
   height?: string;
 }
 
-export default function SingleCategorySelectBox({ categoryList, onUpdate, height="70px" }: SingleCategorySelectBoxProps) {
+export default function SingleCategorySelectBox({
+                                                  categoryList,
+                                                  onUpdate,
+                                                  height = "70px"
+                                                }: SingleCategorySelectBoxProps) {
   const [selectedCategoryName, setSelectedCategoryName] = React.useState<string>("");
-  const [selectedCategory, setSelectedCategory] = useState<Category>();
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const handleChange = (event) => {
     const { target: { value } } = event;
     setSelectedCategoryName(value);
-    setSelectedCategory(categoryList.find(category => category.name === value));
   };
 
   useEffect(() => {
-    onUpdate(selectedCategory);
-  }, [selectedCategory]);
+    if (onUpdate) {
+      onUpdate(selectedCategoryName);
+    }
+  }, [onUpdate, selectedCategoryName]);
 
   return (
       <FormControl sx={{ width: 1 }}>

@@ -55,7 +55,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
     contentHtml: exampleContentHtml,
     contentText: "",
     contextJson: JSON.stringify(exampleContentJson),
-    categoryName: null,
+    categoryName: "unknown",
     pictureLinkList: [],
     attachmentLink: null,
     tagNameList: []
@@ -214,9 +214,9 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
           <div className="w-full md:hidden flex flex-col justify-start items-start gap-4">
             <div className="text-nowrap text-xl font-bold">Category</div>
             <SingleCategorySelectBox categoryList={categories}
-                                     onUpdate={(category?: Category) => category && setFormData(prevArticleData => ({
-                                       ...prevArticleData,
-                                       category: category
+                                     onUpdate={categoryName => setFormData(prevState => ({
+                                       ...prevState,
+                                       categoryName: categoryName
                                      }))}/>
           </div>
           <div className="w-full min-h-28 md:hidden flex flex-col justify-start items-start gap-4">
@@ -235,7 +235,12 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
             <div className="w-full flex flex-col justify-start items-start gap-4">
               <div className="text-nowrap text-xl font-bold">Tags</div>
               <div className="w-full mt-3">
-                <TagPoolForArticleModification tagList={tags} ref={tagPoolRef}/>
+                <TagPoolForArticleModification tagList={tags} ref={tagPoolRef}
+                                               onUpdate={(tagList) => setFormData(prevState => ({
+                                                 ...prevState,
+                                                 tagNameList: tagList.map(tag => tag.name)
+                                               }))}
+                />
               </div>
             </div>
           </div>

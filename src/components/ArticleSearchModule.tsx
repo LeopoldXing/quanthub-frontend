@@ -5,13 +5,14 @@ import SelectedTagPool from "@/components/SelectedTagPool.tsx";
 import ArticleSortingPanel from "@/components/ArticleSortingPanel.tsx";
 import ArticleOverviewList from "@/components/ArticleOverviewList.tsx";
 import Pagination from "@mui/material/Pagination";
-import { debounce, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import LoopIcon from "@mui/icons-material/Loop";
 import TagPoolForSearching, { HandleSelectedTagChange } from "@/components/TagPoolForSearching.tsx";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArticleOverviewInfo, ArticleSearchParamType, Category, Tag } from "@/types.ts";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
+import { sleep } from "@/utils/GlobalUtils.ts";
 
 type ArticleSearchModuleProps = {
   mode?: "public" | "user" | "admin";
@@ -21,14 +22,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
   // navigation
   const navigate = useNavigate();
 
-  /*  search  */
-  const handleSearch = (): void => {
-    console.log("search in backend")
-    console.log(searchParams)
-  }
-  const debouncedSearch = useCallback(debounce(() => {
-    handleSearch();
-  }, 200), [handleSearch])
+  /*  search params  */
   const [searchParams, setSearchParams] = useState<ArticleSearchParamType>({
     keyword: "",
     selectedCategoryList: [],
@@ -36,6 +30,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
     sortStrategy: "recommended",
     sortDirection: "none"
   })
+
   // keyword
   const handleKeywordChange = (keyword: string): void => {
     setSearchParams(prevState => {
@@ -49,6 +44,9 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
       selectedCategoryList: updatedCategoryList
     }));
   }
+
+  // tags
+  const [currentTagList, setCurrentTagList] = useState<Array<Tag>>();
   // tags - cancel
   const handleDeleteTag = (id: string): void => {
     if (id === "all") {
@@ -64,13 +62,8 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
   }
   // tags - select
   const handleSelectTag = (tag: Tag): void => {
-    setSearchParams(prevState => {
-      const prevTagList = prevState.selectedTagList;
-      if (prevTagList.findIndex(prevTag => prevTag.id === tag.id) === -1) {
-        prevTagList.push(tag);
-      }
-      return { ...prevState, selectedTagList: prevTagList };
-    })
+    // if the selected tag is not in search param, then add the tag into the search param, otherwise do nothing
+    setSearchParams(prevState => ({ ...prevState, selectedTagList: [...new Set([...prevState.selectedTagList, tag])] }))
   }
   // tags - update TagPool
   const tagPoolRef = useRef<HandleSelectedTagChange>(null);
@@ -80,31 +73,49 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
     }
   }, [searchParams.selectedTagList]);
   // tags - shuffle
-  const [isSpinning, setIsSpinning] = useState<boolean>(false);
-  const handleRefreshIconSpin = () => {
-    setIsSpinning(true);
-    setTimeout(() => {
-      setIsSpinning(false);
-    }, 500); // animation will last 0.5s
-  };
-  const [currentTagList, setCurrentTagList] = useState<Array<Tag>>(tags);
-  const handleRefreshTags = (): void => {
-    console.log("shuffle tag list");
+  const [tagPoolLoading, setTagPoolLoading] = useState(true);
+  const handleRefreshTags = async (): Promise<void> => {
+    try {
+      setTagPoolLoading(true);
+      console.log("shuffle tag list");
+      await sleep(1000);
+      setCurrentTagList(tags);
+    } finally {
+      setTagPoolLoading(false);
+    }
   }
+  useEffect(() => {
+    handleRefreshTags();
+  }, []);
 
 
   /*  sorting  */
   const handleSort = (sortStrategy: "publish_date" | "update_date" | "recommended", sortDirection: "asc" | "desc" | "none") => {
     console.log("sortStrategy", sortStrategy);
     console.log("sortDirection", sortDirection);
+    setSearchParams(prevState => ({ ...prevState, sortDirection, sortStrategy }));
   }
 
   /*  get search result from backend  */
-  const [articleOverviewList, setArticleOverviewList] = useState<Array<ArticleOverviewInfo>>([])
+  /*  search  */
+  const handleSearch = async (): Promise<void> => {
+    try {
+      setArticleLoading(true);
+      console.log("search in backend")
+      console.log(searchParams)
+      await sleep(1000);
+      setArticleOverviewList(fakeArticleOverviewList);
+    } finally {
+      setArticleLoading(false);
+    }
+  }
+  const [articleOverviewList, setArticleOverviewList] = useState<Array<ArticleOverviewInfo>>();
   useEffect(() => {
-    debouncedSearch();
-    setArticleOverviewList(fakeArticleOverviewList);
-  }, [searchParams.selectedCategoryList, searchParams.selectedCategoryList]);
+    handleSearch();
+  }, [searchParams.selectedTagList, searchParams.sortStrategy, searchParams.selectedCategoryList, searchParams.sortDirection]);
+
+  //articleLoading
+  const [articleLoading, setArticleLoading] = useState<boolean>(!articleOverviewList);
 
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
@@ -126,7 +137,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
 
         {/*  sorting panel  */}
         <div className="lg:hidden w-full mt-5">
-          <ArticleSortingPanel onSort={handleSort}/>
+          <ArticleSortingPanel onSort={handleSort} loading={articleLoading}/>
         </div>
 
         {/*  content container  */}
@@ -143,22 +154,23 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
 
             {/*  sorting panel  */}
             <div className="hidden mt-7 lg:block">
-              <ArticleSortingPanel onSort={handleSort} mode={mode}/>
+              <ArticleSortingPanel onSort={handleSort} mode={mode} loading={articleLoading}/>
             </div>
 
             {/*  search result  */}
-            {articleOverviewList.length > 0 ? (
+            {(articleLoading || (Array.isArray(articleOverviewList) && articleOverviewList.length > 0)) && (
                 <div className="w-full">
                   <div className="w-full py-10">
-                    <ArticleOverviewList articleOverviewInfoList={articleOverviewList}/>
+                    <ArticleOverviewList articleOverviewInfoList={articleOverviewList} loading={articleLoading}/>
                   </div>
-                  {articleOverviewList.length > 5 && (
+                  {Array.isArray(articleOverviewList) && articleOverviewList.length > 5 && (
                       <div className="w-full flex justify-center items-center">
                         <Pagination count={10} shape="rounded"/>
                       </div>
                   )}
                 </div>
-            ) : (
+            )}
+            {(!articleLoading && articleOverviewList && Array.isArray(articleOverviewList) && articleOverviewList.length === 0) && (
                 <div className="w-full flex justify-center items-center" style={{ height: "70vh" }}>
                   {mode === "public" ? (
                       <Typography fontWeight="normal" fontSize="xl" textAlign="center" paddingTop="5%">
@@ -166,10 +178,12 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
                       </Typography>
                   ) : (
                       <div className="flex justify-center items-center gap-4">
-                        <Typography sx={{fontSize: "16px", fontWeight: "bold"}}>You don't have any articles, </Typography>
+                        <Typography sx={{ fontSize: "16px", fontWeight: "bold" }}>
+                          You don't have any articles,
+                        </Typography>
                         <Button variant="text" sx={{ paddingY: "10px", marginLeft: "-15px", textTransform: "none" }}
                                 onClick={() => navigate("/article/create")}>
-                          <Typography sx={{ fontSize: "16px", textWrap: "nowrap"}}>write something!</Typography>
+                          <Typography sx={{ fontSize: "16px", textWrap: "nowrap" }}>write something!</Typography>
                         </Button>
                       </div>
                   )}
@@ -188,14 +202,14 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
               <div className="w-full mb-4 flex justify-between items-center">
                 <div className="text-start text-xl font-bold">{mode === "public" ? "Popular tags" : "My Tags"}</div>
                 <button onClick={() => {
-                  handleRefreshIconSpin();
                   handleRefreshTags();
-                }} className={`${isSpinning ? 'spin-once' : ''} ${mode === "public" ? "" : "hidden"}`}>
+                }} className={`${tagPoolLoading ? 'spin-once' : ''} ${mode === "public" ? "" : "hidden"}`}>
                   <LoopIcon sx={{ height: "28px", width: "28px" }}/>
                 </button>
               </div>
               <div className="mt-8">
-                <TagPoolForSearching tagList={currentTagList} onSelect={handleSelectTag} ref={tagPoolRef}/>
+                <TagPoolForSearching tagList={currentTagList} onSelect={handleSelectTag} ref={tagPoolRef}
+                                     loading={tagPoolLoading}/>
               </div>
             </div>
           </div>

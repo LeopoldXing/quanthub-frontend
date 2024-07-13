@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Chip, Input, InputAdornment } from "@mui/material";
 import Button from "@mui/material/Button";
 import { v4 as uuidv4 } from 'uuid';
@@ -11,12 +11,12 @@ export interface HandleSelectedTagData {
 
 type TagPoolProps = {
   tagList: Array<Tag>;
-  onSelect?: (tag: Tag) => void;
+  onUpdate?: (tagList: Tag[]) => void;
 };
 
 const TagPoolForArticleModification = forwardRef<HandleSelectedTagData, TagPoolProps>(({
                                                                                          tagList,
-                                                                                         onSelect
+                                                                                         onUpdate
                                                                                        }, ref) => {
   const [localTagList, setLocalTagList] = useState<Tag[]>(tagList);
   const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>([]);
@@ -31,6 +31,12 @@ const TagPoolForArticleModification = forwardRef<HandleSelectedTagData, TagPoolP
       return selectedTagList;
     }
   }));
+
+  useEffect(() => {
+    if (onUpdate) {
+      onUpdate(selectedTagList);
+    }
+  }, [onUpdate, selectedTagList]);
 
 
   /*  create tag  */
@@ -63,7 +69,6 @@ const TagPoolForArticleModification = forwardRef<HandleSelectedTagData, TagPoolP
     const selectedTagIndex = selectedTagList.findIndex(prevTag => prevTag.id === tag.id);
     if (selectedTagIndex === -1) {
       setSelectedTagList(prevState => [...prevState, tag]);
-      onSelect && onSelect(tag);
     } else {
       setSelectedTagList(prevState => prevState.filter((_, index) => index !== selectedTagIndex));
       const newTagIndex = newTagList.findIndex(newTag => newTag.name === tag.name);

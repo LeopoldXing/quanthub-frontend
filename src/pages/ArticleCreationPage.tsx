@@ -85,7 +85,7 @@ const ArticleCreationPage = () => {
         title: currentFormData.title,
         subtitle: currentFormData.subtitle || "",
         tags: currentFormData.tagNameList?.map(tagName => ({ id: uuidv4(), name: tagName })) || [],
-        category: { id: uuidv4(), name: currentFormData.categoryName || "" },
+        category: { id: uuidv4(), name: currentFormData.categoryName || "unknown" },
         contentHtml: currentFormData.contentHtml || "",
         contentText: currentFormData.contentText || "",
         contentJson: currentFormData.contextJson || "",
@@ -96,12 +96,12 @@ const ArticleCreationPage = () => {
         views: "1",
         author: {
           id: uuidv4(),
-          username: "User",
+          username: "myself",
           role: "user"
         },
-        publishTimestamp: BigInt(Date.now() - 3 * 24 * 60 * 60 * 1000),
+        publishTimestamp: BigInt(Date.now()),
         updateTimestamp: BigInt(Date.now()),
-        publishTillToday: "3 days ago",
+        publishTillToday: "a few seconds ago",
         updateTillToday: "a few seconds ago"
       });
       // open preview
@@ -110,7 +110,7 @@ const ArticleCreationPage = () => {
       showNotification({
         message: "Please check your input",
         severity: "warning",
-        horizontal: "left",
+        horizontal: "right",
         vertical: "bottom"
       });
     }
@@ -130,7 +130,7 @@ const ArticleCreationPage = () => {
       showNotification({
         message: "Your article is published.",
         severity: "success",
-        horizontal: "left",
+        horizontal: "right",
         vertical: "bottom"
       });
       window.scrollTo(0, 0);
@@ -138,7 +138,7 @@ const ArticleCreationPage = () => {
       showNotification({
         message: "Please check your input",
         severity: "warning",
-        horizontal: "left",
+        horizontal: "right",
         vertical: "bottom"
       });
     }
@@ -163,14 +163,14 @@ const ArticleCreationPage = () => {
   const [savingDraft, setSavingDraft] = useState<boolean>(false);
   const handleSaveDraft = async () => {
     setSavingDraft(true);
-    console.log(articleFormRef.current?.submit());
+    console.log(currentFormData);
     await sleep(1000);
     setSavingDraft(false);
     showNotification({
       message: "Draft saved.",
       severity: "success",
-      horizontal: "left",
-      vertical: "bottom"
+      horizontal: "right",
+      vertical: "top"
     });
   }
 
@@ -202,7 +202,7 @@ const ArticleCreationPage = () => {
     showNotification({
       message: "Draft saved.",
       severity: "success",
-      horizontal: "left",
+      horizontal: "right",
       vertical: "bottom"
     });
     navigate(-1);

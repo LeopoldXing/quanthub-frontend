@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 type ArticleSortingPanelProps = {
   onSort: (sortStrategy: "publish_date" | "update_date" | "recommended", sortDirection: "asc" | "desc" | "none") => void;
   mode?: "public" | "user" | "admin";
+  loading?: boolean;
 }
 
-const ArticleSortingPanel = ({ onSort, mode = "public" }: ArticleSortingPanelProps) => {
+const ArticleSortingPanel = ({ onSort, mode = "public", loading = false }: ArticleSortingPanelProps) => {
   const directionChangeSequence = ["asc", "desc", "none"];
   const [publishSortDirectionPointer, setPublishSortDirectionPointer] = useState(2);
   const [updateSortDirectionPointer, setUpdateSortDirectionPointer] = useState(2);
@@ -48,6 +49,7 @@ const ArticleSortingPanel = ({ onSort, mode = "public" }: ArticleSortingPanelPro
         <div className="py-2">
           <div className="h-8 py-0 pr-4 border-r-[1px] border-gray-300">
             <Button
+                disabled={loading}
                 sx={{
                   textWrap: "nowrap",
                   fontSize: "small",
@@ -69,6 +71,7 @@ const ArticleSortingPanel = ({ onSort, mode = "public" }: ArticleSortingPanelPro
         <div>
           <div className="h-8 py-0 pr-4 border-r-[1px] border-gray-300">
             <Button
+                disabled={loading}
                 sx={{
                   textWrap: "nowrap",
                   fontSize: "small",
@@ -91,6 +94,7 @@ const ArticleSortingPanel = ({ onSort, mode = "public" }: ArticleSortingPanelPro
         {/*  updated date  */}
         <div>
           <Button
+              disabled={loading}
               sx={{
                 textWrap: "nowrap",
                 fontSize: "small",

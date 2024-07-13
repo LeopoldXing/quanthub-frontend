@@ -1,7 +1,6 @@
 import Button from "@mui/material/Button";
 import { Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
 import ArticleSearchModule from "@/components/ArticleSearchModule.tsx";
