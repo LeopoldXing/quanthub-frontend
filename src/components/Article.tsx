@@ -1,11 +1,12 @@
 import { CompleteArticleData } from "@/types.ts";
 import RenderHtmlContent from "@/components/RenderHtmlContent.tsx";
+import { fakeCompleteArticles } from "@/lib/dummyData.ts";
 
 type ArticleProps = {
-  articleData: CompleteArticleData;
+  articleData?: CompleteArticleData;
 }
 
-const Article = ({articleData}: ArticleProps) => {
+const Article = ({ articleData = fakeCompleteArticles[0] }: ArticleProps) => {
   return (
       <div className="w-full">
         {/*  title  */}
@@ -42,7 +43,7 @@ const Article = ({articleData}: ArticleProps) => {
         </div>*/}
         {/*  content  */}
         <div className="w-full mt-10">
-          <RenderHtmlContent contentHtml={articleData.contentHtml} />
+          <RenderHtmlContent contentHtml={articleData.contentHtml}/>
         </div>
       </div>
   );

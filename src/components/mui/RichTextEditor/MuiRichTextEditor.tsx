@@ -42,6 +42,7 @@ type MuiRichTextEditorProps = {
   onCancel?: () => void;
   isSavingDraft?: boolean;
   mode?: "edit" | "display";
+  onUpdate?: (content: { contentText: string, contentJson: string, contentHtml: string }) => void;
 }
 
 const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditorProps>(({
@@ -50,7 +51,8 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
                                                                                           variant = "standard",
                                                                                           renderControls,
                                                                                           onSaveDraft,
-                                                                                          isSavingDraft = false
+                                                                                          isSavingDraft = false,
+                                                                                          onUpdate
                                                                                         }, ref) => {
   const extensions = useExtensions({
     placeholder: "Add your own content here...",
@@ -179,6 +181,15 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
             extensions={extensions}
             content={initialContent}
             editable={mode === "edit" ? isEditable : false}
+            onUpdate={(e) => {
+              if (onUpdate) {
+                onUpdate({
+                  contentText: e.editor.getText(),
+                  contentHtml: e.editor.getHTML(),
+                  contentJson: JSON.stringify(e.editor.getJSON())
+                })
+              }
+            }}
             editorProps={{
               handleDrop: handleDrop,
               handlePaste: handlePaste

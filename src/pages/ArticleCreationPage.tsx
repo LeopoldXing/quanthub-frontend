@@ -7,12 +7,16 @@ import SendIcon from '@mui/icons-material/Send';
 import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MuiConfirmBox from "@/components/mui/MuiConfirmBox.tsx";
-import { ButtonStyleType } from "@/types.ts";
+import { ButtonStyleType, CompleteArticleData } from "@/types.ts";
 import { sleep } from "@/utils/GlobalUtils.ts";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { fakeCompleteArticles } from "@/lib/dummyData.ts";
+import { Modal, Paper } from "@mui/material";
+import Article from "@/components/Article.tsx";
+import { v4 as uuidv4 } from "uuid";
+import { ArticleModificationFormZodDataType } from "@/components/forms/schemas/ArticleModificationFormSchema.ts";
 
 const ArticleCreationPage = () => {
   const navigate = useNavigate();
@@ -47,10 +51,69 @@ const ArticleCreationPage = () => {
     await confirmAction();
   }
 
+
+  const [currentFormData, setCurrentFormData] = useState<ArticleModificationFormZodDataType>({
+    title: "",
+    subtitle: null,
+    contentHtml: null,
+    contentText: null,
+    contextJson: null,
+    categoryName: null,
+    pictureLinkList: [],
+    attachmentLink: null,
+    tagNameList: []
+  });
+
+  const handleFormDataChange = (formData: ArticleModificationFormZodDataType) => {
+    setCurrentFormData(formData);
+  };
+
+
   /*  preview  */
+  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
+  const [articleData, setArticleData] = useState<CompleteArticleData>();
+  const handlePreviewClose = () => {
+    setPreviewOpen(false);
+    setArticleData(undefined);
+  }
   const handlePreview = () => {
     console.log("preview")
-    console.log(articleFormRef.current?.submit());
+    console.log(currentFormData);
+    if (currentFormData) {
+      setArticleData({
+        id: uuidv4(),
+        title: currentFormData.title,
+        subtitle: currentFormData.subtitle || "",
+        tags: currentFormData.tagNameList?.map(tagName => ({ id: uuidv4(), name: tagName })) || [],
+        category: { id: uuidv4(), name: currentFormData.categoryName || "" },
+        contentHtml: currentFormData.contentHtml || "",
+        contentText: currentFormData.contentText || "",
+        contentJson: currentFormData.contextJson || "",
+        coverImageLink: undefined,
+        rate: 9.0,
+        comments: [],
+        likes: "0",
+        views: "1",
+        author: {
+          id: uuidv4(),
+          username: "User",
+          role: "user"
+        },
+        publishTimestamp: BigInt(Date.now() - 3 * 24 * 60 * 60 * 1000),
+        updateTimestamp: BigInt(Date.now()),
+        publishTillToday: "3 days ago",
+        updateTillToday: "a few seconds ago"
+      });
+      // open preview
+      setPreviewOpen(true);
+    } else {
+      showNotification({
+        message: "Please check your input",
+        severity: "warning",
+        horizontal: "left",
+        vertical: "bottom"
+      });
+    }
   }
 
   /*  publish  */
@@ -100,6 +163,7 @@ const ArticleCreationPage = () => {
   const [savingDraft, setSavingDraft] = useState<boolean>(false);
   const handleSaveDraft = async () => {
     setSavingDraft(true);
+    console.log(articleFormRef.current?.submit());
     await sleep(1000);
     setSavingDraft(false);
     showNotification({
@@ -193,11 +257,40 @@ const ArticleCreationPage = () => {
         <div className="w-full mt-10">
           <ArticleModificationForm mode="create" initialData={{ author: { username: "lll" } }} ref={articleFormRef}
                                    onSaveDraft={handleSaveDraft} onCancel={openCancelDialog}
-                                   isSavingDraft={savingDraft}/>
+                                   isSavingDraft={savingDraft} onFormDataChange={handleFormDataChange}/>
         </div>
 
         <MuiConfirmBox open={confirmBoxOpen} handleClose={handleDialogClose} buttonStyle={confirmBoxData}
                        onConfirm={onConfirm}/>
+        {/*  preview  */}
+        <Modal
+            open={previewOpen}
+            onClose={handlePreviewClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+          <Paper square={false} sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            py: 6,
+            px: 8,
+            transform: "translate(-50%, -50%)",
+            width: "80%",
+            maxHeight: "80%",
+            bgcolor: "background.paper",
+            border: "none",
+            boxShadow: 24,
+            overflow: "scroll"
+          }}>
+            <div className="mb-8 flex justify-end items-center">
+              <Button sx={{ fontWeight: "bold", color: "black" }} onClick={handlePreviewClose}>
+                Done
+              </Button>
+            </div>
+            <Article articleData={articleData}/>
+          </Paper>
+        </Modal>
       </div>
   );
 };

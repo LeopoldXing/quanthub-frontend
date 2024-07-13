@@ -1,10 +1,10 @@
 import MuiRichTextEditor, { handleRichTextEditorData } from "@/components/mui/RichTextEditor/MuiRichTextEditor.tsx";
 import { MenuControlsContainer } from "mui-tiptap";
 import EditorMenuControls from "@/components/mui/RichTextEditor/EditorMenuControls.tsx";
-import { categories, exampleContentHtml, tags } from "@/lib/dummyData.ts";
+import { categories, exampleContentHtml, exampleContentJson, tags } from "@/lib/dummyData.ts";
 import { Box, TextField } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { ArticleComment, Category } from "@/types.ts";
 import {
   articleModificationFormSchema,
@@ -37,6 +37,7 @@ type ArticleModificationFormProps = {
   onSaveDraft: () => void;
   onCancel: () => void;
   isSavingDraft?: boolean;
+  onFormDataChange?: (data: ArticleModificationFormZodDataType) => void;
 }
 
 const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmission, ArticleModificationFormProps>(({
@@ -44,20 +45,26 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
                                                                                                                      mode = "create",
                                                                                                                      onSaveDraft,
                                                                                                                      onCancel,
-                                                                                                                     isSavingDraft = false
+                                                                                                                     isSavingDraft = false,
+                                                                                                                     onFormDataChange
                                                                                                                    }, ref) => {
   // form data
   const [formData, setFormData] = useState<ArticleModificationFormZodDataType>({
     title: "",
     subtitle: null,
-    contentHtml: null,
-    contentText: null,
-    contextJson: null,
+    contentHtml: exampleContentHtml,
+    contentText: "",
+    contextJson: JSON.stringify(exampleContentJson),
     categoryName: null,
     pictureLinkList: [],
     attachmentLink: null,
     tagNameList: []
   });
+  useEffect(() => {
+    if (onFormDataChange) {
+      onFormDataChange(formData);
+    }
+  }, [formData, onFormDataChange]);
   // text editor ref
   const textEditorRef = useRef<handleRichTextEditorData>(null);
   // tag pool ref
@@ -105,14 +112,10 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
       return { ...formData, ...fetchArticleContent(contentType) };
     },
     submit() {
-      // get article content
-      const articleContent = fetchArticleContent("html&text");
       // get selected tags
       const selectedTagList = tagPoolRef.current?.getSelectedTagList();
       setFormData(prevState => ({
         ...prevState,
-        contentHtml: articleContent.contentHtml,
-        contentText: articleContent.contentText,
         tagNameList: selectedTagList?.map(selectedTag => selectedTag.name) || null
       }))
       if (validateFormData(formData)) {
@@ -170,6 +173,14 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
               ref={textEditorRef}
               onSaveDraft={onSaveDraft}
               onCancel={onCancel}
+              onUpdate={(content) => {
+                setFormData(prevState => ({
+                  ...prevState,
+                  contentText: content.contentText,
+                  contentHtml: content.contentHtml,
+                  contextJson: content.contentJson
+                }))
+              }}
               isSavingDraft={isSavingDraft}
           />
         </div>
