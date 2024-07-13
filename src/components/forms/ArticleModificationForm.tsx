@@ -5,7 +5,7 @@ import { categories, exampleContentHtml, exampleContentJson, tags } from "@/lib/
 import { Box, TextField } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { ArticleComment, Category } from "@/types.ts";
+import { ArticleComment } from "@/types.ts";
 import {
   articleModificationFormSchema,
   ArticleModificationFormZodDataType
@@ -54,7 +54,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
     subtitle: null,
     contentHtml: exampleContentHtml,
     contentText: "",
-    contextJson: JSON.stringify(exampleContentJson),
+    contentJson: JSON.stringify(exampleContentJson),
     categoryName: "unknown",
     pictureLinkList: [],
     attachmentLink: null,
@@ -193,9 +193,9 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
             <div className="w-full min-h-24 flex flex-col justify-start items-start gap-4">
               <div className="text-nowrap text-xl font-bold">Category</div>
               <SingleCategorySelectBox categoryList={categories}
-                                       onUpdate={(category?: Category) => category && setFormData(prevArticleData => ({
-                                         ...prevArticleData,
-                                         category: category
+                                       onUpdate={categoryName => setFormData(prevState => ({
+                                         ...prevState,
+                                         categoryName: categoryName
                                        }))}/>
             </div>
             <div className="w-full min-h-28 flex flex-col justify-start items-start gap-4">
