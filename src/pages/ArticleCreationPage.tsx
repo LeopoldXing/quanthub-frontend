@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import ArticleModificationForm, {
   HandleArticleModificationFormSubmission
 } from "@/components/forms/ArticleModificationForm.tsx";
@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import MuiConfirmBox from "@/components/mui/MuiConfirmBox.tsx";
 import { ButtonStyleType, CompleteArticleData } from "@/types.ts";
 import { sleep } from "@/utils/GlobalUtils.ts";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { fakeCompleteArticles } from "@/lib/dummyData.ts";
@@ -18,10 +18,18 @@ import { v4 as uuidv4 } from "uuid";
 import { ArticleModificationFormZodDataType } from "@/components/forms/schemas/ArticleModificationFormSchema.ts";
 
 const ArticleCreationPage = () => {
+/*  const location = useLocation();
+  const initialData = location.state.articleData;
+  const mode: "create" | "edit" = initialData ? "edit" : "create";
+  console.log("mode: ", mode)*/
+
   const navigate = useNavigate();
+  // article modification form ref
   const articleFormRef = useRef<HandleArticleModificationFormSubmission>(null);
+  // notification
   const { showNotification } = useNotification();
 
+  /*  dialog  */
   const [confirmBoxOpen, setConfirmBoxOpen] = useState<boolean>(false);
   const [confirmBoxData, setConfirmBoxData] = useState<ButtonStyleType>({
     title: "Confirm action?",
@@ -38,15 +46,16 @@ const ArticleCreationPage = () => {
     confirmOptionEndIcon: undefined,
     confirmOptionLoadingPosition: "center"
   });
-  const [confirmAction, setConfirmAction] = useState<() => Promise<void>>(() => async () => {});
+  const [confirmAction, setConfirmAction] = useState<() => Promise<void>>(() => async () => { });
 
-  const handleDialogClose = useCallback(() => {
+  const handleDialogClose = () => {
     setConfirmBoxOpen(false);
-  }, []);
+  }
 
-  const onConfirm = useCallback(async () => {
+  const onConfirm = async () => {
     await confirmAction();
-  }, [confirmAction]);
+  }
+
 
   const [currentFormData, setCurrentFormData] = useState<ArticleModificationFormZodDataType>({
     title: "",
@@ -60,18 +69,21 @@ const ArticleCreationPage = () => {
     tagNameList: []
   });
 
-  const handleFormDataChange = useCallback((formData: ArticleModificationFormZodDataType) => {
+  const handleFormDataChange = (formData: ArticleModificationFormZodDataType) => {
     setCurrentFormData(formData);
-  }, []);
+  };
 
+
+  /*  preview  */
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [articleData, setArticleData] = useState<CompleteArticleData>();
-  const handlePreviewClose = useCallback(() => {
+  const handlePreviewClose = () => {
     setPreviewOpen(false);
     setArticleData(undefined);
-  }, []);
-
-  const handlePreview = useCallback(() => {
+  }
+  const handlePreview = () => {
+    console.log("preview")
+    console.log(currentFormData);
     if (currentFormData) {
       setArticleData({
         id: uuidv4(),
@@ -97,6 +109,7 @@ const ArticleCreationPage = () => {
         publishTillToday: "a few seconds ago",
         updateTillToday: "a few seconds ago"
       });
+      // open preview
       setPreviewOpen(true);
     } else {
       showNotification({
@@ -106,9 +119,10 @@ const ArticleCreationPage = () => {
         vertical: "bottom"
       });
     }
-  }, [currentFormData, showNotification]);
+  }
 
-  const handlePublish = useCallback(async () => {
+  /*  publish  */
+  const handlePublish = async () => {
     const formData = articleFormRef.current?.submit();
     if (formData) {
       await sleep(2000);
@@ -133,24 +147,29 @@ const ArticleCreationPage = () => {
         vertical: "bottom"
       });
     }
-  }, [navigate, showNotification]);
+  }
 
-  const openPublishConfirmDialog = useCallback(() => {
+  const openPublishConfirmDialog = () => {
     setConfirmBoxData(prevState => ({
       ...prevState,
       title: "Publish this article?",
       description: "By confirming, this article will be published and made available to all users. Are you sure you want to proceed?",
       confirmOptionText: "Publish",
       confirmOptionColor: "primary",
-      confirmOptionEndIcon: <SendIcon fontSize="small" />,
+      confirmOptionStartIcon: undefined,
+      confirmOptionEndIcon: <SendIcon fontSize="small"/>,
+      confirmOptionLoadingPosition: "end",
+      option3Text: undefined
     }));
     setConfirmAction(() => handlePublish);
     setConfirmBoxOpen(true);
-  }, [handlePublish]);
+  }
 
+  /*  save draft  */
   const [savingDraft, setSavingDraft] = useState<boolean>(false);
-  const handleSaveDraft = useCallback(async () => {
+  const handleSaveDraft = async () => {
     setSavingDraft(true);
+    console.log(currentFormData);
     await sleep(1000);
     setSavingDraft(false);
     showNotification({
@@ -159,13 +178,16 @@ const ArticleCreationPage = () => {
       horizontal: "right",
       vertical: "top"
     });
-  }, [showNotification]);
+  }
 
-  const handleCancel = useCallback(async () => {
+
+  /*  cancel  */
+  const handleCancel = async () => {
     navigate(-1);
-  }, [navigate]);
+    /*window.scrollTo(0, 0);*/
+  }
 
-  const openCancelDialog = useCallback(() => {
+  const openCancelDialog = () => {
     setConfirmBoxData(prevState => ({
       ...prevState,
       title: "Delete draft and leave this page?",
@@ -173,13 +195,15 @@ const ArticleCreationPage = () => {
       cancelOptionColor: "primary",
       confirmOptionText: "Leave",
       confirmOptionColor: "error",
-      confirmOptionStartIcon: <DeleteIcon />,
+      confirmOptionStartIcon: <DeleteIcon/>,
+      confirmOptionEndIcon: undefined
     }));
     setConfirmAction(() => handleCancel);
     setConfirmBoxOpen(true);
-  }, [handleCancel]);
+  }
 
-  const handleSaveAndLeave = useCallback(async () => {
+  // go back
+  const handleSaveAndLeave = async () => {
     await sleep(1000);
     showNotification({
       message: "Draft saved.",
@@ -188,50 +212,52 @@ const ArticleCreationPage = () => {
       vertical: "bottom"
     });
     navigate(-1);
-  }, [navigate, showNotification]);
-
-  const handleLeave = useCallback(() => {
+    /*window.scrollTo(0, 0);*/
+  }
+  const handleLeave = async () => {
     navigate(-1);
-  }, [navigate]);
+  }
 
-  const openGoBackDialog = useCallback(() => {
+  const openGoBackDialog = () => {
     setConfirmBoxData(prevState => ({
       ...prevState,
-      title: "Leave this page?",
+      title: "Leave this page? ",
       description: "By confirming, any unsaved changes to your draft will be permanently deleted and you will leave this page. Are you sure you want to proceed?",
       cancelOptionColor: "primary",
+      confirmOptionEndIcon: undefined,
+      cancelOptionVariant: "text",
       confirmOptionText: "Save and Leave",
       confirmOptionColor: "primary",
-      option3Text: "Don't save",
+      confirmOptionStartIcon: undefined,
+      cancelOptionEndIcon: undefined,
+      option3Text: "Dont save",
+      option3StartIcon: undefined,
+      option3EndIcon: undefined,
       option3Color: "error",
+      option3Variant: "outlined",
       option3Action: handleLeave
     }));
     setConfirmAction(() => handleSaveAndLeave);
     setConfirmBoxOpen(true);
-  }, [handleSaveAndLeave, handleLeave]);
-
-  // 调试渲染次数
-  useEffect(() => {
-    console.log("ArticleCreationPage rendered");
-  });
+  }
 
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
-        <Button startIcon={<ArrowBackIosIcon fontSize="small" />}
+        <Button startIcon={<ArrowBackIosIcon fontSize="small"/>}
                 sx={{ fontWeight: "bold", color: "black" }}
                 onClick={openGoBackDialog}>
           Back
         </Button>
-        {/* title */}
+        {/*  title  */}
         <div className="w-full mt-10 space-y-10 md:space-y-0 md:flex justify-between items-center">
           <div className="text-4xl font-bold">Create Article</div>
           <div className="flex flex-nowrap justify-start md:justify-center items-center gap-4">
             <Button variant="outlined" onClick={handlePreview} color="secondary">Preview</Button>
-            <Button variant="contained" onClick={openPublishConfirmDialog} endIcon={<SendIcon fontSize="small" />}
+            <Button variant="contained" onClick={openPublishConfirmDialog} endIcon={<SendIcon fontSize="small"/>}
                     color="primary">Publish</Button>
           </div>
         </div>
-        {/* Form */}
+        {/*  Form  */}
         <div className="w-full mt-10">
           <ArticleModificationForm mode="create" initialData={{ author: { username: "lll" } }} ref={articleFormRef}
                                    onSaveDraft={handleSaveDraft} onCancel={openCancelDialog}
@@ -240,7 +266,7 @@ const ArticleCreationPage = () => {
 
         <MuiConfirmBox open={confirmBoxOpen} handleClose={handleDialogClose} buttonStyle={confirmBoxData}
                        onConfirm={onConfirm}/>
-        {/* preview */}
+        {/*  preview  */}
         <Modal
             open={previewOpen}
             onClose={handlePreviewClose}
