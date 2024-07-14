@@ -244,16 +244,26 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
                             IconComponent={isEditable ? LockOpen : Lock}
                         />
 
-                        <LoadingButton
-                            variant="contained"
-                            size="small"
-                            loading={isSavingDraft}
-                            onClick={onSaveDraft}>
-                          <div className="flex justify-center items-center md:gap-2">
+                        <div className="hidden md:block">
+                          <LoadingButton
+                              variant="contained"
+                              size="small"
+                              startIcon={<DraftsIcon fontSize="small"/>}
+                              loadingPosition="start"
+                              loading={isSavingDraft}
+                              onClick={onSaveDraft}>
+                            <span className="text-[12px]">Save draft</span>
+                          </LoadingButton>
+                        </div>
+                        <div className="md:hidden">
+                          <LoadingButton
+                              variant="contained"
+                              size="small"
+                              loading={isSavingDraft}
+                              onClick={onSaveDraft}>
                             <DraftsIcon fontSize="small"/>
-                            <span className="hidden md:block">Save draft</span>
-                          </div>
-                        </LoadingButton>
+                          </LoadingButton>
+                        </div>
                         {/*                    <Button
                         variant="contained"
                         color="error"

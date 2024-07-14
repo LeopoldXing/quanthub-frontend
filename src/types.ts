@@ -1,5 +1,4 @@
 import React from "react";
-import { Comment } from "postcss";
 
 export type Category = {
   id: string;
@@ -18,15 +17,17 @@ export type User = {
   email?: string;
   phoneNumber?: string;
   role: string;
+  avatarLink?: string;
 }
 
 export type ArticleComment = {
   id: string;
+  articleId: string;
   content: string;
   user: User;
   publishDatetime: Date;
-  articleId: string;
-  status: string;
+  publishTillToday?: string;
+  status?: "normal" | "hide" | "deleted";
 }
 
 export type ArticleOverviewInfo = {
@@ -63,13 +64,15 @@ export type CompleteArticleData = {
   contentJson?: string;
   coverImageLink?: string;
   rate: number;
-  comments: Comment[],
+  comments: ArticleComment[],
   likes: string;
+  isLiking?: boolean;
   views: string;
   author: {
     id: string;
     username: string;
     role: string;
+    avatarLink?: string;
   };
   publishTimestamp: bigint;
   updateTimestamp: bigint;
@@ -103,7 +106,7 @@ export type ButtonStyleType = {
   description: string;
   cancelOptionText: string;
   confirmOptionText: string;
-  option3Text?:string;
+  option3Text?: string;
   cancelOptionVariant: 'text' | 'outlined' | 'contained';
   confirmOptionVariant: 'text' | 'outlined' | 'contained';
   option3Variant?: 'text' | 'outlined' | 'contained';
@@ -113,10 +116,11 @@ export type ButtonStyleType = {
   cancelOptionStartIcon?: React.ReactNode;
   confirmOptionStartIcon?: React.ReactNode;
   option3StartIcon?: React.ReactNode;
-  confirmOptionEndIcon?: React.ReactNode;
   cancelOptionEndIcon?: React.ReactNode;
+  confirmOptionEndIcon?: React.ReactNode;
   option3EndIcon?: React.ReactNode;
-  option3Action?: () => Promise<void>
+  option3Action?: () => Promise<void>;
+  confirmOptionLoadingPosition?: 'start' | 'end' | 'center'
 };
 
 export type NotificationProps = {

@@ -28,6 +28,7 @@ const MuiConfirmBox = ({
                            confirmOptionStartIcon: undefined,
                            cancelOptionEndIcon: undefined,
                            confirmOptionEndIcon: undefined,
+                           confirmOptionLoadingPosition: "center"
                          }
                        }: MuiConfirmBoxProps) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -59,7 +60,7 @@ const MuiConfirmBox = ({
               color={buttonStyle.cancelOptionColor}
               variant={buttonStyle.cancelOptionVariant}
               startIcon={buttonStyle.cancelOptionStartIcon}
-              endIcon={buttonStyle.confirmOptionEndIcon}
+              endIcon={buttonStyle.cancelOptionEndIcon}
               onClick={handleClose}
               disabled={loading}
               sx={{ fontSize: "small" }}
@@ -89,8 +90,9 @@ const MuiConfirmBox = ({
               color={buttonStyle.confirmOptionColor}
               autoFocus
               startIcon={buttonStyle.confirmOptionStartIcon}
-              endIcon={buttonStyle.cancelOptionEndIcon}
+              endIcon={buttonStyle.confirmOptionEndIcon}
               loading={loading}
+              loadingPosition={buttonStyle.confirmOptionLoadingPosition}
               size="small"
               sx={{ fontSize: "small" }}
               onClick={async () => {

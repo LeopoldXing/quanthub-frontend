@@ -1,4 +1,6 @@
 /*  rich text editor example content  */
+import { v4 as uuidv4 } from "uuid";
+
 export const exampleContentHtml = '<h2 style="text-align: center">Hey there 👋</h2><p>This is a <em>basic</em> example of <code>mui-tiptap</code>, which combines <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/">Tiptap</a> with customizable <a target="_blank" rel="noopener noreferrer nofollow" href="https://mui.com/">MUI (Material-UI)</a> styles, plus a suite of additional components and extensions! Sure, there are <strong>all <em>kinds</em> of <s>text</s> <u>formatting</u> options</strong> you’d probably expect from a rich text editor. But wait until you see the <span data-type="mention" data-id="15" data-label="Axl Rose">@Axl Rose</span> mentions and lists:</p><ul><li><p>That’s a bullet list with one …</p></li><li><p>… or two list items.</p></li></ul><p>Isn’t that great? And all of that is editable. <strong><span style="color: #ff9900">But wait, </span><span style="color: #403101"><mark data-color="#ffd699" style="background-color: #ffd699; color: inherit">there’s more!</mark></span></strong> Let’s try a code block:</p><pre><code class="language-css">body {\n  display: none;\n}</code></pre><p></p><p>That’s only the tip of the iceberg. Feel free to add and resize images:</p><img height="auto" src="https://picsum.photos/600/400" alt="random image" width="350" style="aspect-ratio: 3 / 2"><p></p><p>Organize information in tables:</p><table><tbody><tr><th colspan="1" rowspan="1"><p>Name</p></th><th colspan="1" rowspan="1"><p>Role</p></th><th colspan="1" rowspan="1"><p>Team</p></th></tr><tr><td colspan="1" rowspan="1"><p>Alice</p></td><td colspan="1" rowspan="1"><p>PM</p></td><td colspan="1" rowspan="1"><p>Internal tools</p></td></tr><tr><td colspan="1" rowspan="1"><p>Bob</p></td><td colspan="1" rowspan="1"><p>Software</p></td><td colspan="1" rowspan="1"><p>Infrastructure</p></td></tr></tbody></table><p></p><p>Or write down your groceries:</p><ul data-type="taskList"><li data-checked="true" data-type="taskItem"><label><input type="checkbox" checked="checked"><span></span></label><div><p>Milk</p></div></li><li data-checked="false" data-type="taskItem"><label><input type="checkbox"><span></span></label><div><p>Eggs</p></div></li><li data-checked="false" data-type="taskItem"><label><input type="checkbox"><span></span></label><div><p>Sriracha</p></div></li></ul><blockquote><p>Wow, that’s amazing. Good work! 👏 <br>— Mom</p></blockquote><p>Give it a try and click around!</p>';
 export const exampleContentJson = {
   "type": "doc",
@@ -687,8 +689,19 @@ export const fakeCompleteArticles: Array<CompleteArticleData> = [
     author: { id: "1", username: "Quant Guru", role: "admin" },
     coverImageLink: undefined,
     rate: 8.5,
-    comments: [],
+    comments: [{
+      id: uuidv4(),
+      content: "content1233435256trweioguwehrogicontenuwehrogicontent1233435256trweioguwehrogicontasdfgaergaerthryjtdyjfgukgyuilhuikdfgyseraeerkko;jikoglysrfgaesdrghfyjghliotlyudtjthsrtguwehrogi",
+      user: {
+        id: uuidv4(), username: "Disco_Broccoli", role: "user"
+      },
+      publishDatetime: new Date(Date.now() - 1000 * 60 * 60 * 13),
+      publishTillToday: "13 days ago",
+      articleId: "1",
+      status: "normal"
+    }],
     likes: "150",
+    isLiking: true,
     views: "1024",
     publishTimestamp: BigInt(Date.now() - 7 * 24 * 60 * 60 * 1000), // 1 week ago
     updateTimestamp: BigInt(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
@@ -751,6 +764,7 @@ export const fakeCompleteArticles: Array<CompleteArticleData> = [
     rate: 9.3,
     comments: [],
     likes: "200",
+    isLiking: false,
     views: "1345",
     publishTimestamp: BigInt(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
     updateTimestamp: BigInt(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
@@ -816,6 +830,7 @@ export const fakeCompleteArticles: Array<CompleteArticleData> = [
     rate: 7.8,
     comments: [],
     likes: "120",
+    isLiking: true,
     views: "987",
     publishTimestamp: BigInt(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
     updateTimestamp: BigInt(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
@@ -897,6 +912,7 @@ export const fakeCompleteArticles: Array<CompleteArticleData> = [
     rate: 8.9,
     comments: [],
     likes: "140",
+    isLiking: false,
     views: "1123",
     publishTimestamp: BigInt(Date.now() - 12 * 24 * 60 * 60 * 1000), // 12 days ago
     updateTimestamp: BigInt(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
@@ -966,6 +982,7 @@ export const fakeCompleteArticles: Array<CompleteArticleData> = [
     rate: 9.6,
     comments: [],
     likes: "175",
+    isLiking: true,
     views: "1420",
     publishTimestamp: BigInt(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
     updateTimestamp: BigInt(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago

@@ -4,7 +4,6 @@ import ArticleModificationForm, {
 } from "@/components/forms/ArticleModificationForm.tsx";
 import Button from "@mui/material/Button";
 import SendIcon from '@mui/icons-material/Send';
-import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MuiConfirmBox from "@/components/mui/MuiConfirmBox.tsx";
 import { ButtonStyleType, CompleteArticleData } from "@/types.ts";
@@ -38,8 +37,9 @@ const ArticleCreationPage = () => {
     confirmOptionColor: "primary",
     cancelOptionStartIcon: undefined,
     confirmOptionStartIcon: undefined,
+    cancelOptionEndIcon: undefined,
     confirmOptionEndIcon: undefined,
-    cancelOptionEndIcon: undefined
+    confirmOptionLoadingPosition: "center"
   });
   const [confirmAction, setConfirmAction] = useState<() => Promise<void>>(() => async () => { });
 
@@ -152,7 +152,8 @@ const ArticleCreationPage = () => {
       confirmOptionText: "Publish",
       confirmOptionColor: "primary",
       confirmOptionStartIcon: undefined,
-      cancelOptionEndIcon: <SendIcon fontSize="small"/>,
+      confirmOptionEndIcon: <SendIcon fontSize="small"/>,
+      confirmOptionLoadingPosition: "end",
       option3Text: undefined
     }));
     setConfirmAction(() => handlePublish);
@@ -190,7 +191,7 @@ const ArticleCreationPage = () => {
       confirmOptionText: "Leave",
       confirmOptionColor: "error",
       confirmOptionStartIcon: <DeleteIcon/>,
-      cancelOptionEndIcon: undefined
+      confirmOptionEndIcon: undefined
     }));
     setConfirmAction(() => handleCancel);
     setConfirmBoxOpen(true);
@@ -218,12 +219,12 @@ const ArticleCreationPage = () => {
       title: "Leave this page? ",
       description: "By confirming, any unsaved changes to your draft will be permanently deleted and you will leave this page. Are you sure you want to proceed?",
       cancelOptionColor: "primary",
-      cancelOptionEndIcon: undefined,
+      confirmOptionEndIcon: undefined,
       cancelOptionVariant: "text",
       confirmOptionText: "Save and Leave",
       confirmOptionColor: "primary",
       confirmOptionStartIcon: undefined,
-      confirmOptionEndIcon: undefined,
+      cancelOptionEndIcon: undefined,
       option3Text: "Dont save",
       option3StartIcon: undefined,
       option3EndIcon: undefined,
@@ -244,11 +245,9 @@ const ArticleCreationPage = () => {
         </Button>
         {/*  title  */}
         <div className="w-full mt-10 space-y-10 md:space-y-0 md:flex justify-between items-center">
-          <div className="lg:hidden text-4xl font-bold">Create Article</div>
           <div className="text-4xl font-bold">Create Article</div>
           <div className="flex flex-nowrap justify-start md:justify-center items-center gap-4">
-            <Button variant="outlined" onClick={handlePreview} endIcon={<PreviewOutlinedIcon/>}
-                    color="secondary">Preview</Button>
+            <Button variant="outlined" onClick={handlePreview} color="secondary">Preview</Button>
             <Button variant="contained" onClick={openPublishConfirmDialog} endIcon={<SendIcon fontSize="small"/>}
                     color="primary">Publish</Button>
           </div>

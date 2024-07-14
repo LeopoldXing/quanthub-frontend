@@ -9,9 +9,12 @@ import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 
 type ArticleProps = {
   articleData?: CompleteArticleData;
+  likes?: number;
+  views?: number;
+  commentCount?: number;
 }
 
-const Article = ({ articleData = fakeCompleteArticles[0] }: ArticleProps) => {
+const Article = ({ articleData = fakeCompleteArticles[0], likes = 0, views = 1, commentCount = 0 }: ArticleProps) => {
   return (
       <div className="w-full">
         {/*  title  */}
@@ -41,15 +44,15 @@ const Article = ({ articleData = fakeCompleteArticles[0] }: ArticleProps) => {
             <div className="flex justify-center items-center gap-4">
               <div className="flex justify-center items-center gap-1">
                 <VisibilityOutlinedIcon fontSize="14px" sx={{ color: "#9CA3AF" }}/>
-                <Typography fontSize="13px" color="#9CA3AF">{articleData.views}</Typography>
+                <Typography fontSize="13px" color="#9CA3AF">{views}</Typography>
               </div>
               <div className="flex justify-center items-center gap-1">
                 <CommentOutlinedIcon fontSize="14px" sx={{ color: "#9CA3AF" }}/>
-                <Typography fontSize="13px" color="#9CA3AF">{articleData.comments.length}</Typography>
+                <Typography fontSize="13px" color="#9CA3AF">{commentCount}</Typography>
               </div>
               <div className="flex justify-center items-center gap-1">
                 <ThumbUpOutlinedIcon fontSize="14px" sx={{ color: "#9CA3AF" }}/>
-                <Typography fontSize="13px" color="#9CA3AF">{articleData.likes}</Typography>
+                <Typography fontSize="13px" color="#9CA3AF">{likes}</Typography>
               </div>
             </div>
           </div>
@@ -60,7 +63,7 @@ const Article = ({ articleData = fakeCompleteArticles[0] }: ArticleProps) => {
         </div>
         {/*  tags  */}
         {articleData.tags && (
-            <div className="mt-12">
+            <div className="mt-8">
               <TagBar tagList={articleData.tags} multiLine={true} size={"medium"} variant="filled" gap={4}/>
             </div>
         )}
