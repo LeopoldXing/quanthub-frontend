@@ -10,11 +10,18 @@ import Picker from '@emoji-mart/react';
 type CommentInputSectionProps = {
   onSubmitted: (content: string) => Promise<void>;
   onDeActivate?: () => void;
+  mode?: "create" | "edit";
+  initialContent?: string;
 }
 
-const CommentInputBox = ({ onDeActivate, onSubmitted }: CommentInputSectionProps) => {
-  const [isInputActive, setIsInputActive] = useState<boolean>(false);
-  const [input, setInput] = useState("");
+const CommentInputBox = ({
+                           onDeActivate,
+                           onSubmitted,
+                           mode = "create",
+                           initialContent = ""
+                         }: CommentInputSectionProps) => {
+  const [isInputActive, setIsInputActive] = useState<boolean>(mode === "edit");
+  const [input, setInput] = useState(initialContent);
   const [loading, setLoading] = useState(false);
   const [submissionDisabled, setSubmissionDisabled] = useState<boolean>(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
@@ -79,6 +86,13 @@ const CommentInputBox = ({ onDeActivate, onSubmitted }: CommentInputSectionProps
   }, [showEmojiPicker]);
 
   useEffect(() => {
+    // edit mode will auto direct cursor to the end of the text
+    if (mode === "edit" && inputRef.current) {
+      inputRef.current.focus();
+      const length = input.length;
+      inputRef.current.setSelectionRange(length, length);
+    }
+
     const handleClickOutside = (event: MouseEvent) => {
       if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node) &&
           emojiButtonRef.current && !emojiButtonRef.current.contains(event.target as Node)) {
@@ -94,7 +108,8 @@ const CommentInputBox = ({ onDeActivate, onSubmitted }: CommentInputSectionProps
 
   return (
       <div className="w-full flex justify-start items-start gap-5">
-        <Avatar alt="user avatar" src={avatar} sx={{ marginTop: "26px", height: "40px", width: "40px" }}/>
+        <Avatar alt="user avatar" src={avatar}
+                sx={{ marginTop: `${mode === 'edit' ? '10px' : '26px'}`, height: "40px", width: "40px" }}/>
         <div className="w-full flex flex-col justify-start items-center gap-1">
           <TextField
               id="comment_input_textfield"
@@ -102,8 +117,9 @@ const CommentInputBox = ({ onDeActivate, onSubmitted }: CommentInputSectionProps
               value={input}
               onChange={e => setInput(e.target.value)}
               inputRef={inputRef}
-              label="Add a comment..."
+              label={mode === "create" ? "Add a comment..." : undefined}
               multiline
+              autoFocus={mode === "edit"}
               variant="standard"
               fullWidth
               InputProps={{
@@ -134,7 +150,7 @@ const CommentInputBox = ({ onDeActivate, onSubmitted }: CommentInputSectionProps
                                  size="small"
                                  variant="contained" color="primary" onClick={handleCommentSubmission}
                                  loading={loading} disabled={submissionDisabled}>
-                    <span className="text-sm">Comment</span>
+                    <span className="text-sm">{mode === "edit" ? "Save" : "Comment"}</span>
                   </LoadingButton>
                 </div>
               </div>

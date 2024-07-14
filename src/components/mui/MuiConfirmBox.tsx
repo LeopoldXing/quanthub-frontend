@@ -8,6 +8,7 @@ type MuiConfirmBoxProps = {
   open: boolean;
   handleClose: () => void;
   onConfirm: () => Promise<void>;
+  onCancel?: () => void;
   buttonStyle: ButtonStyleType;
 };
 
@@ -15,6 +16,7 @@ const MuiConfirmBox = ({
                          open,
                          handleClose,
                          onConfirm,
+                         onCancel,
                          buttonStyle = {
                            title: "Confirm action?",
                            description: "",
@@ -56,12 +58,16 @@ const MuiConfirmBox = ({
           marginY: "10px",
           marginRight: "25px",
         }}>
+          {/*  cancel  */}
           <Button
               color={buttonStyle.cancelOptionColor}
               variant={buttonStyle.cancelOptionVariant}
               startIcon={buttonStyle.cancelOptionStartIcon}
               endIcon={buttonStyle.cancelOptionEndIcon}
-              onClick={handleClose}
+              onClick={() => {
+                onCancel && onCancel();
+                handleClose();
+              }}
               disabled={loading}
               sx={{ fontSize: "small" }}
               size="small"
@@ -85,6 +91,7 @@ const MuiConfirmBox = ({
                 {buttonStyle.option3Text}
               </Button>
           )}
+          {/*  confirm  */}
           <LoadingButton
               variant={buttonStyle.confirmOptionVariant}
               color={buttonStyle.confirmOptionColor}

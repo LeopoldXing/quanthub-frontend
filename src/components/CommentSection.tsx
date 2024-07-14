@@ -18,9 +18,9 @@ const CommentSection = ({ comments, onComment }: CommentSectionProps) => {
         </div>
         {/*  comment list  */}
         {Array.isArray(comments) && comments.length > 0 && (
-            <ul className="w-full mt-6">
-              {comments.map(comment => (
-                  <li key={comment.id} className="w-full">
+            <ul className="w-full mt-6 mb-16">
+              {comments.map((comment, index) => (
+                  <li key={comment.id} className={`w-full ${index !== 0 ? 'mt-8' : ''}`}>
                     <CommentItem comment={comment}/>
                   </li>
               ))}

@@ -689,17 +689,63 @@ export const fakeCompleteArticles: Array<CompleteArticleData> = [
     author: { id: "1", username: "Quant Guru", role: "admin" },
     coverImageLink: undefined,
     rate: 8.5,
-    comments: [{
-      id: uuidv4(),
-      content: "content1233435256trweioguwehrogicontenuwehrogicontent1233435256trweioguwehrogicontasdfgaergaerthryjtdyjfgukgyuilhuikdfgyseraeerkko;jikoglysrfgaesdrghfyjghliotlyudtjthsrtguwehrogi",
-      user: {
-        id: uuidv4(), username: "Disco_Broccoli", role: "user"
+    comments: [
+      {
+        id: uuidv4(),
+        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquid architecto asperiores autem beatae commodi consequatur culpa cum distinctio dolore error eveniet excepturi expedita fugiat id itaque iure labore minus molestiae nemo odit officia porro possimus quae quam quibusdam quidem quod ratione reprehenderit sed, suscipit temporibus voluptatem voluptatum! Aspernatur dignissimos dolorem necessitatibus reiciendis veritatis. Accusamus adipisci commodi laborum, modi officia officiis recusandae sunt ullam. Adipisci aut beatae corporis debitis eaque esse explicabo facilis, nemo neque odio quidem quo quod reiciendis, sapiente sequi velit voluptates? Aliquam corporis cum exercitationem in neque nisi, perferendis placeat quibusdam quis repellat tenetur voluptate voluptates voluptatibus?",
+        user: {
+          id: uuidv4(), username: "Disco_Broccoli", role: "user"
+        },
+        publishDatetime: new Date(Date.now() - 1000 * 60 * 60 * 13),
+        publishTillToday: "13 days ago",
+        articleId: "1",
+        status: "normal"
       },
-      publishDatetime: new Date(Date.now() - 1000 * 60 * 60 * 13),
-      publishTillToday: "13 days ago",
-      articleId: "1",
-      status: "normal"
-    }],
+      {
+        id: uuidv4(),
+        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquid architecto asperiores autem beatae commodi consequatur culpa cum distinctio dolore error eveniet excepturi expedita fugiat id itaque iure labore minus molestiae nemo odit officia porro possimus quae quam quibusdam quidem quod ratione reprehenderit sed, suscipit temporibus voluptatem voluptatum! Aspernatur dignissimos dolorem necessitatibus reiciendis veritatis. Accusamus adipisci commodi laborum, modi officia officiis recusandae sunt ullam. Adipisci aut beatae corporis debitis eaque esse explicabo facilis, nemo neque odio quidem quo quod reiciendis, sapiente sequi velit voluptates? Aliquam corporis cum exercitationem in neque nisi, perferendis placeat quibusdam quis repellat tenetur voluptate voluptates voluptatibus?",
+        user: {
+          id: uuidv4(), username: "Disco_Broccoli", role: "user"
+        },
+        publishDatetime: new Date(Date.now() - 1000 * 60 * 60 * 13),
+        publishTillToday: "13 days ago",
+        articleId: "1",
+        status: "normal"
+      },
+      {
+        id: uuidv4(),
+        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquid architecto asperiores autem beatae commodi consequatur culpa cum distinctio dolore error eveniet excepturi expedita fugiat id itaque iure labore minus molestiae nemo odit officia porro possimus quae quam quibusdam quidem quod ratione reprehenderit sed, suscipit temporibus voluptatem voluptatum! Aspernatur dignissimos dolorem necessitatibus reiciendis veritatis. Accusamus adipisci commodi laborum, modi officia officiis recusandae sunt ullam. Adipisci aut beatae corporis debitis eaque esse explicabo facilis, nemo neque odio quidem quo quod reiciendis, sapiente sequi velit voluptates? Aliquam corporis cum exercitationem in neque nisi, perferendis placeat quibusdam quis repellat tenetur voluptate voluptates voluptatibus?",
+        user: {
+          id: uuidv4(), username: "Disco_Broccoli", role: "user"
+        },
+        publishDatetime: new Date(Date.now() - 1000 * 60 * 60 * 13),
+        publishTillToday: "13 days ago",
+        articleId: "1",
+        status: "normal"
+      },
+      {
+        id: uuidv4(),
+        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquid architecto asperiores autem beatae commodi consequatur culpa cum distinctio dolore error eveniet excepturi expedita fugiat id itaque iure labore minus molestiae nemo odit officia porro possimus quae quam quibusdam quidem quod ratione reprehenderit sed, suscipit temporibus voluptatem voluptatum! Aspernatur dignissimos dolorem necessitatibus reiciendis veritatis. Accusamus adipisci commodi laborum, modi officia officiis recusandae sunt ullam. Adipisci aut beatae corporis debitis eaque esse explicabo facilis, nemo neque odio quidem quo quod reiciendis, sapiente sequi velit voluptates? Aliquam corporis cum exercitationem in neque nisi, perferendis placeat quibusdam quis repellat tenetur voluptate voluptates voluptatibus?",
+        user: {
+          id: uuidv4(), username: "Disco_Broccoli", role: "user"
+        },
+        publishDatetime: new Date(Date.now() - 1000 * 60 * 60 * 13),
+        publishTillToday: "13 days ago",
+        articleId: "1",
+        status: "normal"
+      },
+      {
+        id: uuidv4(),
+        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquid architecto asperiores autem beatae commodi consequatur culpa cum distinctio dolore error eveniet excepturi expedita fugiat id itaque iure labore minus molestiae nemo odit officia porro possimus quae quam quibusdam quidem quod ratione reprehenderit sed, suscipit temporibus voluptatem voluptatum! Aspernatur dignissimos dolorem necessitatibus reiciendis veritatis. Accusamus adipisci commodi laborum, modi officia officiis recusandae sunt ullam. Adipisci aut beatae corporis debitis eaque esse explicabo facilis, nemo neque odio quidem quo quod reiciendis, sapiente sequi velit voluptates? Aliquam corporis cum exercitationem in neque nisi, perferendis placeat quibusdam quis repellat tenetur voluptate voluptates voluptatibus?",
+        user: {
+          id: uuidv4(), username: "Disco_Broccoli", role: "user"
+        },
+        publishDatetime: new Date(Date.now() - 1000 * 60 * 60 * 13),
+        publishTillToday: "13 days ago",
+        articleId: "1",
+        status: "normal"
+      }
+    ],
     likes: "150",
     isLiking: true,
     views: "1024",
