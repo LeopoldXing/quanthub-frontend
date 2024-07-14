@@ -4,8 +4,8 @@ import EditorMenuControls from "@/components/mui/RichTextEditor/EditorMenuContro
 import { categories, exampleContentHtml, exampleContentJson, tags } from "@/lib/dummyData.ts";
 import { Box, TextField } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { ArticleComment } from "@/types.ts";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState, useCallback } from "react";
+import { ArticleComment, Tag } from "@/types.ts";
 import {
   articleModificationFormSchema,
   ArticleModificationFormZodDataType
@@ -23,7 +23,7 @@ type ArticleModificationFormProps = {
   initialData: {
     title?: string;
     subtitle?: string;
-    content?: string;
+    contentHtml?: string;
     author: {
       username: string;
     };
@@ -50,8 +50,8 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
                                                                                                                    }, ref) => {
   // form data
   const [formData, setFormData] = useState<ArticleModificationFormZodDataType>({
-    title: "",
-    subtitle: null,
+    title: initialData.title || "",
+    subtitle: initialData.subtitle || null,
     contentHtml: exampleContentHtml,
     contentText: "",
     contentJson: JSON.stringify(exampleContentJson),
@@ -60,17 +60,21 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
     attachmentLink: null,
     tagNameList: []
   });
+
+  // 优化 useEffect，避免不必要的状态更新
   useEffect(() => {
     if (onFormDataChange) {
       onFormDataChange(formData);
     }
   }, [formData, onFormDataChange]);
+
   // text editor ref
   const textEditorRef = useRef<handleRichTextEditorData>(null);
   // tag pool ref
   const tagPoolRef = useRef<HandleSelectedTagData>(null);
+
   // get article content
-  const fetchArticleContent = (contentType: "text" | "json" | "html" | "html&text") => {
+  const fetchArticleContent = useCallback((contentType: "text" | "json" | "html" | "html&text") => {
     let contentText: string = "";
     let contentHtml: string = "";
     let contentJson: string = "";
@@ -83,14 +87,15 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
       } else if (contentType === "html") {
         contentHtml = textEditorRef.current.getHtml();
       } else if (contentType === "json") {
-        contentJson = JSON.parse(textEditorRef.current.getJson()) || "";
+        contentJson = textEditorRef.current.getJson();
       }
     }
     return { contentText, contentHtml, contentJson };
-  }
+  }, []);
+
   // validate form data
   const [errors, setErrors] = useState<{ [key in keyof ArticleModificationFormZodDataType]?: string }>({});
-  const validateFormData = (data: ArticleModificationFormZodDataType): boolean => {
+  const validateFormData = useCallback((data: ArticleModificationFormZodDataType): boolean => {
     const result = articleModificationFormSchema.safeParse(data);
     if (!result.success) {
       const fieldErrors = result.error.flatten().fieldErrors;
@@ -104,7 +109,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
       setErrors({});
       return true;
     }
-  };
+  }, []);
 
   /*  interfaces expose to other component  */
   useImperativeHandle(ref, () => ({
@@ -116,7 +121,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
       const selectedTagList = tagPoolRef.current?.getSelectedTagList();
       setFormData(prevState => ({
         ...prevState,
-        tagNameList: selectedTagList?.map(selectedTag => selectedTag.name) || null
+        tagNameList: selectedTagList?.map(selectedTag => selectedTag.name) || []
       }))
       if (validateFormData(formData)) {
         return formData;
@@ -126,10 +131,35 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
   }));
 
   /*  handle file upload button click  */
-  const handleFileUpload = () => {
+  const handleFileUpload = useCallback(() => {
     console.log("文件上传");
     console.log(formData);
-  }
+  }, [formData]);
+
+  const handleTitleChange = useCallback((e) => {
+    setFormData(prevState => ({ ...prevState, title: e.target.value }));
+  }, []);
+
+  const handleSubtitleChange = useCallback((e) => {
+    setFormData(prevState => ({ ...prevState, subtitle: e.target.value }));
+  }, []);
+
+  const handleCategoryChange = useCallback((categoryName: string) => {
+    setFormData(prevState => ({ ...prevState, categoryName }));
+  }, []);
+
+  const handleTagUpdate = useCallback((tagList: Tag[]) => {
+    setFormData(prevState => ({ ...prevState, tagNameList: tagList.map(tag => tag.name) }));
+  }, []);
+
+  const handleEditorUpdate = useCallback((content) => {
+    setFormData(prevState => ({
+      ...prevState,
+      contentText: content.contentText,
+      contentHtml: content.contentHtml,
+      contentJson: content.contentJson
+    }));
+  }, []);
 
   return (
       <Box width="100%" component="form" noValidate autoComplete="off">
@@ -145,8 +175,9 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
               size="small"
               error={!!errors.title}
               helperText={errors.title}
-              onChange={e => setFormData(prevState => ({ ...prevState, title: e.target.value }))}
+              onChange={handleTitleChange}
               autoFocus
+              value={formData.title}
           />
           <InputLabel htmlFor="sub_title" size="small">Sub Title*</InputLabel>
           <TextField
@@ -158,7 +189,8 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
               size="small"
               error={!!errors.subtitle}
               helperText={errors.subtitle}
-              onChange={e => setFormData(prevState => ({ ...prevState, subtitle: e.target.value }))}
+              onChange={handleSubtitleChange}
+              value={formData.subtitle || ''}
           />
         </Box>
         {/*  Rich Text Editor  */}
@@ -169,22 +201,14 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
                     <EditorMenuControls/>
                   </MenuControlsContainer>
               )}
-              initialContent={mode === "create" ? exampleContentHtml : initialData.content}
+              initialContent={mode === "create" ? exampleContentHtml : initialData.contentHtml}
               ref={textEditorRef}
               onSaveDraft={onSaveDraft}
               onCancel={onCancel}
-              onUpdate={(content) => {
-                setFormData(prevState => ({
-                  ...prevState,
-                  contentText: content.contentText,
-                  contentHtml: content.contentHtml,
-                  contextJson: content.contentJson
-                }))
-              }}
+              onUpdate={handleEditorUpdate}
               isSavingDraft={isSavingDraft}
           />
         </div>
-
 
         {/*  tags and files and category  */}
         <div className="w-full mt-10 flex flex-col justify-start items-center gap-10">
@@ -193,10 +217,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
             <div className="w-full min-h-24 flex flex-col justify-start items-start gap-4">
               <div className="text-nowrap text-xl font-bold">Category</div>
               <SingleCategorySelectBox categoryList={categories}
-                                       onUpdate={categoryName => setFormData(prevState => ({
-                                         ...prevState,
-                                         categoryName: categoryName
-                                       }))}/>
+                                       onUpdate={handleCategoryChange}/>
             </div>
             <div className="w-full min-h-28 flex flex-col justify-start items-start gap-4">
               <div className="w-full">
@@ -214,10 +235,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
           <div className="w-full md:hidden flex flex-col justify-start items-start gap-4">
             <div className="text-nowrap text-xl font-bold">Category</div>
             <SingleCategorySelectBox categoryList={categories}
-                                     onUpdate={categoryName => setFormData(prevState => ({
-                                       ...prevState,
-                                       categoryName: categoryName
-                                     }))}/>
+                                     onUpdate={handleCategoryChange}/>
           </div>
           <div className="w-full min-h-28 md:hidden flex flex-col justify-start items-start gap-4">
             <div className="w-full">
@@ -236,11 +254,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
               <div className="text-nowrap text-xl font-bold">Tags</div>
               <div className="w-full mt-3">
                 <TagPoolForArticleModification tagList={tags} ref={tagPoolRef}
-                                               onUpdate={(tagList) => setFormData(prevState => ({
-                                                 ...prevState,
-                                                 tagNameList: tagList.map(tag => tag.name)
-                                               }))}
-                />
+                                               onUpdate={handleTagUpdate}/>
               </div>
             </div>
           </div>

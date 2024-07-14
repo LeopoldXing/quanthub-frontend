@@ -15,6 +15,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import CommentSection from "@/components/CommentSection.tsx";
 import MuiConfirmBox from "@/components/mui/MuiConfirmBox.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useNotification } from "@/contexts/NotificationContext.tsx";
 
 type ArticleDetailPageProps = {
   mode?: "user" | "viewer" | "admin";
@@ -25,6 +26,8 @@ const ArticleDetailPage = ({ mode = "viewer" }: ArticleDetailPageProps) => {
   const navigate = useNavigate();
   const { articleId, initialArticleData } = location.state || {};
   const [articleData, setArticleData] = useState<CompleteArticleData>(initialArticleData);
+
+  const {showNotification} = useNotification();
 
   // dialog
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -93,6 +96,12 @@ const ArticleDetailPage = ({ mode = "viewer" }: ArticleDetailPageProps) => {
     await sleep(1000);
     console.log("delete article");
     navigate("/my/articles");
+    showNotification({
+      message: "Article Deleted",
+      severity: "success",
+      horizontal: "right",
+      vertical: "bottom"
+    });
   }
 
   return (
