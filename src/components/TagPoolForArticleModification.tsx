@@ -12,14 +12,22 @@ export interface HandleSelectedTagData {
 type TagPoolProps = {
   tagList: Array<Tag>;
   onUpdate?: (tagList: Tag[]) => void;
+  initialTagNameList?: string[];
 };
 
 const TagPoolForArticleModification = forwardRef<HandleSelectedTagData, TagPoolProps>(({
+                                                                                         initialTagNameList,
                                                                                          tagList,
                                                                                          onUpdate
                                                                                        }, ref) => {
-  const [localTagList, setLocalTagList] = useState<Tag[]>(tagList);
-  const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>([]);
+  // make sure tagList has the value of initialTagNameList
+  const [localTagList, setLocalTagList] = useState<Tag[]>(
+      [...new Set([...tagList.map(tag => tag.name), ...initialTagNameList || []])]
+          .map(name => ({ id: uuidv4(), name })));
+  const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>(initialTagNameList?.map(name => ({
+    id: uuidv4(),
+    name
+  })) || []);
   const [newTagList, setNewTagList] = useState<Array<Tag>>([]);
   const [newTagName, setNewTagName] = useState<string>("");
   // notification

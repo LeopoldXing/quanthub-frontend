@@ -21,19 +21,14 @@ export interface HandleArticleModificationFormSubmission {
 
 type ArticleModificationFormProps = {
   initialData: {
-    title?: string;
-    subtitle?: string;
-    contentHtml?: string;
-    author: {
-      username: string;
-    };
+    initialFormData: ArticleModificationFormZodDataType;
     metaData?: {
       likes: bigint;
       views: bigint;
       comments: ArticleComment[];
     }
   };
-  mode?: "create" | "update";
+  mode?: "create" | "edit";
   onSaveDraft: () => void;
   onCancel: () => void;
   isSavingDraft?: boolean;
@@ -50,15 +45,15 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
                                                                                                                    }, ref) => {
   // form data
   const [formData, setFormData] = useState<ArticleModificationFormZodDataType>({
-    title: initialData.title || "",
-    subtitle: initialData.subtitle || null,
-    contentHtml: exampleContentHtml,
+    title: initialData?.initialFormData?.title || "",
+    subtitle: initialData?.initialFormData?.subtitle || null,
+    contentHtml: initialData?.initialFormData?.contentHtml || exampleContentHtml,
     contentText: "",
-    contentJson: JSON.stringify(exampleContentJson),
-    categoryName: "unknown",
+    contentJson: initialData?.initialFormData?.contentJson || JSON.stringify(exampleContentJson),
+    categoryName: initialData?.initialFormData?.categoryName || "",
     pictureLinkList: [],
     attachmentLink: null,
-    tagNameList: []
+    tagNameList: initialData?.initialFormData?.tagNameList || []
   });
 
   // 优化 useEffect，避免不必要的状态更新
@@ -152,7 +147,11 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
     setFormData(prevState => ({ ...prevState, tagNameList: tagList.map(tag => tag.name) }));
   }, []);
 
-  const handleEditorUpdate = useCallback((content) => {
+  const handleEditorUpdate = useCallback((content: {
+    contentText: string,
+    contentHtml: string,
+    contentJson: string
+  }) => {
     setFormData(prevState => ({
       ...prevState,
       contentText: content.contentText,
@@ -201,7 +200,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
                     <EditorMenuControls/>
                   </MenuControlsContainer>
               )}
-              initialContent={mode === "create" ? exampleContentHtml : initialData.contentHtml}
+              initialContent={mode === "create" ? exampleContentHtml : initialData.initialFormData.contentHtml || exampleContentHtml}
               ref={textEditorRef}
               onSaveDraft={onSaveDraft}
               onCancel={onCancel}
@@ -216,7 +215,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
           <div className="w-full hidden md:flex justify-between items-center gap-8">
             <div className="w-full min-h-24 flex flex-col justify-start items-start gap-4">
               <div className="text-nowrap text-xl font-bold">Category</div>
-              <SingleCategorySelectBox categoryList={categories}
+              <SingleCategorySelectBox categoryList={categories} initialCategoryName={initialData.initialFormData.categoryName || ""}
                                        onUpdate={handleCategoryChange}/>
             </div>
             <div className="w-full min-h-28 flex flex-col justify-start items-start gap-4">
@@ -253,7 +252,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
             <div className="w-full flex flex-col justify-start items-start gap-4">
               <div className="text-nowrap text-xl font-bold">Tags</div>
               <div className="w-full mt-3">
-                <TagPoolForArticleModification tagList={tags} ref={tagPoolRef}
+                <TagPoolForArticleModification tagList={tags} ref={tagPoolRef} initialTagNameList={initialData.initialFormData.tagNameList}
                                                onUpdate={handleTagUpdate}/>
               </div>
             </div>

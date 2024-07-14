@@ -22,14 +22,16 @@ interface SingleCategorySelectBoxProps {
   categoryList: Array<Category>;
   onUpdate?: (data: string) => void;
   height?: string;
+  initialCategoryName?: string;
 }
 
 export default function SingleCategorySelectBox({
+                                                  initialCategoryName,
                                                   categoryList,
                                                   onUpdate,
                                                   height = "70px"
                                                 }: SingleCategorySelectBoxProps) {
-  const [selectedCategoryName, setSelectedCategoryName] = React.useState<string>("");
+  const [selectedCategoryName, setSelectedCategoryName] = React.useState<string>(initialCategoryName || "");
 
   useEffect(() => {
     if (onUpdate && selectedCategoryName !== "") {
@@ -41,7 +43,7 @@ export default function SingleCategorySelectBox({
       <FormControl sx={{ width: 1 }}>
         <Select
             id="demo-multiple-checkbox"
-            value={selectedCategoryName}
+            defaultValue={initialCategoryName || ""}
             onChange={(e) => setSelectedCategoryName(e.target.value)}
             input={<OutlinedInput/>}
             sx={{

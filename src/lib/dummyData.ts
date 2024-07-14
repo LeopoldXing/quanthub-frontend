@@ -683,57 +683,55 @@ export const fakeCompleteArticles: Array<CompleteArticleData> = [
     id: "1",
     title: "Quantitative Trading Strategies for US Stocks",
     subtitle: "An Introduction",
-    tags: [{ id: "1", name: "quant" }, { id: "2", name: "US stocks" }],
+    tags: [{ id: "1", name: "quant" }, { id: "2", name: "US stocks" }, {id: "3", name: "自定义标签"}],
     category: { id: "1", name: "Trading" },
-    contentHtml: exampleContentHtml,
+    contentHtml: `
+      <p>
+        The use of machine learning in trading has grown significantly in recent years. This article explores how machine 
+        learning algorithms can be applied to Bitcoin trading to enhance trading strategies and improve returns. 
+        Machine learning models can analyze large datasets to identify patterns and make predictions about future price 
+        movements. These models can be used for various trading strategies, including predictive modeling, sentiment 
+        analysis, and anomaly detection.
+      </p>
+      <h3>Predictive Modeling</h3>
+      <p>
+        Predictive modeling involves using historical data to make predictions about future events. In the context of 
+        Bitcoin trading, predictive models can forecast future price movements based on past price data. These models 
+        use statistical techniques and machine learning algorithms, such as regression analysis and neural networks, 
+        to identify patterns in the data. Traders can use these predictions to inform their trading decisions, such 
+        as when to buy or sell Bitcoin.
+      </p>
+      <h3>Sentiment Analysis</h3>
+      <p>
+        Sentiment analysis is another powerful application of machine learning in Bitcoin trading. This technique 
+        involves analyzing social media posts, news articles, and other text data to gauge market sentiment. Machine 
+        learning algorithms, particularly those in the field of natural language processing (NLP), can process and 
+        analyze vast amounts of text data to determine whether the sentiment is positive, negative, or neutral. Traders 
+        can use this information to make informed decisions about market trends and potential price movements.
+      </p>
+      <h3>Anomaly Detection</h3>
+      <p>
+        Anomaly detection involves identifying unusual patterns in the data that may indicate potential trading 
+        opportunities. Machine learning algorithms can be trained to recognize normal trading patterns and detect 
+        anomalies that deviate from these patterns. For example, a sudden spike in trading volume or a significant 
+        price movement that is not explained by historical trends may be flagged as an anomaly. Traders can investigate 
+        these anomalies to determine whether they represent potential trading opportunities or risks.
+      </p>
+      <h3>Conclusion</h3>
+      <p>
+        Machine learning applications in Bitcoin trading offer powerful tools for enhancing trading strategies. 
+        Predictive modeling, sentiment analysis, and anomaly detection are just a few of the ways that machine learning 
+        can be used to analyze market data and inform trading decisions. As the field of machine learning continues 
+        to evolve, it is likely that new applications and techniques will emerge, providing traders with even more 
+        sophisticated tools for navigating the complex world of cryptocurrency trading. However, it is important to 
+        note that machine learning models are not infallible, and traders should use them in conjunction with other 
+        analysis techniques and risk management strategies.
+      </p>
+    `,
     author: { id: "1", username: "Quant Guru", role: "admin" },
     coverImageLink: undefined,
     rate: 8.5,
     comments: [
-      {
-        id: uuidv4(),
-        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquid architecto asperiores autem beatae commodi consequatur culpa cum distinctio dolore error eveniet excepturi expedita fugiat id itaque iure labore minus molestiae nemo odit officia porro possimus quae quam quibusdam quidem quod ratione reprehenderit sed, suscipit temporibus voluptatem voluptatum! Aspernatur dignissimos dolorem necessitatibus reiciendis veritatis. Accusamus adipisci commodi laborum, modi officia officiis recusandae sunt ullam. Adipisci aut beatae corporis debitis eaque esse explicabo facilis, nemo neque odio quidem quo quod reiciendis, sapiente sequi velit voluptates? Aliquam corporis cum exercitationem in neque nisi, perferendis placeat quibusdam quis repellat tenetur voluptate voluptates voluptatibus?",
-        user: {
-          id: uuidv4(), username: "Disco_Broccoli", role: "user"
-        },
-        publishDatetime: new Date(Date.now() - 1000 * 60 * 60 * 13),
-        publishTillToday: "13 days ago",
-        articleId: "1",
-        status: "normal"
-      },
-      {
-        id: uuidv4(),
-        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquid architecto asperiores autem beatae commodi consequatur culpa cum distinctio dolore error eveniet excepturi expedita fugiat id itaque iure labore minus molestiae nemo odit officia porro possimus quae quam quibusdam quidem quod ratione reprehenderit sed, suscipit temporibus voluptatem voluptatum! Aspernatur dignissimos dolorem necessitatibus reiciendis veritatis. Accusamus adipisci commodi laborum, modi officia officiis recusandae sunt ullam. Adipisci aut beatae corporis debitis eaque esse explicabo facilis, nemo neque odio quidem quo quod reiciendis, sapiente sequi velit voluptates? Aliquam corporis cum exercitationem in neque nisi, perferendis placeat quibusdam quis repellat tenetur voluptate voluptates voluptatibus?",
-        user: {
-          id: uuidv4(), username: "Disco_Broccoli", role: "user"
-        },
-        publishDatetime: new Date(Date.now() - 1000 * 60 * 60 * 13),
-        publishTillToday: "13 days ago",
-        articleId: "1",
-        status: "normal"
-      },
-      {
-        id: uuidv4(),
-        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquid architecto asperiores autem beatae commodi consequatur culpa cum distinctio dolore error eveniet excepturi expedita fugiat id itaque iure labore minus molestiae nemo odit officia porro possimus quae quam quibusdam quidem quod ratione reprehenderit sed, suscipit temporibus voluptatem voluptatum! Aspernatur dignissimos dolorem necessitatibus reiciendis veritatis. Accusamus adipisci commodi laborum, modi officia officiis recusandae sunt ullam. Adipisci aut beatae corporis debitis eaque esse explicabo facilis, nemo neque odio quidem quo quod reiciendis, sapiente sequi velit voluptates? Aliquam corporis cum exercitationem in neque nisi, perferendis placeat quibusdam quis repellat tenetur voluptate voluptates voluptatibus?",
-        user: {
-          id: uuidv4(), username: "Disco_Broccoli", role: "user"
-        },
-        publishDatetime: new Date(Date.now() - 1000 * 60 * 60 * 13),
-        publishTillToday: "13 days ago",
-        articleId: "1",
-        status: "normal"
-      },
-      {
-        id: uuidv4(),
-        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquid architecto asperiores autem beatae commodi consequatur culpa cum distinctio dolore error eveniet excepturi expedita fugiat id itaque iure labore minus molestiae nemo odit officia porro possimus quae quam quibusdam quidem quod ratione reprehenderit sed, suscipit temporibus voluptatem voluptatum! Aspernatur dignissimos dolorem necessitatibus reiciendis veritatis. Accusamus adipisci commodi laborum, modi officia officiis recusandae sunt ullam. Adipisci aut beatae corporis debitis eaque esse explicabo facilis, nemo neque odio quidem quo quod reiciendis, sapiente sequi velit voluptates? Aliquam corporis cum exercitationem in neque nisi, perferendis placeat quibusdam quis repellat tenetur voluptate voluptates voluptatibus?",
-        user: {
-          id: uuidv4(), username: "Disco_Broccoli", role: "user"
-        },
-        publishDatetime: new Date(Date.now() - 1000 * 60 * 60 * 13),
-        publishTillToday: "13 days ago",
-        articleId: "1",
-        status: "normal"
-      },
       {
         id: uuidv4(),
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquid architecto asperiores autem beatae commodi consequatur culpa cum distinctio dolore error eveniet excepturi expedita fugiat id itaque iure labore minus molestiae nemo odit officia porro possimus quae quam quibusdam quidem quod ratione reprehenderit sed, suscipit temporibus voluptatem voluptatum! Aspernatur dignissimos dolorem necessitatibus reiciendis veritatis. Accusamus adipisci commodi laborum, modi officia officiis recusandae sunt ullam. Adipisci aut beatae corporis debitis eaque esse explicabo facilis, nemo neque odio quidem quo quod reiciendis, sapiente sequi velit voluptates? Aliquam corporis cum exercitationem in neque nisi, perferendis placeat quibusdam quis repellat tenetur voluptate voluptates voluptatibus?",
@@ -1428,6 +1426,8 @@ export const tags: Array<Tag> = [
 ];
 
 export const categories: Array<Category> = [
+  { id: "1", name: "Trading" },
+  { id: "2", name: "Cryptocurrency" },
   { id: "23", name: "high-frequency trading" },
   { id: "24", name: "statistical arbitrage" },
   { id: "25", name: "options pricing" },

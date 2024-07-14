@@ -1,5 +1,5 @@
 import { CompleteArticleData } from "@/types.ts";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { sleep } from "@/utils/GlobalUtils.ts";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Avatar, Box, Skeleton } from "@mui/material";
@@ -17,17 +17,19 @@ import MuiConfirmBox from "@/components/mui/MuiConfirmBox.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
 
-type ArticleDetailPageProps = {
-  mode?: "user" | "viewer" | "admin";
-}
-
-const ArticleDetailPage = ({ mode = "viewer" }: ArticleDetailPageProps) => {
+const ArticleDetailPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { articleId, initialArticleData } = location.state || {};
   const [articleData, setArticleData] = useState<CompleteArticleData>(initialArticleData);
 
-  const {showNotification} = useNotification();
+  const commentSectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    console.log(articleData);
+  }, [articleData]);
+
+  const { showNotification } = useNotification();
 
   // dialog
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -104,6 +106,12 @@ const ArticleDetailPage = ({ mode = "viewer" }: ArticleDetailPageProps) => {
     });
   }
 
+  const handleScrollToComments = () => {
+    if (commentSectionRef.current) {
+      commentSectionRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
         <Button startIcon={<ArrowBackIosIcon fontSize="small"/>}
@@ -134,7 +142,8 @@ const ArticleDetailPage = ({ mode = "viewer" }: ArticleDetailPageProps) => {
                         sx={{ minWidth: "40px", borderRadius: "20px" }} onClick={toggleDislikingButton}><ThumbDownIcon
                     fontSize="medium"/></Button>
                 <Button startIcon={<CommentIcon fontSize="large"/>} variant="outlined"
-                        sx={{ minWidth: "80px", borderRadius: "20px" }}>{articleData.comments.length}</Button>
+                        sx={{ minWidth: "80px", borderRadius: "20px" }}
+                        onClick={handleScrollToComments}>{articleData.comments.length}</Button>
                 <Button startIcon={<ShareIcon fontSize="large"/>} variant="outlined"
                         sx={{ textTransform: "none", minWidth: "90px", borderRadius: "20px" }}>Share</Button>
               </div>
@@ -160,7 +169,7 @@ const ArticleDetailPage = ({ mode = "viewer" }: ArticleDetailPageProps) => {
                 </div>
               </div>
               {/*  comment area  */}
-              <div className="w-full mt-10">
+              <div className="w-full mt-10" ref={commentSectionRef}>
                 <CommentSection comments={articleData.comments} onComment={async (content) => {
                   console.log("comment: ", content)
                   await sleep(1000);

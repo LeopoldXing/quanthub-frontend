@@ -7,8 +7,7 @@ import AboutPage from "@/pages/AboutPage.tsx";
 import SupportPage from "@/pages/SupportPage.tsx";
 import ArticlesPage from "@/pages/ArticlesPage.tsx";
 import ArticleDetailPage from "@/pages/ArticleDetailPage.tsx";
-import ArticleCreationPage from "@/pages/ArticleCreationPage.tsx";
-import ArticleUpdatePage from "@/pages/ArticleUpdatePage.tsx";
+import ArticleModificationPage from "@/pages/ArticleModificationPage.tsx";
 import MyArticlesPage from "@/pages/MyArticlesPage.tsx";
 
 const AppRoutes = () => {
@@ -22,8 +21,7 @@ const AppRoutes = () => {
         <Route path="/support" element={<Layout><SupportPage/></Layout>}/>
         <Route path="/articles" element={<Layout><ArticlesPage/></Layout>}/>
         <Route path="/article/detail" element={<Layout><ArticleDetailPage/></Layout>}/>
-        <Route path="/article/create" element={<Layout><ArticleCreationPage/></Layout>}/>
-        <Route path="/article/update" element={<Layout><ArticleUpdatePage/></Layout>}/>
+        <Route path="/article/create" element={<Layout><ArticleModificationPage/></Layout>}/>
         <Route path="/my/articles" element={<Layout><MyArticlesPage/></Layout>}/>
         <Route path="*" element={<Navigate to={"/"}/>}/>
       </Routes>
