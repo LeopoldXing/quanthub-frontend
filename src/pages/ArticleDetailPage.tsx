@@ -13,6 +13,8 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CommentIcon from '@mui/icons-material/Comment';
 import ShareIcon from '@mui/icons-material/Share';
 import CommentSection from "@/components/CommentSection.tsx";
+import MuiConfirmBox from "@/components/mui/MuiConfirmBox.tsx";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 type ArticleDetailPageProps = {
   mode?: "user" | "viewer" | "admin";
@@ -23,6 +25,9 @@ const ArticleDetailPage = ({ mode = "viewer" }: ArticleDetailPageProps) => {
   const navigate = useNavigate();
   const { articleId, initialArticleData } = location.state || {};
   const [articleData, setArticleData] = useState<CompleteArticleData>(initialArticleData);
+
+  // dialog
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   // fetch complete article data
   const [loading, setLoading] = useState<boolean>(!initialArticleData);
@@ -75,6 +80,21 @@ const ArticleDetailPage = ({ mode = "viewer" }: ArticleDetailPageProps) => {
     setIsDisliking(!isDisliking);
   };
 
+  /*  edit article  */
+  const handleEditArticle = () => {
+    navigate("/article/create", {
+      state: {
+        articleData: articleData
+      }
+    })
+  }
+  /*  delete article  */
+  const handleDeleteArticle = async () => {
+    await sleep(1000);
+    console.log("delete article");
+    navigate("/my/articles");
+  }
+
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
         <Button startIcon={<ArrowBackIosIcon fontSize="small"/>}
@@ -91,7 +111,9 @@ const ArticleDetailPage = ({ mode = "viewer" }: ArticleDetailPageProps) => {
         {!loading ? (
             <div className="w-full mt-8 flex flex-col justify-start items-start">
               {/*  article content  */}
-              <Article articleData={articleData} likes={likes} commentCount={0} views={1}/>
+              <Article articleData={articleData} likes={likes} commentCount={0} views={1}
+                       onDelete={() => setDialogOpen(true)}
+                       onEdit={handleEditArticle}/>
               {/*  like comment share  */}
               <div className="w-full mt-10 flex justify-start items-center gap-4">
                 <Button startIcon={<ThumbUpIcon fontSize="large"/>}
@@ -200,6 +222,22 @@ const ArticleDetailPage = ({ mode = "viewer" }: ArticleDetailPageProps) => {
               </Box>
             </Box>
         )}
+        <MuiConfirmBox open={dialogOpen} handleClose={() => setDialogOpen(false)} onConfirm={handleDeleteArticle}
+                       buttonStyle={{
+                         title: "Delete this article?",
+                         description: "Are you sure to permanently delete this article?",
+                         cancelOptionColor: "primary",
+                         confirmOptionText: "Delete",
+                         confirmOptionColor: "error",
+                         confirmOptionStartIcon: <DeleteIcon/>,
+                         confirmOptionEndIcon: undefined,
+                         cancelOptionText: "Cancel",
+                         cancelOptionVariant: "text",
+                         confirmOptionVariant: "contained",
+                         cancelOptionStartIcon: undefined,
+                         cancelOptionEndIcon: undefined,
+                         confirmOptionLoadingPosition: "start"
+                       }}/>
       </div>
   );
 };

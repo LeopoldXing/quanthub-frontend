@@ -122,11 +122,11 @@ const CommentInputBox = ({
               autoFocus={mode === "edit"}
               variant="standard"
               fullWidth
-              InputProps={{
+              /*InputProps={{
                 style: {
                   fontFamily: '"Segoe UI Emoji", "Segoe UI Symbol", "Segoe UI", "Apple Color Emoji", "Twemoji Mozilla", "Noto Color Emoji", "Android Emoji"'
                 }
-              }}
+              }}*/
           />
           {isInputActive ? (
               <div className="w-full mt-1 flex justify-between items-center relative">

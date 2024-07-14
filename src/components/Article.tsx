@@ -2,23 +2,48 @@ import { CompleteArticleData } from "@/types.ts";
 import RenderHtmlContent from "@/components/RenderHtmlContent.tsx";
 import { fakeCompleteArticles } from "@/lib/dummyData.ts";
 import TagBar from "@/components/TagBar.tsx";
-import { Typography } from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import CommentOutlinedIcon from "@mui/icons-material/CommentOutlined";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 type ArticleProps = {
   articleData?: CompleteArticleData;
+  isPreview?: boolean;
   likes?: number;
   views?: number;
   commentCount?: number;
+  onDelete?: (id: string) => void;
+  onEdit?: (id: string) => void;
 }
 
-const Article = ({ articleData = fakeCompleteArticles[0], likes = 0, views = 1, commentCount = 0 }: ArticleProps) => {
+const Article = ({
+                   articleData = fakeCompleteArticles[0],
+                   likes = 0,
+                   views = 1,
+                   commentCount = 0,
+                   isPreview = false,
+                   onDelete,
+                   onEdit,
+                 }: ArticleProps) => {
   return (
       <div className="w-full">
         {/*  title  */}
-        <div className="w-full text-4xl font-bold">{articleData.title}</div>
+        <div className={`w-full ${!isPreview && 'flex justify-start items-center'}`}>
+          <div className="text-4xl font-bold">{articleData.title}</div>
+          {!isPreview && (
+              <div className="ml-4 flex justify-start items-center gap-4">
+                <IconButton onClick={() => onEdit && onEdit(articleData.id)}>
+                  <EditIcon/>
+                </IconButton>
+                <IconButton onClick={() => onDelete && onDelete(articleData.id)}>
+                  <DeleteIcon/>
+                </IconButton>
+              </div>
+          )}
+        </div>
         {/*  subtitle  */}
         {articleData.subtitle && (
             <div className="w-full mt-8 text-xl font-bold text-gray-600">{articleData.subtitle}</div>
