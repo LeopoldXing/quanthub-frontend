@@ -16,8 +16,10 @@ export type User = {
   password?: string;
   email?: string;
   phoneNumber?: string;
-  role: string;
+  description?: string;
+  role: "Admin" | "Registered User";
   avatarLink?: string;
+  joinedDatetime?: Date;
 }
 
 export type ArticleComment = {

@@ -9,7 +9,7 @@ import { ArticleComment, Tag } from "@/types.ts";
 import {
   articleModificationFormSchema,
   ArticleModificationFormZodDataType
-} from "@/components/forms/schemas/ArticleModificationFormSchema.ts";
+} from "@/forms/schemas/ArticleModificationFormSchema.ts";
 import SingleCategorySelectBox from "@/components/mui/SingleCategorySelectBox.tsx";
 import FileUploadButton from "@/components/mui/FileUploadButton.tsx";
 import TagPoolForArticleModification, { HandleSelectedTagData } from "@/components/TagPoolForArticleModification.tsx";

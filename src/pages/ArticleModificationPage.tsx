@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import ArticleModificationForm, {
   HandleArticleModificationFormSubmission
-} from "@/components/forms/ArticleModificationForm.tsx";
+} from "@/forms/ArticleModificationForm.tsx";
 import Button from "@mui/material/Button";
 import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -16,7 +16,7 @@ import { fakeCompleteArticles } from "@/lib/dummyData.ts";
 import { Modal, Paper } from "@mui/material";
 import Article from "@/components/Article.tsx";
 import { v4 as uuidv4 } from "uuid";
-import { ArticleModificationFormZodDataType } from "@/components/forms/schemas/ArticleModificationFormSchema.ts";
+import { ArticleModificationFormZodDataType } from "@/forms/schemas/ArticleModificationFormSchema.ts";
 
 const ArticleModificationPage = () => {
   const location = useLocation();

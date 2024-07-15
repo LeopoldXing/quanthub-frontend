@@ -9,13 +9,14 @@ import ArticlesPage from "@/pages/ArticlesPage.tsx";
 import ArticleDetailPage from "@/pages/ArticleDetailPage.tsx";
 import ArticleModificationPage from "@/pages/ArticleModificationPage.tsx";
 import MyArticlesPage from "@/pages/MyArticlesPage.tsx";
+import UserProfilePage from "@/pages/UserProfilePage.tsx";
 
 const AppRoutes = () => {
   return (
       <Routes>
         <Route path="/" element={<HomePage/>}/>
         <Route path="/auth-callback" element={<AuthCallbackPage/>}/>
-        <Route path="/user-profile" element={<Layout><span>USER PROFILE PAGE</span></Layout>}/>
+        <Route path="/user-profile" element={<Layout><UserProfilePage/></Layout>}/>
         <Route path="/about" element={<Layout><AboutPage/></Layout>}/>
         <Route path="/docs" element={<Layout><DocsPage/></Layout>}/>
         <Route path="/support" element={<Layout><SupportPage/></Layout>}/>
