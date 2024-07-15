@@ -1,7 +1,8 @@
 import { useMutation } from "react-query";
 import { useAuth0 } from "@auth0/auth0-react";
+import { User } from "@/types.ts";
 
-const BASE_URL = import.meta.env.APP_BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 type CreateUserRequest = {
   auth0Id: string;
@@ -30,4 +31,33 @@ const useCreateMyUser = () => {
   return { createUser, isLoading, isError, isSuccess };
 }
 
-export { useCreateMyUser };
+
+type UpdateProfileRequest = {
+  user: User;
+}
+/**
+ * custom hook to update user profile
+ */
+const useUpdateProfile = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const updateProfileRequest = async (user: UpdateProfileRequest) => {
+    const accessToken = await getAccessTokenSilently();
+    const response = await fetch(`${BASE_URL}/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`
+      },
+      body: JSON.stringify(user)
+    });
+    if (!response.ok) {
+      throw new Error("Failed to update profile");
+    }
+  }
+
+  const { mutateAsync: updateProfile, isLoading, isError, isSuccess } = useMutation(updateProfileRequest);
+  return { updateProfile, isLoading, isError, isSuccess };
+}
+
+export { useCreateMyUser, useUpdateProfile };

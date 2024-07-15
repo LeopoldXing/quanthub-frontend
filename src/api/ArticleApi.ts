@@ -1,23 +1,13 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useMutation } from "react-query";
-import { CompleteArticleData } from "@/types.ts";
+import { ArticleSearchParamType, CompleteArticleData } from "@/types.ts";
 
-const BASE_URL = import.meta.env.APP_BASE_URL;
-
-type UpdateArticleRequestProps = {
-  auth0Id: string;
-  authorId: string;
-  articleData: CompleteArticleData;
-}
-
-type searchArticleRequestProps = {
-
-}
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const useCreateArticle = () => {
   const { getAccessTokenSilently } = useAuth0();
 
-  const createArticleRequest = async (data: UpdateArticleRequestProps) => {
+  const createArticleRequest = async (data: ArticleSearchParamType) => {
     const accessToken = await getAccessTokenSilently();
     const response = await fetch(`${BASE_URL}/article`, {
       method: "POST",
@@ -36,6 +26,12 @@ const useCreateArticle = () => {
   return { createArticle, isLoading, isError, isSuccess };
 }
 
+
+type UpdateArticleRequestProps = {
+  auth0Id: string;
+  authorId: string;
+  articleData: CompleteArticleData;
+}
 const useUpdateArticle = () => {
   const { getAccessTokenSilently } = useAuth0();
 
