@@ -14,6 +14,7 @@ const useCreateMyUser = () => {
 
   const createUserRequest = async (user: CreateUserRequest) => {
     const accessToken = await getAccessTokenSilently();
+    console.log("createUserRequest - accessToken", accessToken);
     const response = await fetch(`${BASE_URL}/my/user`, {
       method: "POST",
       headers: {
@@ -22,6 +23,7 @@ const useCreateMyUser = () => {
       },
       body: JSON.stringify(user)
     });
+    console.log("createUserRequest - response", response);
     if (!response.ok) {
       throw new Error("Failed to create user");
     }

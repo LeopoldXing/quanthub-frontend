@@ -24,7 +24,7 @@ const Header = () => {
   }
 
   // auth0
-  const { loginWithRedirect, loginWithPopup, isAuthenticated, logout } = useAuth0();
+  const { loginWithRedirect, isAuthenticated, logout } = useAuth0();
 
   return (
       <header className="w-full h-20 bg-[#21305e]">
@@ -74,10 +74,7 @@ const Header = () => {
                     </Dropdown>
                 ) : (
                     <Button variant="text" sx={{ fontWeight: "bold", fontSize: "15px", color: "white" }}
-                            onClick={async () => {
-                              await loginWithPopup();
-                              navigate(0);
-                            }}>
+                            onClick={async () => await loginWithRedirect()}>
                       Login
                     </Button>
                 )}

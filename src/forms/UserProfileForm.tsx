@@ -90,7 +90,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ initialData, onSubmit
             render={({ field }) => (
                 <TextField
                     {...field}
-                    label="Phone Number"
+                    label="Phone Number (Optional)"
                     fullWidth
                     error={!!errors.phoneNumber}
                     helperText={errors.phoneNumber ? errors.phoneNumber.message : ''}
@@ -107,6 +107,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ initialData, onSubmit
                     placeholder="Introduce yourself to other traders!"
                     fullWidth
                     multiline
+                    rows={12}
                     error={!!errors.description}
                     helperText={errors.description ? errors.description.message : ''}
                 />
