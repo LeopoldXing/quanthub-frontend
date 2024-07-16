@@ -12,6 +12,7 @@ export type Tag = {
 
 export type User = {
   id: string;
+  auth0Id?: string;
   username: string;
   password?: string;
   email?: string;
@@ -133,3 +134,8 @@ export type NotificationProps = {
   severity?: "success" | "warning" | "error" | "info";
   variant?: 'standard' | 'filled' | 'outlined';
 }
+
+export type CurrentUserInfo = {
+  token: string;
+  user: User;
+} | null

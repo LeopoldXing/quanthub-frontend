@@ -15,7 +15,7 @@ const useCreateMyUser = () => {
   const createUserRequest = async (user: CreateUserRequest) => {
     const accessToken = await getAccessTokenSilently();
     console.log("createUserRequest - accessToken", accessToken);
-    const response = await fetch(`${BASE_URL}/my/user`, {
+    const response = await fetch(`${BASE_URL}/api/my/user`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -45,7 +45,7 @@ const useUpdateProfile = () => {
 
   const updateProfileRequest = async (user: UpdateProfileRequest) => {
     const accessToken = await getAccessTokenSilently();
-    const response = await fetch(`${BASE_URL}/profile`, {
+    const response = await fetch(`${BASE_URL}/api/profile`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -62,4 +62,34 @@ const useUpdateProfile = () => {
   return { updateProfile, isLoading, isError, isSuccess };
 }
 
-export { useCreateMyUser, useUpdateProfile };
+
+type GetUserProfileRequest = {
+  id?: string;
+  auth0Id?: string;
+  email?: string;
+}
+const useGetUserProfile = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const getUserProfileRequest = async (data: GetUserProfileRequest) => {
+    const accessToken = await getAccessTokenSilently();
+    const queryParams = new URLSearchParams(data as any).toString();
+    const response = await fetch(`${BASE_URL}/api/profile?${queryParams}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error("Failed to get profile");
+    } else {
+      return await response.json();
+    }
+  }
+
+  const { mutateAsync: getUserProfile, isLoading, isError, isSuccess } = useMutation(getUserProfileRequest);
+  return { getUserProfile, isLoading, isError, isSuccess };
+}
+
+export { useCreateMyUser, useUpdateProfile, useGetUserProfile };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import logo from "@/assets/logo.svg";
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import { Menu, MenuButton, MenuItem } from "@/components/mui/MenuDropdown.tsx";
@@ -7,35 +7,83 @@ import clsx from "clsx";
 import { useAuth0 } from "@auth0/auth0-react";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
+import Cookies from 'js-cookie';
+import { CurrentUserInfo } from "@/types.ts";
+import { useGetUserProfile } from "@/api/MyUserApi.ts";
 
 const Header = () => {
   const navigate = useNavigate();
 
   // mobile menu
-  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const toggleMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
   // dropdown
-  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   }
 
   // auth0
-  const { loginWithRedirect, isAuthenticated, logout } = useAuth0();
+  const { loginWithRedirect, isAuthenticated, logout, isLoading, user, getAccessTokenSilently } = useAuth0();
+
+  // current user info
+  const [currentUserInfo, setCurrentUserInfo] = useState<CurrentUserInfo | null>(null);
+
+  useEffect(() => {
+    const cookie = Cookies.get("quanthub-user");
+    if (cookie) {
+      try {
+        const parsedCookie = JSON.parse(cookie);
+        setCurrentUserInfo(parsedCookie);
+      } catch (error) {
+        console.error("Error parsing cookie:", error);
+      }
+    } else {
+      setCurrentUserInfo(null);
+    }
+  }, []);
+
+
+  const { getUserProfile } = useGetUserProfile();
+  useEffect(() => {
+    const updateUserInfo = async () => {
+      if (!isLoading) {
+        if (isAuthenticated && user) {
+          try {
+            const token = await getAccessTokenSilently();
+
+            const customUser = await getUserProfile({ auth0Id: user.sub, email: user.email });
+
+            const userInfo: CurrentUserInfo = { token, user: customUser };
+            Cookies.set("quanthub-user", JSON.stringify(userInfo));
+            setCurrentUserInfo(userInfo);
+          } catch (error) {
+            console.error("Error getting access token:", error);
+          }
+        } else {
+          Cookies.remove("quanthub-user");
+          setCurrentUserInfo(null);
+        }
+      }
+    };
+
+    updateUserInfo();
+  }, [isAuthenticated, isLoading, user, getAccessTokenSilently]);
+
+  const handleLogout = () => {
+    Cookies.remove("quanthub-user");
+    logout({ logoutParams: { returnTo: window.location.origin } });
+  };
 
   return (
       <header className="w-full h-20 bg-[#21305e]">
-        {/*  container  */}
         <div className="max-w-[1600px] h-20 mx-auto px-10 md:px-28 flex items-center justify-between text-white">
-          {/*  Logo  */}
           <a href="/"><img src={logo} alt="logo" className="h-16"/></a>
 
-          {/*  Menu/Logo Container  */}
           <nav className="flex items-center justify-between font-bold text-white">
-            {/*  Links  */}
             <div className="hidden mr-8 font-alata md:flex md:space-x-8">
               <div className="group">
                 <a href="/about" className="hover:text-[#f0e68c]">About</a>
@@ -56,20 +104,18 @@ const Header = () => {
             </div>
 
             <div className="hidden font-alata md:flex md:items-center">
-              {/*  separator  */}
               <div className="w-0 h-8 mr-6 border-x-[1px] border-white"></div>
-              {/*  user  */}
               <a className="flex items-center justify-around cursor-pointer" onClick={toggleDropdown}>
-                {isAuthenticated ? (
+                {currentUserInfo ? (
                     <Dropdown open={dropdownOpen}>
                       <MenuButton className={clsx("h-10 flex justify-center items-center")}>
                         <AccountCircleOutlinedIcon/>
-                        <span className={"ml-1 hidden lg:flex"}>1759714344@qq.com</span>
+                        <span className={"ml-1 hidden lg:flex"}>{currentUserInfo.user.username}</span>
                       </MenuButton>
                       <Menu onBlur={toggleDropdown} className={clsx(!dropdownOpen && "hidden")}>
                         <MenuItem onClick={() => navigate("/user-profile")}>Profile</MenuItem>
                         <MenuItem onClick={() => navigate("/my/articles")}>My articles</MenuItem>
-                        <MenuItem onClick={() => logout()}>Log out</MenuItem>
+                        <MenuItem onClick={handleLogout}>Log out</MenuItem>
                       </Menu>
                     </Dropdown>
                 ) : (
@@ -81,7 +127,6 @@ const Header = () => {
               </a>
             </div>
 
-            {/*  Hamburger Button  */}
             <div className="md:hidden">
               <button
                   id="menu-btn"
@@ -93,13 +138,12 @@ const Header = () => {
                 <span className="hamburger-bottom"></span>
               </button>
             </div>
-            {/*  Mobile Menu  */}
             <div
                 id="menu"
                 className={`absolute top-0 bottom-0 left-0 flex-col self-end w-full min-h-screen py-1 pt-40 pl-12 space-y-3 text-lg text-white uppercase bg-black ${mobileMenuOpen ? 'flex' : 'hidden'}`}
             >
               {isAuthenticated ? (
-                  <a href="/logout" className="hover:text-pink-500" onClick={() => logout()}>Logout</a>
+                  <a href="/logout" className="hover:text-pink-500" onClick={handleLogout}>Logout</a>
               ) : (
                   <a href="/login" className="hover:text-pink-500"
                      onClick={async () => await loginWithRedirect()}>Login</a>
