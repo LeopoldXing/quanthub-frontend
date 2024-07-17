@@ -3,6 +3,44 @@ import { useMutation } from "react-query";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+type SearchContentRequestProps = {
+  keyword: string;
+  categoryList: string[];
+  tagList: string[];
+  sortStrategy: "publish_date" | "update_date" | "recommended";
+  sortDirection: "desc" | "asc" | "none";
+  contentType: "article" | "announcement";
+}
+const useSearchContent = () => {
+  const searchContentRequest = async (data: SearchContentRequestProps) => {
+    const queryParams = new URLSearchParams(data as any).toString();
+    console.log("searchContentRequest");
+    console.log("query params");
+    console.log(data);
+    console.log("url");
+    console.log(`${BASE_URL}/api/article/search?${queryParams}`)
+    const response = await fetch(`${BASE_URL}/api/article/search?${queryParams}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    console.log("response")
+    console.log(response)
+    if (!response.ok) {
+      throw new Error("Failed to search article");
+    } else {
+      console.log("response body")
+      const res = await response.json();
+      console.log(res);
+      return res;
+    }
+  }
+
+  const { mutateAsync: searchContent, isLoading, isError, isSuccess } = useMutation(searchContentRequest);
+  return { searchContent, isLoading, isError, isSuccess };
+}
+
 type CreateArticleRequestProps = {
   authorId: string;
   title: string;
@@ -77,6 +115,7 @@ const useUpdateArticle = () => {
 
 const useGetArticle = () => {
   const getArticleRequest = async (articleId: string) => {
+    console.log(`查找文章，文章id：${articleId}`);
     const response = await fetch(`${BASE_URL}/api/article/${articleId}`, {
       method: "GET"
     });
@@ -94,4 +133,37 @@ const useGetArticle = () => {
   return { getArticle, isLoading, isError, isSuccess };
 }
 
-export { useCreateArticle, useUpdateArticle, useGetArticle }
+type SaveDraftRequestProps = {
+  authorId: string;
+  title: string;
+  subTitle?: string;
+  contentHtml: string;
+  contentText?: string;
+  coverImageLink?: string;
+  category?: string;
+  tags?: string[];
+  attachmentLink?: string;
+}
+const useSaveDraft = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const saveDraftRequest = async (data: SaveDraftRequestProps) => {
+    const accessToken = await getAccessTokenSilently();
+    const response = await fetch(`${BASE_URL}/api/article/draft`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`
+      },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+      throw new Error("Failed to save draft");
+    }
+  }
+
+  const { mutateAsync: saveDraft, isLoading, isError, isSuccess } = useMutation(saveDraftRequest);
+  return { saveDraft, isLoading, isError, isSuccess };
+}
+
+export { useCreateArticle, useUpdateArticle, useGetArticle, useSaveDraft, useSearchContent }

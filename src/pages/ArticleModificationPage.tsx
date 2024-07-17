@@ -15,7 +15,7 @@ import Article from "@/components/Article.tsx";
 import { v4 as uuidv4 } from "uuid";
 import Cookies from 'js-cookie';
 import { ArticleModificationFormZodDataType } from "@/forms/schemas/ArticleModificationFormSchema.ts";
-import { useCreateArticle, useUpdateArticle } from "@/api/ArticleApi.ts";
+import { useCreateArticle, useSaveDraft, useUpdateArticle } from "@/api/ArticleApi.ts";
 
 const ArticleModificationPage = () => {
   const location = useLocation();
@@ -140,7 +140,8 @@ const ArticleModificationPage = () => {
         coverImageLink: formData.pictureLinkList ? formData.pictureLinkList[0] : undefined,
         category: formData.categoryName || undefined,
         tags: formData.tagNameList || undefined,
-        attachmentLink: formData.attachmentLink || undefined
+        attachmentLink: formData.attachmentLink || undefined,
+        status: "published"
       };
       if (mode === "create") {
         publishedArticle = await publishArticle(requestParam);
@@ -188,15 +189,34 @@ const ArticleModificationPage = () => {
   }, [handlePublish]);
 
   const [savingDraft, setSavingDraft] = useState<boolean>(false);
+  const { saveDraft } = useSaveDraft();
   const handleSaveDraft = useCallback(async () => {
     setSavingDraft(true);
-    await sleep(1000);
+    const formData = articleFormRef.current?.submit()!;
+    const cookie = Cookies.get("quanthub-user");
+    const currentUser = JSON.parse(cookie!).user;
+    const requestParam = {
+      articleId: initialData?.id || uuidv4(),
+      authorId: currentUser.id,
+      title: formData.title,
+      subTitle: formData.subtitle || "",
+      contentHtml: formData.contentHtml || "",
+      contentText: formData.contentText || "",
+      coverImageLink: formData.pictureLinkList ? formData.pictureLinkList[0] : undefined,
+      category: formData.categoryName || undefined,
+      tags: formData.tagNameList || undefined,
+      attachmentLink: formData.attachmentLink || undefined,
+      status: "draft"
+    };
+    await saveDraft(requestParam);
     setSavingDraft(false);
+    navigate("/my/articles");
+    window.scrollTo(0, 0);
     showNotification({
       message: "Draft saved.",
       severity: "success",
       horizontal: "right",
-      vertical: "top"
+      vertical: "bottom"
     });
   }, [showNotification]);
 

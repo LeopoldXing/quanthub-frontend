@@ -1,6 +1,6 @@
 import SearchBox from "@/components/SearchBox.tsx";
 import MultiCategorySelectBox from "@/components/mui/MultiCategorySelectBox.tsx";
-import { categories, fakeArticleOverviewList, tags } from "@/lib/dummyData.ts";
+import { categories } from "@/lib/dummyData.ts";
 import SelectedTagPool from "@/components/SelectedTagPool.tsx";
 import ArticleSortingPanel from "@/components/ArticleSortingPanel.tsx";
 import ArticleOverviewList from "@/components/ArticleOverviewList.tsx";
@@ -12,7 +12,8 @@ import { useEffect, useRef, useState } from "react";
 import { ArticleOverviewInfo, ArticleSearchParamType, Category, Tag } from "@/types.ts";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
-import { sleep } from "@/utils/GlobalUtils.ts";
+import { useShuffleTags } from "@/api/TagApi.ts";
+import { useSearchContent } from "@/api/ArticleApi.ts";
 
 type ArticleSearchModuleProps = {
   mode?: "public" | "user" | "admin";
@@ -21,6 +22,7 @@ type ArticleSearchModuleProps = {
 const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
   // navigation
   const navigate = useNavigate();
+  const [articleOverviewList, setArticleOverviewList] = useState<Array<ArticleOverviewInfo>>();
 
   /*  search params  */
   const [searchParams, setSearchParams] = useState<ArticleSearchParamType>({
@@ -73,15 +75,13 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
     }
   }, [searchParams.selectedTagList]);
   // tags - shuffle
-  const [tagPoolLoading, setTagPoolLoading] = useState(true);
+  const { shuffleTags, isLoading: tagPoolLoading } = useShuffleTags();
   const handleRefreshTags = async (): Promise<void> => {
     try {
-      setTagPoolLoading(true);
-      console.log("shuffle tag list");
-      await sleep(1000);
+      const tags = await shuffleTags(30);
       setCurrentTagList(tags);
-    } finally {
-      setTagPoolLoading(false);
+    } catch (error) {
+      console.error(error);
     }
   }
   useEffect(() => {
@@ -91,31 +91,35 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
 
   /*  sorting  */
   const handleSort = (sortStrategy: "publish_date" | "update_date" | "recommended", sortDirection: "asc" | "desc" | "none") => {
-    console.log("sortStrategy", sortStrategy);
-    console.log("sortDirection", sortDirection);
     setSearchParams(prevState => ({ ...prevState, sortDirection, sortStrategy }));
   }
 
   /*  get search result from backend  */
   /*  search  */
+  const { searchContent, isLoading: isSearching } = useSearchContent();
   const handleSearch = async (): Promise<void> => {
     try {
-      setArticleLoading(true);
       console.log("search in backend")
       console.log(searchParams)
-      await sleep(1000);
-      setArticleOverviewList(fakeArticleOverviewList);
-    } finally {
-      setArticleLoading(false);
+      const res = await searchContent({
+        keyword: searchParams.keyword,
+        categoryList: searchParams.selectedCategoryList?.map(category => category.name),
+        tagList: searchParams.selectedTagList.map(tag => tag.name),
+        sortStrategy: searchParams.sortStrategy,
+        sortDirection: searchParams.sortDirection,
+        contentType: "article"
+      });
+      console.log("search result ->")
+      console.log(res);
+      setArticleOverviewList(res);
+    } catch (error) {
+      console.error(error);
     }
   }
-  const [articleOverviewList, setArticleOverviewList] = useState<Array<ArticleOverviewInfo>>();
+
   useEffect(() => {
     handleSearch();
   }, [searchParams.selectedTagList, searchParams.sortStrategy, searchParams.selectedCategoryList, searchParams.sortDirection]);
-
-  //articleLoading
-  const [articleLoading, setArticleLoading] = useState<boolean>(!articleOverviewList);
 
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
@@ -137,7 +141,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
 
         {/*  sorting panel  */}
         <div className="lg:hidden w-full mt-5">
-          <ArticleSortingPanel onSort={handleSort} loading={articleLoading}/>
+          <ArticleSortingPanel onSort={handleSort} loading={isSearching}/>
         </div>
 
         {/*  content container  */}
@@ -154,14 +158,14 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
 
             {/*  sorting panel  */}
             <div className="hidden mt-7 lg:block">
-              <ArticleSortingPanel onSort={handleSort} mode={mode} loading={articleLoading}/>
+              <ArticleSortingPanel onSort={handleSort} mode={mode} loading={isSearching}/>
             </div>
 
             {/*  search result  */}
-            {(articleLoading || (Array.isArray(articleOverviewList) && articleOverviewList.length > 0)) && (
+            {(isSearching || (Array.isArray(articleOverviewList) && articleOverviewList.length > 0)) && (
                 <div className="w-full">
                   <div className="w-full py-10">
-                    <ArticleOverviewList articleOverviewInfoList={articleOverviewList} loading={articleLoading}/>
+                    <ArticleOverviewList articleOverviewInfoList={articleOverviewList} loading={isSearching}/>
                   </div>
                   {Array.isArray(articleOverviewList) && articleOverviewList.length > 5 && (
                       <div className="w-full flex justify-center items-center">
@@ -170,7 +174,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
                   )}
                 </div>
             )}
-            {(!articleLoading && articleOverviewList && Array.isArray(articleOverviewList) && articleOverviewList.length === 0) && (
+            {(!isSearching && articleOverviewList && Array.isArray(articleOverviewList) && articleOverviewList.length === 0) && (
                 <div className="w-full flex justify-center items-center" style={{ height: "70vh" }}>
                   {mode === "public" ? (
                       <Typography fontWeight="normal" fontSize="xl" textAlign="center" paddingTop="5%">
