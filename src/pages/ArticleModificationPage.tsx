@@ -1,7 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import ArticleModificationForm, {
-  HandleArticleModificationFormSubmission
-} from "@/forms/ArticleModificationForm.tsx";
+import ArticleModificationForm, { HandleArticleModificationFormSubmission } from "@/forms/ArticleModificationForm.tsx";
 import Button from "@mui/material/Button";
 import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,16 +10,18 @@ import { sleep } from "@/utils/GlobalUtils.ts";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { fakeCompleteArticles } from "@/lib/dummyData.ts";
 import { Modal, Paper } from "@mui/material";
 import Article from "@/components/Article.tsx";
 import { v4 as uuidv4 } from "uuid";
+import Cookies from 'js-cookie';
 import { ArticleModificationFormZodDataType } from "@/forms/schemas/ArticleModificationFormSchema.ts";
+import { useCreateArticle } from "@/api/ArticleApi.ts";
 
 const ArticleModificationPage = () => {
   const location = useLocation();
   const initialData: CompleteArticleData = location.state?.articleData;
   const mode = !initialData ? "create" : "edit";
+  const { publishArticle } = useCreateArticle();
   console.log("initialData ->");
   console.log(initialData);
   const initialFormData: ArticleModificationFormZodDataType = {
@@ -87,7 +87,7 @@ const ArticleModificationPage = () => {
   }, []);
 
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
-  const [articleData, setArticleData] = useState<CompleteArticleData>(initialData);
+  const [articleData, setArticleData] = useState<CompleteArticleData | undefined>(initialData);
   const handlePreviewClose = useCallback(() => {
     console.log("handlePreviewClose called");
     setPreviewOpen(false);
@@ -135,12 +135,24 @@ const ArticleModificationPage = () => {
   const handlePublish = useCallback(async () => {
     console.log("handlePublish called");
     const formData = articleFormRef.current?.submit();
+    const cookie = Cookies.get("quanthub-user");
+    const currentUser = JSON.parse(cookie!).user;
     if (formData) {
-      await sleep(2000);
+      const publishedArticle: CompleteArticleData = await publishArticle({
+        authorId: currentUser.id,
+        title: formData.title,
+        subTitle: formData.subtitle || "",
+        contentHtml: formData.contentHtml || "",
+        contentText: formData.contentText || "",
+        coverImageLink: formData.pictureLinkList ? formData.pictureLinkList[0] : undefined,
+        category: formData.categoryName || undefined,
+        tags: formData.tagNameList || undefined,
+        attachmentLink: formData.attachmentLink || undefined
+      });
       navigate("/article/detail", {
         state: {
           articleId: 1,
-          initialArticleData: fakeCompleteArticles[0]
+          initialArticleData: publishedArticle
         }
       });
       showNotification({
