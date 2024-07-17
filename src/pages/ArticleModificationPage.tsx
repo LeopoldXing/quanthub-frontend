@@ -15,15 +15,14 @@ import Article from "@/components/Article.tsx";
 import { v4 as uuidv4 } from "uuid";
 import Cookies from 'js-cookie';
 import { ArticleModificationFormZodDataType } from "@/forms/schemas/ArticleModificationFormSchema.ts";
-import { useCreateArticle } from "@/api/ArticleApi.ts";
+import { useCreateArticle, useUpdateArticle } from "@/api/ArticleApi.ts";
 
 const ArticleModificationPage = () => {
   const location = useLocation();
   const initialData: CompleteArticleData = location.state?.articleData;
   const mode = !initialData ? "create" : "edit";
   const { publishArticle } = useCreateArticle();
-  console.log("initialData ->");
-  console.log(initialData);
+  const { updateArticle } = useUpdateArticle();
   const initialFormData: ArticleModificationFormZodDataType = {
     title: "",
     subtitle: null,
@@ -44,8 +43,6 @@ const ArticleModificationPage = () => {
     initialFormData.attachmentLink = null;
     initialFormData.tagNameList = initialData.tags?.map(tag => tag.name);
   }
-  console.log("initialFormData ->")
-  console.log(initialFormData)
 
   const navigate = useNavigate();
   const articleFormRef = useRef<HandleArticleModificationFormSubmission>(null);
@@ -70,32 +67,27 @@ const ArticleModificationPage = () => {
   const [confirmAction, setConfirmAction] = useState<() => Promise<void>>(() => async () => { });
 
   const handleDialogClose = useCallback(() => {
-    console.log("handleDialogClose called");
     setConfirmBoxOpen(false);
   }, []);
 
   const onConfirm = useCallback(async () => {
-    console.log("onConfirm called");
     await confirmAction();
   }, [confirmAction]);
 
   const [currentFormData, setCurrentFormData] = useState<ArticleModificationFormZodDataType>(initialFormData);
 
   const handleFormDataChange = useCallback((formData: ArticleModificationFormZodDataType) => {
-    console.log("handleFormDataChange called with:", formData);
     setCurrentFormData(formData);
   }, []);
 
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [articleData, setArticleData] = useState<CompleteArticleData | undefined>(initialData);
   const handlePreviewClose = useCallback(() => {
-    console.log("handlePreviewClose called");
     setPreviewOpen(false);
     setArticleData(undefined);
   }, []);
 
   const handlePreview = useCallback(() => {
-    console.log("handlePreview called with:", currentFormData);
     if (currentFormData) {
       setArticleData({
         id: uuidv4(),
@@ -133,12 +125,13 @@ const ArticleModificationPage = () => {
   }, [currentFormData, showNotification]);
 
   const handlePublish = useCallback(async () => {
-    console.log("handlePublish called");
     const formData = articleFormRef.current?.submit();
     const cookie = Cookies.get("quanthub-user");
     const currentUser = JSON.parse(cookie!).user;
     if (formData) {
-      const publishedArticle: CompleteArticleData = await publishArticle({
+      let publishedArticle = null;
+      const requestParam = {
+        articleId: initialData?.id || uuidv4(),
         authorId: currentUser.id,
         title: formData.title,
         subTitle: formData.subtitle || "",
@@ -148,7 +141,12 @@ const ArticleModificationPage = () => {
         category: formData.categoryName || undefined,
         tags: formData.tagNameList || undefined,
         attachmentLink: formData.attachmentLink || undefined
-      });
+      };
+      if (mode === "create") {
+        publishedArticle = await publishArticle(requestParam);
+      } else {
+        publishedArticle = await updateArticle(requestParam);
+      }
       navigate("/article/detail", {
         state: {
           articleId: 1,
@@ -173,7 +171,6 @@ const ArticleModificationPage = () => {
   }, [navigate, showNotification]);
 
   const openPublishConfirmDialog = useCallback(() => {
-    console.log("openPublishConfirmDialog called");
     setConfirmBoxData(prevState => ({
       ...prevState,
       title: `${mode === "create" ? "Publish" : "Update"} this article?`,
@@ -192,7 +189,6 @@ const ArticleModificationPage = () => {
 
   const [savingDraft, setSavingDraft] = useState<boolean>(false);
   const handleSaveDraft = useCallback(async () => {
-    console.log("handleSaveDraft called");
     setSavingDraft(true);
     await sleep(1000);
     setSavingDraft(false);
@@ -205,12 +201,10 @@ const ArticleModificationPage = () => {
   }, [showNotification]);
 
   const handleCancel = useCallback(() => {
-    console.log("handleCancel called");
     navigate(-1);
   }, [navigate]);
 
   const openCancelDialog = useCallback(() => {
-    console.log("openCancelDialog called");
     setConfirmBoxData(prevState => ({
       ...prevState,
       title: "Delete draft and leave this page?",
@@ -226,7 +220,6 @@ const ArticleModificationPage = () => {
   }, [handleCancel]);
 
   const handleSaveAndLeave = useCallback(async () => {
-    console.log("handleSaveAndLeave called");
     await sleep(1000);
     showNotification({
       message: "Draft saved.",
@@ -238,12 +231,10 @@ const ArticleModificationPage = () => {
   }, [navigate, showNotification]);
 
   const handleLeave = useCallback(() => {
-    console.log("handleLeave called");
     navigate(-1);
   }, [navigate]);
 
   const openGoBackDialog = useCallback(() => {
-    console.log("openGoBackDialog called");
     setConfirmBoxData(prevState => ({
       ...prevState,
       title: "Leave this page? ",

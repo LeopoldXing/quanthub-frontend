@@ -1,6 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useMutation } from "react-query";
-import { CompleteArticleData } from "@/types.ts";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -41,16 +40,23 @@ const useCreateArticle = () => {
 
 
 type UpdateArticleRequestProps = {
-  auth0Id: string;
+  articleId: string;
   authorId: string;
-  articleData: CompleteArticleData;
+  title: string;
+  subTitle?: string;
+  contentHtml: string;
+  contentText?: string;
+  coverImageLink?: string;
+  category?: string;
+  tags?: string[];
+  attachmentLink?: string;
 }
 const useUpdateArticle = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   const updateArticleRequest = async (data: UpdateArticleRequestProps) => {
     const accessToken = await getAccessTokenSilently();
-    const response = await fetch(`${BASE_URL}/api/article`, {
+    const response = await fetch(`${BASE_URL}/api/article/update`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -60,6 +66,8 @@ const useUpdateArticle = () => {
     });
     if (!response.ok) {
       throw new Error("Failed to update article");
+    } else {
+      return await response.json();
     }
   }
 
@@ -70,15 +78,15 @@ const useUpdateArticle = () => {
 const useGetArticle = () => {
   const getArticleRequest = async (articleId: string) => {
     const response = await fetch(`${BASE_URL}/api/article/${articleId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      }
+      method: "GET"
     });
     if (!response.ok) {
       throw new Error("Failed to get article");
     } else {
-      return await response.json();
+      const responsedata = await response.json();
+      console.log("responsedata -> ")
+      console.log(responsedata);
+      return responsedata;
     }
   }
 
@@ -86,4 +94,4 @@ const useGetArticle = () => {
   return { getArticle, isLoading, isError, isSuccess };
 }
 
-export { useCreateArticle, useUpdateArticle }
+export { useCreateArticle, useUpdateArticle, useGetArticle }

@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { sleep } from "@/utils/GlobalUtils.ts";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Avatar, Box, Skeleton } from "@mui/material";
-import { fakeCompleteArticles } from "@/lib/dummyData.ts";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import Button from "@mui/material/Button";
 import Article from "@/components/Article";
@@ -16,6 +15,7 @@ import CommentSection from "@/components/CommentSection.tsx";
 import MuiConfirmBox from "@/components/mui/MuiConfirmBox.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
+import { useGetArticle } from "@/api/ArticleApi.ts";
 
 const ArticleDetailPage = () => {
   const location = useLocation();
@@ -25,10 +25,6 @@ const ArticleDetailPage = () => {
 
   const commentSectionRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    console.log(articleData);
-  }, [articleData]);
-
   const { showNotification } = useNotification();
 
   // dialog
@@ -36,12 +32,14 @@ const ArticleDetailPage = () => {
 
   // fetch complete article data
   const [loading, setLoading] = useState<boolean>(!initialArticleData);
+  const { getArticle } = useGetArticle();
   const fetchArticleData = async () => {
     try {
       setLoading(true);
       console.log(`fetch article data from backend: ${articleId}`);
-      await sleep(1500);
-      setArticleData(fakeCompleteArticles[0]);
+      const article = await getArticle(articleId);
+      console.log(article);
+      setArticleData(article);
     } finally {
       setLoading(false);
     }
@@ -143,7 +141,7 @@ const ArticleDetailPage = () => {
                     fontSize="medium"/></Button>
                 <Button startIcon={<CommentIcon fontSize="large"/>} variant="outlined"
                         sx={{ minWidth: "80px", borderRadius: "20px" }}
-                        onClick={handleScrollToComments}>{articleData.comments.length}</Button>
+                        onClick={handleScrollToComments}>{articleData.comments?.length || 0}</Button>
                 <Button startIcon={<ShareIcon fontSize="large"/>} variant="outlined"
                         sx={{ textTransform: "none", minWidth: "90px", borderRadius: "20px" }}>Share</Button>
               </div>
