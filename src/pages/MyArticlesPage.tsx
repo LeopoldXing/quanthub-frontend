@@ -107,9 +107,7 @@ const MyArticlesPage = ({ isAdmin = false }: MyArticlesPageProps) => {
             </div>
         )}
 
-        <div className="w-full -mt-4" style={{ height: "70vh" }}>
-          <ArticleSearchModule mode="user"/>
-        </div>
+        <ArticleSearchModule mode="user"/>
       </div>
   );
 };

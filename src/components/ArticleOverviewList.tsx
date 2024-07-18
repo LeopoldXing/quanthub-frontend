@@ -11,7 +11,7 @@ const ArticleOverviewList = ({ articleOverviewInfoList, loading = false }: Artic
   return (
       <>
         {(!loading && Array.isArray(articleOverviewInfoList)) ? (
-            <ul className="w-full flex flex-col justify-start items-start gap-8">
+            <ul style={{ minHeight: '70vh' }} className="w-full flex flex-col justify-start items-start gap-8">
               {Array.isArray(articleOverviewInfoList) && articleOverviewInfoList.length > 0 && (
                   articleOverviewInfoList.map((articleInfo: ArticleOverviewInfo, index: number) => (
                       <li key={articleInfo.id} className="w-full p-0 m-0">
@@ -24,7 +24,7 @@ const ArticleOverviewList = ({ articleOverviewInfoList, loading = false }: Artic
               )}
             </ul>
         ) : (
-            <ul className="w-full flex flex-col justify-start items-start gap-8">
+            <ul style={{ minHeight: '70vh' }} className="w-full flex flex-col justify-start items-start gap-8">
               {Array.from({ length: 10 }, () => Math.floor(Math.random() * 10000) + 1).map((_, index) => (
                   <li key={_} className="w-full p-0 m-0">
                     <Box width={"100%"}>

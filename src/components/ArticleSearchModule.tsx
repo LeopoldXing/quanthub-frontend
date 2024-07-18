@@ -9,7 +9,7 @@ import { Typography } from "@mui/material";
 import LoopIcon from "@mui/icons-material/Loop";
 import TagPoolForSearching, { HandleSelectedTagChange } from "@/components/TagPoolForSearching.tsx";
 import { useEffect, useRef, useState } from "react";
-import { ArticleOverviewInfo, ArticleSearchParamType, Category, Tag } from "@/types.ts";
+import { ArticleOverviewInfo, ArticleSearchParamType, Category } from "@/types.ts";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { useShuffleTags } from "@/api/TagApi.ts";
@@ -48,24 +48,29 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
   }
 
   // tags
-  const [currentTagList, setCurrentTagList] = useState<Array<Tag>>();
+  const [currentTagList, setCurrentTagList] = useState<string[]>();
   // tags - cancel
-  const handleDeleteTag = (id: string): void => {
-    if (id === "all") {
+  const handleDeleteTag = (tag: string): void => {
+    if (tag === "-1") {
       setSearchParams(prevState => {
         return { ...prevState, selectedTagList: [] }
       });
     } else {
       setSearchParams(prevState => {
-        const newTagList = prevState.selectedTagList.filter(tag => tag.id !== id);
+        const newTagList = prevState.selectedTagList.filter(prevTag => prevTag !== tag);
         return { ...prevState, selectedTagList: newTagList };
       });
     }
   }
   // tags - select
-  const handleSelectTag = (tag: Tag): void => {
+  const handleSelectTag = (tag: string): void => {
     // if the selected tag is not in search param, then add the tag into the search param, otherwise do nothing
-    setSearchParams(prevState => ({ ...prevState, selectedTagList: [...new Set([...prevState.selectedTagList, tag])] }))
+    if (searchParams.selectedTagList?.findIndex(selectedTag => selectedTag === tag) === -1) {
+      setSearchParams({
+        ...searchParams,
+        selectedTagList: [...searchParams.selectedTagList, tag]
+      });
+    }
   }
   // tags - update TagPool
   const tagPoolRef = useRef<HandleSelectedTagChange>(null);
@@ -104,7 +109,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
       const res = await searchContent({
         keyword: searchParams.keyword,
         categoryList: searchParams.selectedCategoryList?.map(category => category.name),
-        tagList: searchParams.selectedTagList.map(tag => tag.name),
+        tagList: searchParams.selectedTagList,
         sortStrategy: searchParams.sortStrategy,
         sortDirection: searchParams.sortDirection,
         contentType: "article"
@@ -136,7 +141,8 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
 
         {/*  selected tag area  */}
         <div className="lg:hidden w-full mt-6">
-          <SelectedTagPool selectedTagList={searchParams.selectedTagList} handleDeleteTag={handleDeleteTag}/>
+          <SelectedTagPool selectedTagList={searchParams.selectedTagList}
+                           handleDeleteTag={handleDeleteTag}/>
         </div>
 
         {/*  sorting panel  */}
@@ -153,7 +159,8 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
             </div>
             {/*  selected tag area  */}
             <div className="hidden lg:block w-full mt-6">
-              <SelectedTagPool selectedTagList={searchParams.selectedTagList} handleDeleteTag={handleDeleteTag}/>
+              <SelectedTagPool selectedTagList={searchParams.selectedTagList}
+                               handleDeleteTag={handleDeleteTag}/>
             </div>
 
             {/*  sorting panel  */}
@@ -212,7 +219,8 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
                 </button>
               </div>
               <div className="mt-8">
-                <TagPoolForSearching tagList={currentTagList} onSelect={handleSelectTag} ref={tagPoolRef}
+                <TagPoolForSearching tagList={currentTagList} onSelect={handleSelectTag}
+                                     ref={tagPoolRef}
                                      loading={tagPoolLoading}/>
               </div>
             </div>

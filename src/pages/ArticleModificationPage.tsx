@@ -41,7 +41,7 @@ const ArticleModificationPage = () => {
     initialFormData.categoryName = initialData.category?.name;
     initialFormData.pictureLinkList = [];
     initialFormData.attachmentLink = null;
-    initialFormData.tagNameList = initialData.tags?.map(tag => tag.name);
+    initialFormData.tagNameList = initialData.tags;
   }
 
   const navigate = useNavigate();
@@ -93,7 +93,7 @@ const ArticleModificationPage = () => {
         id: uuidv4(),
         title: currentFormData.title,
         subtitle: currentFormData.subtitle || "",
-        tags: currentFormData.tagNameList?.map(tagName => ({ id: uuidv4(), name: tagName })) || [],
+        tags: currentFormData.tagNameList || [],
         category: { id: uuidv4(), name: currentFormData.categoryName || "unknown" },
         contentHtml: currentFormData.contentHtml || "",
         contentText: currentFormData.contentText || "",

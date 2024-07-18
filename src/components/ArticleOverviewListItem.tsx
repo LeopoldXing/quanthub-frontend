@@ -7,8 +7,7 @@ import { ArticleOverviewInfo } from "@/types.ts";
 import { useNavigate } from "react-router-dom";
 
 const ArticleOverviewListItem = ({ articleOverviewInfo }: {
-  articleOverviewInfo?: ArticleOverviewInfo,
-  loading?: boolean
+  articleOverviewInfo?: ArticleOverviewInfo
 }) => {
   const navigate = useNavigate();
   const handleNavigate = () => {

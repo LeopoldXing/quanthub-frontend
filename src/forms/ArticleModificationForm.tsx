@@ -5,7 +5,7 @@ import { categories, exampleContentHtml, exampleContentJson, tags } from "@/lib/
 import { Box, TextField } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState, useCallback } from "react";
-import { ArticleComment, Tag } from "@/types.ts";
+import { ArticleComment } from "@/types.ts";
 import {
   articleModificationFormSchema,
   ArticleModificationFormZodDataType
@@ -116,7 +116,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
       const selectedTagList = tagPoolRef.current?.getSelectedTagList();
       setFormData(prevState => ({
         ...prevState,
-        tagNameList: selectedTagList?.map(selectedTag => selectedTag.name) || []
+        tagNameList: selectedTagList || []
       }))
       if (validateFormData(formData)) {
         return formData;
@@ -143,8 +143,8 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
     setFormData(prevState => ({ ...prevState, categoryName }));
   }, []);
 
-  const handleTagUpdate = useCallback((tagList: Tag[]) => {
-    setFormData(prevState => ({ ...prevState, tagNameList: tagList.map(tag => tag.name) }));
+  const handleTagUpdate = useCallback((tagList: string[]) => {
+    setFormData(prevState => ({ ...prevState, tagNameList: tagList }));
   }, []);
 
   const handleEditorUpdate = useCallback((content: {
@@ -215,7 +215,8 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
           <div className="w-full hidden md:flex justify-between items-center gap-8">
             <div className="w-full min-h-24 flex flex-col justify-start items-start gap-4">
               <div className="text-nowrap text-xl font-bold">Category</div>
-              <SingleCategorySelectBox categoryList={categories} initialCategoryName={initialData.initialFormData.categoryName || ""}
+              <SingleCategorySelectBox categoryList={categories}
+                                       initialCategoryName={initialData.initialFormData.categoryName || ""}
                                        onUpdate={handleCategoryChange}/>
             </div>
             <div className="w-full min-h-28 flex flex-col justify-start items-start gap-4">
@@ -252,7 +253,8 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
             <div className="w-full flex flex-col justify-start items-start gap-4">
               <div className="text-nowrap text-xl font-bold">Tags</div>
               <div className="w-full mt-3">
-                <TagPoolForArticleModification tagList={tags} ref={tagPoolRef} initialTagNameList={initialData.initialFormData.tagNameList}
+                <TagPoolForArticleModification tagList={tags.map(tag => tag.name)} ref={tagPoolRef}
+                                               initialTagNameList={initialData.initialFormData.tagNameList || []}
                                                onUpdate={handleTagUpdate}/>
               </div>
             </div>

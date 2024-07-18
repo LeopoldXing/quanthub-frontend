@@ -1,17 +1,15 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Chip, Input, InputAdornment } from "@mui/material";
 import Button from "@mui/material/Button";
-import { v4 as uuidv4 } from 'uuid';
-import { Tag } from "@/types.ts";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
 
 export interface HandleSelectedTagData {
-  getSelectedTagList: () => Tag[];
+  getSelectedTagList: () => string[];
 }
 
 type TagPoolProps = {
-  tagList: Array<Tag>;
-  onUpdate?: (tagList: Tag[]) => void;
+  tagList: Array<string>;
+  onUpdate?: (tagList: string[]) => void;
   initialTagNameList?: string[];
 };
 
@@ -21,14 +19,10 @@ const TagPoolForArticleModification = forwardRef<HandleSelectedTagData, TagPoolP
                                                                                          onUpdate
                                                                                        }, ref) => {
   // make sure tagList has the value of initialTagNameList
-  const [localTagList, setLocalTagList] = useState<Tag[]>(
-      [...new Set([...tagList.map(tag => tag.name), ...initialTagNameList || []])]
-          .map(name => ({ id: uuidv4(), name })));
-  const [selectedTagList, setSelectedTagList] = useState<Array<Tag>>(initialTagNameList?.map(name => ({
-    id: uuidv4(),
-    name
-  })) || []);
-  const [newTagList, setNewTagList] = useState<Array<Tag>>([]);
+  const [localTagList, setLocalTagList] = useState<string[]>(
+      [...new Set([...tagList, ...initialTagNameList || []])]);
+  const [selectedTagList, setSelectedTagList] = useState<Array<string>>(initialTagNameList || []);
+  const [newTagList, setNewTagList] = useState<Array<string>>([]);
   const [newTagName, setNewTagName] = useState<string>("");
   // notification
   const { showNotification } = useNotification();
@@ -51,13 +45,12 @@ const TagPoolForArticleModification = forwardRef<HandleSelectedTagData, TagPoolP
   const handleTagCreate = () => {
     if (!newTagName || newTagName.length === 0) return;
     if (newTagList.length < 10) {
-      const newTagIndex = tagList.findIndex(tag => tag.name === newTagName);
-      const selectedTagIndex = selectedTagList.findIndex(selectedTag => selectedTag.name === newTagName);
+      const newTagIndex = tagList.findIndex(tag => tag === newTagName);
+      const selectedTagIndex = selectedTagList.findIndex(selectedTag => selectedTag === newTagName);
       if (newTagIndex === -1 && selectedTagIndex === -1) {
-        const newTag = { id: uuidv4(), name: newTagName };
-        setNewTagList(prevState => [...prevState, newTag]);
-        setSelectedTagList(prevState => [...prevState, newTag]);
-        setLocalTagList(prevState => [...prevState, newTag]);
+        setNewTagList(prevState => [...prevState, newTagName]);
+        setSelectedTagList(prevState => [...prevState, newTagName]);
+        setLocalTagList(prevState => [...prevState, newTagName]);
       }
       setNewTagName("");
     } else {
@@ -73,14 +66,14 @@ const TagPoolForArticleModification = forwardRef<HandleSelectedTagData, TagPoolP
   }
 
   /*  handle tag click  */
-  const handleTagClick = (tag: Tag) => {
-    const selectedTagIndex = selectedTagList.findIndex(prevTag => prevTag.id === tag.id);
+  const handleTagClick = (tag: string) => {
+    const selectedTagIndex = selectedTagList.findIndex(prevTag => prevTag === tag);
     if (selectedTagIndex === -1) {
       setSelectedTagList(prevState => [...prevState, tag]);
     } else {
       setSelectedTagList(prevState => prevState.filter((_, index) => index !== selectedTagIndex));
-      const newTagIndex = newTagList.findIndex(newTag => newTag.name === tag.name);
-      const localTagIndex = localTagList.findIndex(localTag => localTag.name === tag.name);
+      const newTagIndex = newTagList.findIndex(newTag => newTag === tag);
+      const localTagIndex = localTagList.findIndex(localTag => localTag === tag);
       if (newTagIndex > -1) {
         setNewTagList(prevState => prevState.filter((_, index) => index !== newTagIndex));
         setLocalTagList(prevState => prevState.filter((_, index) => index !== localTagIndex));
@@ -92,12 +85,12 @@ const TagPoolForArticleModification = forwardRef<HandleSelectedTagData, TagPoolP
       <div>
         {localTagList && localTagList.length > 0 && (
             <div className="w-full flex items-center justify-start gap-5 flex-wrap">
-              {localTagList.map((tag: Tag) => {
-                const selected = selectedTagList.findIndex(selectedTag => selectedTag.name === tag.name) > -1;
+              {localTagList.map((tag: string) => {
+                const selected = selectedTagList.findIndex(selectedTag => selectedTag === tag) > -1;
                 return (
                     <Chip
-                        key={tag.id}
-                        label={tag.name}
+                        key={tag}
+                        label={tag}
                         variant={selected ? "filled" : "outlined"}
                         onClick={() => handleTagClick(tag)}
                         color={selected ? "success" : "default"}

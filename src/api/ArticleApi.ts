@@ -115,7 +115,6 @@ const useUpdateArticle = () => {
 
 const useGetArticle = () => {
   const getArticleRequest = async (articleId: string) => {
-    console.log(`查找文章，文章id：${articleId}`);
     const response = await fetch(`${BASE_URL}/api/article/${articleId}`, {
       method: "GET"
     });
@@ -123,8 +122,6 @@ const useGetArticle = () => {
       throw new Error("Failed to get article");
     } else {
       const responsedata = await response.json();
-      console.log("responsedata -> ")
-      console.log(responsedata);
       return responsedata;
     }
   }

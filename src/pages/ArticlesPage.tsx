@@ -72,9 +72,7 @@ const ArticlesPage = () => {
           </Button>
         </div>
 
-        <div style={{ height: "70vh" }}>
-          <ArticleSearchModule/>
-        </div>
+        <ArticleSearchModule/>
       </div>
   );
 };

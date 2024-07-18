@@ -37,7 +37,7 @@ export type ArticleOverviewInfo = {
   id: string;
   title: string;
   subtitle?: string;
-  tags: Tag[];
+  tags: string;
   category: Category;
   description: string;
   author: {
@@ -60,7 +60,7 @@ export type CompleteArticleData = {
   id: string;
   title: string;
   subtitle?: string;
-  tags: Tag[];
+  tags: string[];
   category: Category;
   contentHtml: string;
   contentText?: string;
@@ -86,7 +86,7 @@ export type CompleteArticleData = {
 export type ArticleSearchParamType = {
   keyword: string;
   selectedCategoryList: Array<Category>;
-  selectedTagList: Array<Tag>;
+  selectedTagList: string[];
   sortStrategy: "publish_date" | "update_date" | "recommended";
   sortDirection: "asc" | "desc" | "none";
 }
@@ -100,7 +100,7 @@ export type ArticleModificationFormData = {
   category?: Category;
   pictureLinkList?: string[];
   attachmentLink?: string;
-  selectedTagList?: Tag[];
+  selectedTagList?: string[];
   coverImageLink?: string;
 }
 
