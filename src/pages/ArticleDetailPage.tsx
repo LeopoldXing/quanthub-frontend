@@ -15,7 +15,7 @@ import CommentSection from "@/components/CommentSection.tsx";
 import MuiConfirmBox from "@/components/mui/MuiConfirmBox.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
-import { useGetArticle } from "@/api/ArticleApi.ts";
+import { useDeleteArticle, useGetArticle } from "@/api/ArticleApi.ts";
 
 const ArticleDetailPage = () => {
   const location = useLocation();
@@ -92,10 +92,12 @@ const ArticleDetailPage = () => {
     })
   }
   /*  delete article  */
+  const { deleteArticle } = useDeleteArticle();
   const handleDeleteArticle = async () => {
-    await sleep(1000);
+    await deleteArticle(articleId);
     console.log("delete article");
     navigate("/my/articles");
+    window.scrollTo(0, 0);
     showNotification({
       message: "Article Deleted",
       severity: "success",

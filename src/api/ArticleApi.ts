@@ -166,4 +166,24 @@ const useSaveDraft = () => {
   return { saveDraft, isLoading, isError, isSuccess };
 }
 
-export { useCreateArticle, useUpdateArticle, useGetArticle, useSaveDraft, useSearchContent }
+const useDeleteArticle = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const deleteArticleRequest = async (articleId: string) => {
+    const accessToken = await getAccessTokenSilently();
+    const response = await fetch(`${BASE_URL}/api/article/${articleId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error("Failed to delete article");
+    }
+  }
+
+  const { mutateAsync: deleteArticle, isLoading, isError, isSuccess } = useMutation(deleteArticleRequest);
+  return { deleteArticle, isLoading, isError, isSuccess };
+}
+
+export { useCreateArticle, useUpdateArticle, useGetArticle, useSaveDraft, useSearchContent, useDeleteArticle }
