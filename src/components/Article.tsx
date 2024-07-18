@@ -1,6 +1,5 @@
 import { CompleteArticleData } from "@/types.ts";
 import RenderHtmlContent from "@/components/RenderHtmlContent.tsx";
-import { fakeCompleteArticles } from "@/lib/dummyData.ts";
 import TagBar from "@/components/TagBar.tsx";
 import { IconButton, Typography } from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -10,7 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 type ArticleProps = {
-  articleData?: CompleteArticleData;
+  articleData: CompleteArticleData;
   isPreview?: boolean;
   likes?: number;
   views?: number;
@@ -20,7 +19,7 @@ type ArticleProps = {
 }
 
 const Article = ({
-                   articleData = fakeCompleteArticles[0],
+                   articleData,
                    likes = 0,
                    views = 1,
                    commentCount = 0,
@@ -58,7 +57,7 @@ const Article = ({
           </div>
           <div className="w-full mt-1 flex justify-start items-center gap-3">
             {/*  category  */}
-            <Typography fontSize="13px" color="#9CA3AF">{articleData.category?.name || "unknown"}</Typography>
+            <Typography fontSize="13px" color="#9CA3AF">{articleData?.category || "unknown"}</Typography>
             <div className="w-1 h-4 border-r-2 border-gray-300"/>
             <Typography fontSize="13px" color="#9CA3AF">
               last

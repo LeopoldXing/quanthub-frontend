@@ -5,7 +5,6 @@ import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import { OutlinedInput } from "@mui/material";
 import { useEffect } from "react";
-import { Category } from "@/types";
 
 const ITEM_HEIGHT = 50;
 const ITEM_PADDING_TOP = 8;
@@ -19,7 +18,7 @@ const MenuProps = {
 };
 
 interface SingleCategorySelectBoxProps {
-  categoryList: Array<Category>;
+  categoryList: Array<string>;
   onUpdate?: (data: string) => void;
   height?: string;
   initialCategoryName?: string;
@@ -53,8 +52,8 @@ export default function SingleCategorySelectBox({
             MenuProps={MenuProps}
         >
           {categoryList && categoryList.map((category) => (
-              <MenuItem key={category.id} value={category.name}>
-                <ListItemText primary={category.name}/>
+              <MenuItem key={category} value={category}>
+                <ListItemText primary={category}/>
               </MenuItem>
           ))}
         </Select>

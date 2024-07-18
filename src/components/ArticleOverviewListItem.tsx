@@ -47,7 +47,7 @@ const ArticleOverviewListItem = ({ articleOverviewInfo }: {
             {/*  meta data  */}
             <div className="w-full flex justify-start items-center gap-3">
               {/*  category  */}
-              <Typography fontSize="13px" color="#9CA3AF">{articleOverviewInfo!.category.name}</Typography>
+              <Typography fontSize="13px" color="#9CA3AF">{articleOverviewInfo!.category}</Typography>
               <div className="w-1 h-4 border-r-2 border-gray-300"/>
               <Typography fontSize="13px" color="#9CA3AF">
                 last

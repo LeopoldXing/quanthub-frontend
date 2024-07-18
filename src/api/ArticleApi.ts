@@ -57,6 +57,8 @@ const useCreateArticle = () => {
 
   const createArticleRequest = async (data: CreateArticleRequestProps) => {
     const accessToken = await getAccessTokenSilently();
+    console.log("create article - data ->")
+    console.log(data)
     const response = await fetch(`${BASE_URL}/api/article/publish`, {
       method: "POST",
       headers: {

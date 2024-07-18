@@ -7,10 +7,10 @@ export const articleModificationFormSchema = z.object({
   contentHtml: z.string().nullable(),
   contentText: z.string().nullable(),
   contentJson: z.string().nullable(),
-  categoryName: z.string().nullable(),
+  category: z.string().nullable(),
   pictureLinkList: z.array(z.string().url()).nullable(),
   attachmentLink: z.string().url().nullable(),
-  tagNameList: z.array(z.string()).nullable()
+  tagList: z.array(z.string()).nullable()
 });
 
 // define form data type

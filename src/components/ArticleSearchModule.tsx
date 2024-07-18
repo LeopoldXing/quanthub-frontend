@@ -9,7 +9,7 @@ import { Typography } from "@mui/material";
 import LoopIcon from "@mui/icons-material/Loop";
 import TagPoolForSearching, { HandleSelectedTagChange } from "@/components/TagPoolForSearching.tsx";
 import { useEffect, useRef, useState } from "react";
-import { ArticleOverviewInfo, ArticleSearchParamType, Category } from "@/types.ts";
+import { ArticleOverviewInfo, ArticleSearchParamType } from "@/types.ts";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { useShuffleTags } from "@/api/TagApi.ts";
@@ -40,7 +40,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
     });
   }
   // category
-  const handleCategoryChange = (updatedCategoryList: Array<Category>): void => {
+  const handleCategoryChange = (updatedCategoryList: string[]): void => {
     setSearchParams(prevState => ({
       ...prevState,
       selectedCategoryList: updatedCategoryList
@@ -108,7 +108,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
       console.log(searchParams)
       const res = await searchContent({
         keyword: searchParams.keyword,
-        categoryList: searchParams.selectedCategoryList?.map(category => category.name),
+        categoryList: searchParams.selectedCategoryList || [],
         tagList: searchParams.selectedTagList,
         sortStrategy: searchParams.sortStrategy,
         sortDirection: searchParams.sortDirection,
@@ -135,7 +135,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
 
         {/*  category bar  */}
         <div className="lg:hidden w-full mt-6 flex justify-end items-center">
-          <MultiCategorySelectBox categoryList={categories}
+          <MultiCategorySelectBox categoryList={categories.map(category => category.name)}
                                   onUpdate={handleCategoryChange}/>
         </div>
 
@@ -170,7 +170,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
 
             {/*  search result  */}
             {(isSearching || (Array.isArray(articleOverviewList) && articleOverviewList.length > 0)) && (
-                <div className="w-full">
+                <div style={{ minHeight: '70vh' }}  className="w-full">
                   <div className="w-full py-10">
                     <ArticleOverviewList articleOverviewInfoList={articleOverviewList} loading={isSearching}/>
                   </div>
@@ -182,13 +182,13 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
                 </div>
             )}
             {(!isSearching && articleOverviewList && Array.isArray(articleOverviewList) && articleOverviewList.length === 0) && (
-                <div className="w-full flex justify-center items-center">
+                <div style={{ minHeight: '70vh' }}  className="w-full flex justify-center items-center">
                   {mode === "public" ? (
                       <Typography fontWeight="normal" fontSize="xl" textAlign="center" paddingTop="5%">
                         No Result Found!
                       </Typography>
                   ) : (
-                      <div className="flex justify-center items-center gap-4">
+                      <div style={{ minHeight: '70vh' }} className="flex justify-center items-center gap-4">
                         <Typography sx={{ fontSize: "16px", fontWeight: "bold" }}>
                           You don't have any articles,
                         </Typography>
@@ -205,7 +205,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
           <div className="hidden lg:block lg:w-1/3">
             {/*  category bar  */}
             <div className="hidden w-full mt-16 lg:flex justify-end items-center">
-              <MultiCategorySelectBox categoryList={categories}
+              <MultiCategorySelectBox categoryList={categories.map(category => category.name)}
                                       onUpdate={handleCategoryChange}/>
             </div>
             {/*  tag pool  */}

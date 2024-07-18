@@ -48,15 +48,14 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
     title: initialData?.initialFormData?.title || "",
     subtitle: initialData?.initialFormData?.subtitle || null,
     contentHtml: initialData?.initialFormData?.contentHtml || exampleContentHtml,
-    contentText: "",
-    contentJson: initialData?.initialFormData?.contentJson || JSON.stringify(exampleContentJson),
-    categoryName: initialData?.initialFormData?.categoryName || "",
+    contentText: initialData?.initialFormData?.contentText,
+    contentJson: initialData?.initialFormData?.contentJson,
+    category: initialData?.initialFormData?.category || "",
     pictureLinkList: [],
     attachmentLink: null,
-    tagNameList: initialData?.initialFormData?.tagNameList || []
+    tagList: initialData?.initialFormData?.tagList || []
   });
 
-  // 优化 useEffect，避免不必要的状态更新
   useEffect(() => {
     if (onFormDataChange) {
       onFormDataChange(formData);
@@ -116,7 +115,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
       const selectedTagList = tagPoolRef.current?.getSelectedTagList();
       setFormData(prevState => ({
         ...prevState,
-        tagNameList: selectedTagList || []
+        tagList: selectedTagList || []
       }))
       if (validateFormData(formData)) {
         return formData;
@@ -139,15 +138,15 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
     setFormData(prevState => ({ ...prevState, subtitle: e.target.value }));
   }, []);
 
-  const handleCategoryChange = useCallback((categoryName: string) => {
-    setFormData(prevState => ({ ...prevState, categoryName }));
+  const handleCategoryChange = useCallback((category: string) => {
+    setFormData(prevState => ({ ...prevState, category }));
   }, []);
 
   const handleTagUpdate = useCallback((tagList: string[]) => {
-    setFormData(prevState => ({ ...prevState, tagNameList: tagList }));
+    setFormData(prevState => ({ ...prevState, tagList: tagList }));
   }, []);
 
-  const handleEditorUpdate = useCallback((content: {
+  const handleEditorUpdate = (content: {
     contentText: string,
     contentHtml: string,
     contentJson: string
@@ -158,7 +157,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
       contentHtml: content.contentHtml,
       contentJson: content.contentJson
     }));
-  }, []);
+  }
 
   return (
       <Box width="100%" component="form" noValidate autoComplete="off">
@@ -215,8 +214,8 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
           <div className="w-full hidden md:flex justify-between items-center gap-8">
             <div className="w-full min-h-24 flex flex-col justify-start items-start gap-4">
               <div className="text-nowrap text-xl font-bold">Category</div>
-              <SingleCategorySelectBox categoryList={categories}
-                                       initialCategoryName={initialData.initialFormData.categoryName || ""}
+              <SingleCategorySelectBox categoryList={categories.map(category => category.name)}
+                                       initialCategoryName={initialData.initialFormData.category || ""}
                                        onUpdate={handleCategoryChange}/>
             </div>
             <div className="w-full min-h-28 flex flex-col justify-start items-start gap-4">
@@ -234,7 +233,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
           </div>
           <div className="w-full md:hidden flex flex-col justify-start items-start gap-4">
             <div className="text-nowrap text-xl font-bold">Category</div>
-            <SingleCategorySelectBox categoryList={categories}
+            <SingleCategorySelectBox categoryList={categories.map(category => category.name)}
                                      onUpdate={handleCategoryChange}/>
           </div>
           <div className="w-full min-h-28 md:hidden flex flex-col justify-start items-start gap-4">
@@ -254,7 +253,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
               <div className="text-nowrap text-xl font-bold">Tags</div>
               <div className="w-full mt-3">
                 <TagPoolForArticleModification tagList={tags.map(tag => tag.name)} ref={tagPoolRef}
-                                               initialTagNameList={initialData.initialFormData.tagNameList || []}
+                                               initialTagNameList={initialData.initialFormData.tagList || []}
                                                onUpdate={handleTagUpdate}/>
               </div>
             </div>

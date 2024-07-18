@@ -1,4 +1,3 @@
-import * as React from 'react';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -7,7 +6,6 @@ import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import { FilledInput } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Category } from "@/types.ts";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -21,28 +19,22 @@ const MenuProps = {
 };
 
 interface MultiCategorySelectBoxProps {
-  categoryList: Array<Category>;
-  onUpdate: (data: Array<Category>) => void;
+  categoryList: Array<string>;
+  onUpdate: (data: Array<string>) => void;
 }
 
 export default function MultiCategorySelectBox({ categoryList, onUpdate }: MultiCategorySelectBoxProps) {
-  const [selectedCategoryNameList, setSelectedCategoryNameList] = React.useState<Array<string>>([]);
-  const [selectedCategoryList, setSelectedCategoryList] = useState<Array<Category>>([]);
+  const [selectedCategoryList, setSelectedCategoryList] = useState<string[]>([]);
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const handleChange = (event) => {
     const { target: { value } } = event;
-    setSelectedCategoryNameList(
+    setSelectedCategoryList(
         // On autofill we get a stringified value.
         typeof value === 'string' ? value.split(',') : value,
     );
   };
-
-  useEffect(() => {
-    setSelectedCategoryList(selectedCategoryNameList
-        .map(selectedName => categoryList.find(category => category.name === selectedName)!));
-  }, [selectedCategoryNameList]);
 
   useEffect(() => {
     onUpdate(selectedCategoryList);
@@ -55,7 +47,7 @@ export default function MultiCategorySelectBox({ categoryList, onUpdate }: Multi
             labelId="demo-multiple-checkbox-label"
             id="demo-multiple-checkbox"
             multiple
-            value={selectedCategoryNameList}
+            value={selectedCategoryList}
             onChange={handleChange}
             input={<FilledInput/>}
             renderValue={(selected) => selected.join(', ')}
@@ -66,9 +58,9 @@ export default function MultiCategorySelectBox({ categoryList, onUpdate }: Multi
             MenuProps={MenuProps}
         >
           {categoryList && categoryList.map((category) => (
-              <MenuItem key={category.id} value={category.name}>
-                <Checkbox checked={selectedCategoryNameList.includes(category.name)}/>
-                <ListItemText primary={category.name}/>
+              <MenuItem key={category} value={category}>
+                <Checkbox checked={selectedCategoryList.includes(category)}/>
+                <ListItemText primary={category}/>
               </MenuItem>
           ))}
         </Select>

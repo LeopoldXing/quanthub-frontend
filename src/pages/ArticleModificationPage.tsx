@@ -29,19 +29,19 @@ const ArticleModificationPage = () => {
     contentHtml: null,
     contentText: null,
     contentJson: null,
-    categoryName: null,
+    category: null,
     pictureLinkList: [],
     attachmentLink: null,
-    tagNameList: []
+    tagList: []
   };
   if (mode === "edit") {
     initialFormData.title = initialData.title;
     initialFormData.subtitle = initialData.subtitle || null;
     initialFormData.contentHtml = initialData.contentHtml;
-    initialFormData.categoryName = initialData.category?.name;
+    initialFormData.category = initialData.category || "unknown";
     initialFormData.pictureLinkList = [];
     initialFormData.attachmentLink = null;
-    initialFormData.tagNameList = initialData.tags;
+    initialFormData.tagList = initialData.tags;
   }
 
   const navigate = useNavigate();
@@ -93,8 +93,8 @@ const ArticleModificationPage = () => {
         id: uuidv4(),
         title: currentFormData.title,
         subtitle: currentFormData.subtitle || "",
-        tags: currentFormData.tagNameList || [],
-        category: { id: uuidv4(), name: currentFormData.categoryName || "unknown" },
+        tags: currentFormData.tagList || [],
+        category: currentFormData.category || "unknown",
         contentHtml: currentFormData.contentHtml || "",
         contentText: currentFormData.contentText || "",
         contentJson: currentFormData.contentJson || "",
@@ -124,12 +124,14 @@ const ArticleModificationPage = () => {
     }
   }, [currentFormData, showNotification]);
 
-  const handlePublish = useCallback(async () => {
+  const handlePublish = async () => {
     const formData = articleFormRef.current?.submit();
+    console.log("publish - submitted formData")
+    console.log(formData);
     const cookie = Cookies.get("quanthub-user");
     const currentUser = JSON.parse(cookie!).user;
     if (formData) {
-      let publishedArticle = null;
+      let publishedArticle;
       const requestParam = {
         articleId: initialData?.id || uuidv4(),
         authorId: currentUser.id,
@@ -138,8 +140,8 @@ const ArticleModificationPage = () => {
         contentHtml: formData.contentHtml || "",
         contentText: formData.contentText || "",
         coverImageLink: formData.pictureLinkList ? formData.pictureLinkList[0] : undefined,
-        category: formData.categoryName || undefined,
-        tags: formData.tagNameList || undefined,
+        category: formData.category || undefined,
+        tags: formData.tagList || undefined,
         attachmentLink: formData.attachmentLink || undefined,
         status: "published"
       };
@@ -169,7 +171,7 @@ const ArticleModificationPage = () => {
         vertical: "bottom"
       });
     }
-  }, [navigate, showNotification]);
+  };
 
   const openPublishConfirmDialog = useCallback(() => {
     setConfirmBoxData(prevState => ({
@@ -203,8 +205,8 @@ const ArticleModificationPage = () => {
       contentHtml: formData.contentHtml || "",
       contentText: formData.contentText || "",
       coverImageLink: formData.pictureLinkList ? formData.pictureLinkList[0] : undefined,
-      category: formData.categoryName || undefined,
-      tags: formData.tagNameList || undefined,
+      category: formData.category || undefined,
+      tags: formData.tagList || undefined,
       attachmentLink: formData.attachmentLink || undefined,
       status: "draft"
     };
@@ -329,7 +331,7 @@ const ArticleModificationPage = () => {
                 Done
               </Button>
             </div>
-            <Article articleData={articleData} isPreview={true}/>
+            <Article articleData={articleData!} isPreview={true}/>
           </Paper>
         </Modal>
       </div>
