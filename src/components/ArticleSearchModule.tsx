@@ -175,7 +175,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
                 </div>
             )}
             {(!isSearching && articleOverviewList && Array.isArray(articleOverviewList) && articleOverviewList.length === 0) && (
-                <div className="w-full flex justify-center items-center" style={{ height: "70vh" }}>
+                <div className="w-full flex justify-center items-center">
                   {mode === "public" ? (
                       <Typography fontWeight="normal" fontSize="xl" textAlign="center" paddingTop="5%">
                         No Result Found!
