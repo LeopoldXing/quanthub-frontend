@@ -47,6 +47,7 @@ export type ArticleOverviewInfo = {
   };
   coverImageLink?: string;
   rate: number;
+  type: 'article' | 'announcement' | 'draft';
   commentsCount: number;
   likes: string;
   views: string;
@@ -90,6 +91,17 @@ export type ArticleSearchParamType = {
   selectedTagList: string[];
   sortStrategy: "publish_date" | "update_date" | "recommended";
   sortDirection: "asc" | "desc" | "none";
+}
+
+export type NewArticleSearchParamType = {
+  keyword: string;
+  categoryList: string[];
+  tagList: string[];
+  sort: {
+    strategy: "publish_date" | "update_date" | "recommended";
+    direction: "desc" | "asc" | "none";
+  }
+  type: 'article' | 'announcement' | 'draft';
 }
 
 export type ArticleModificationFormData = {

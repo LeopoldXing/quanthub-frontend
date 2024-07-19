@@ -77,17 +77,21 @@
 }
 
 /*  refresh icon spin  */
-@keyframes spin-once {
-    0% {
-        transform: rotate(180deg);
-    }
-    100% {
+@keyframes spin {
+    from {
         transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
     }
 }
 
-.spin-once {
-    animation: spin-once 500ms linear forwards;
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+.stop-spinning {
+    animation-duration: 1s;
 }
 
 /* Hamburger Menu */

@@ -3,13 +3,12 @@ import { useMutation } from "react-query";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-type SearchContentRequestProps = {
+export type SearchContentRequestProps = {
   keyword: string;
   categoryList: string[];
   tagList: string[];
   sortStrategy: "publish_date" | "update_date" | "recommended";
   sortDirection: "desc" | "asc" | "none";
-  contentType: "article" | "announcement";
   type?: "article" | "announcement" | "draft";
 }
 const useSearchContent = () => {

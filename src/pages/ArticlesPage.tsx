@@ -1,21 +1,29 @@
 import Button from "@mui/material/Button";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ArticleIcon from '@mui/icons-material/Article';
 import PublicIcon from '@mui/icons-material/Public';
 import { Typography } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import "@/global.css";
 import { useNavigate } from "react-router-dom";
-import ArticleSearchModule from "@/components/ArticleSearchModule.tsx";
+import ArticleSearchForm, { ArticleSearchFormInterface } from "@/forms/ArticleSearchForm.tsx";
 
 const ArticlesPage = () => {
   const navigate = useNavigate();
 
-  /*  section  */
-  const [isAnnouncementSection, setIsAnnouncementSection] = useState<boolean>(false);
-  const handleSectionClick = (section: string) => {
-    setIsAnnouncementSection(section === "announcement");
+  /*  update what type of content user is querying  */
+  const searchFormRef = useRef<ArticleSearchFormInterface>();
+  const updateType = () => {
+    if (searchFormRef.current) {
+      searchFormRef.current.changeType(section);
+    }
   }
+
+  /*  section  */
+  const [section, setSection] = useState<"article" | "announcement">("article");
+  useEffect(() => {
+    updateType();
+  }, [section]);
 
   /*  create new article  */
   const handleCreateArticleButtonClick = () => {
@@ -31,24 +39,24 @@ const ArticlesPage = () => {
             <div className="text-4xl font-bold">Blogs</div>
             {/*  buttons  */}
             <div className="mt-8 lg:mt-0">
-              <Button variant="text" onClick={() => handleSectionClick("article")} size="small" sx={{
+              <Button variant="text" onClick={() => setSection("article")} size="small" sx={{
                 mr: "40px",
                 flex: "flex",
                 alignItems: "center",
-                color: `${isAnnouncementSection ? "#000000" : "#27ae60"}`
+                color: `${section === "article" ? "#27ae60" : "#000000"}`
               }}>
                 <ArticleIcon sx={{ mr: "5px" }}/>
-                <Typography sx={{ fontSize: "14px" }} fontWeight={isAnnouncementSection ? "" : "bold"}>
+                <Typography sx={{ fontSize: "14px" }} fontWeight={section === "article" ? "bold" : ""}>
                   Articles
                 </Typography>
               </Button>
-              <Button variant="text" onClick={() => handleSectionClick("announcement")} size="small" sx={{
+              <Button variant="text" onClick={() => setSection("announcement")} size="small" sx={{
                 flex: "flex",
                 alignItems: "center",
-                color: `${isAnnouncementSection ? "#27ae60" : "#000000"}`
+                color: `${section === "announcement" ? "#27ae60" : "#000000"}`
               }}>
                 <PublicIcon sx={{ mr: "5px" }}/>
-                <Typography sx={{ fontSize: "14px" }} fontWeight={isAnnouncementSection ? "bold" : ""}>
+                <Typography sx={{ fontSize: "14px" }} fontWeight={section === "announcement" ? "bold" : ""}>
                   Announcements
                 </Typography>
               </Button>
@@ -72,7 +80,11 @@ const ArticlesPage = () => {
           </Button>
         </div>
 
-        <ArticleSearchModule/>
+        {/*<ArticleSearchModule/>*/}
+        <ArticleSearchForm ref={searchFormRef} type={section} viewerType="public" onSubmit={(data) => {
+          console.log("搜索表单提交 -> ")
+          console.log(data)
+        }}/>
       </div>
   );
 };

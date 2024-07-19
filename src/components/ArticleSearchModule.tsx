@@ -129,44 +129,44 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
         {/*  search bar  */}
-        <div className="lg:hidden w-full">
+{/*        <div className="lg:hidden w-full">
           <SearchBox handleKeywordChange={handleKeywordChange} handleSearch={handleSearch}/>
-        </div>
+        </div>*/}
 
         {/*  category bar  */}
-        <div className="lg:hidden w-full mt-6 flex justify-end items-center">
+        {/*<div className="lg:hidden w-full mt-6 flex justify-end items-center">
           <MultiCategorySelectBox categoryList={categories.map(category => category.name)}
                                   onUpdate={handleCategoryChange}/>
-        </div>
+        </div>*/}
 
         {/*  selected tag area  */}
-        <div className="lg:hidden w-full mt-6">
+        {/*<div className="lg:hidden w-full mt-6">
           <SelectedTagPool selectedTagList={searchParams.selectedTagList}
                            handleDeleteTag={handleDeleteTag}/>
-        </div>
+        </div>*/}
 
         {/*  sorting panel  */}
-        <div className="lg:hidden w-full mt-5">
+        {/*<div className="lg:hidden w-full mt-5">
           <ArticleSortingPanel onSort={handleSort} loading={isSearching}/>
-        </div>
+        </div>*/}
 
         {/*  content container  */}
         <div className="w-full flex justify-between items-start gap-16">
           {/*  left  */}
           <div className="w-full lg:w-2/3">
-            <div className="hidden lg:block w-full">
+            {/*<div className="hidden lg:block w-full">
               <SearchBox handleKeywordChange={handleKeywordChange} handleSearch={handleSearch}/>
-            </div>
+            </div>*/}
             {/*  selected tag area  */}
-            <div className="hidden lg:block w-full mt-6">
+            {/*<div className="hidden lg:block w-full mt-6">
               <SelectedTagPool selectedTagList={searchParams.selectedTagList}
                                handleDeleteTag={handleDeleteTag}/>
-            </div>
+            </div>*/}
 
             {/*  sorting panel  */}
-            <div className="hidden mt-7 lg:block">
+            {/*<div className="hidden mt-7 lg:block">
               <ArticleSortingPanel onSort={handleSort} mode={mode} loading={isSearching}/>
-            </div>
+            </div>*/}
 
             {/*  search result  */}
             {(isSearching || (Array.isArray(articleOverviewList) && articleOverviewList.length > 0)) && (
@@ -204,12 +204,12 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
           {/*  right extra info  */}
           <div className="hidden lg:block lg:w-1/3">
             {/*  category bar  */}
-            <div className="hidden w-full mt-16 lg:flex justify-end items-center">
+            {/*<div className="hidden w-full mt-16 lg:flex justify-end items-center">
               <MultiCategorySelectBox categoryList={categories.map(category => category.name)}
                                       onUpdate={handleCategoryChange}/>
-            </div>
+            </div>*/}
             {/*  tag pool  */}
-            <div className="hidden lg:block mt-8">
+            {/*<div className="hidden lg:block mt-8">
               <div className="w-full mb-4 flex justify-between items-center">
                 <div className="text-start text-xl font-bold">{mode === "public" ? "Popular tags" : "My Tags"}</div>
                 <button onClick={() => {
@@ -223,7 +223,7 @@ const ArticleSearchModule = ({ mode = "public" }: ArticleSearchModuleProps) => {
                                      ref={tagPoolRef}
                                      loading={tagPoolLoading}/>
               </div>
-            </div>
+            </div>*/}
           </div>
         </div>
       </div>

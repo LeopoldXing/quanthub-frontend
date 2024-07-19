@@ -3,11 +3,11 @@ import { Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
-import ArticleSearchModule from "@/components/ArticleSearchModule.tsx";
 import ArticleIcon from "@mui/icons-material/Article";
 import PublicIcon from "@mui/icons-material/Public";
 import DraftsIcon from '@mui/icons-material/Drafts';
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import ArticleSearchForm, { ArticleSearchFormInterface } from "@/forms/ArticleSearchForm.tsx";
 
 type MyArticlesPageProps = {
   isAdmin?: boolean;
@@ -19,11 +19,19 @@ const MyArticlesPage = ({ isAdmin = true }: MyArticlesPageProps) => {
   // notification
   const { showNotification } = useNotification();
 
+  /*  update what type of content user is querying  */
+  const searchFormRef = useRef<ArticleSearchFormInterface>();
+  const updateType = () => {
+    if (searchFormRef.current) {
+      searchFormRef.current.changeType(section);
+    }
+  }
+
   /*  section  */
   const [section, setSection] = useState<'article' | 'announcement' | 'draft'>("article");
-  const handleSectionClick = (selectedSection: 'article' | 'announcement' | 'draft') => {
-    setSection(selectedSection);
-  }
+  useEffect(() => {
+    updateType();
+  }, [section]);
 
   /*  create new article  */
   const handleCreateArticleButtonClick = () => {
@@ -40,7 +48,7 @@ const MyArticlesPage = ({ isAdmin = true }: MyArticlesPageProps) => {
             {isAdmin ? (
                 /*  buttons  */
                 <div className="mt-8 xl:mt-0">
-                  <Button variant="text" onClick={() => handleSectionClick("article")} size="small" sx={{
+                  <Button variant="text" onClick={() => setSection("article")} size="small" sx={{
                     mr: "40px",
                     flex: "flex",
                     alignItems: "center",
@@ -51,7 +59,7 @@ const MyArticlesPage = ({ isAdmin = true }: MyArticlesPageProps) => {
                       Articles
                     </Typography>
                   </Button>
-                  <Button variant="text" onClick={() => handleSectionClick("announcement")} size="small" sx={{
+                  <Button variant="text" onClick={() => setSection("announcement")} size="small" sx={{
                     mr: "40px",
                     flex: "flex",
                     alignItems: "center",
@@ -62,7 +70,7 @@ const MyArticlesPage = ({ isAdmin = true }: MyArticlesPageProps) => {
                       Announcements
                     </Typography>
                   </Button>
-                  <Button variant="text" onClick={() => handleSectionClick("draft")} size="small" sx={{
+                  <Button variant="text" onClick={() => setSection("draft")} size="small" sx={{
                     flex: "flex",
                     alignItems: "center",
                     color: `${section === 'draft' ? "#27ae60" : "#000000"}`
@@ -76,7 +84,7 @@ const MyArticlesPage = ({ isAdmin = true }: MyArticlesPageProps) => {
             ) : (
                 /*  buttons  */
                 <div className="mt-8 xl:mt-0">
-                  <Button variant="text" onClick={() => handleSectionClick("article")} size="small" sx={{
+                  <Button variant="text" onClick={() => setSection("article")} size="small" sx={{
                     mr: "40px",
                     flex: "flex",
                     alignItems: "center",
@@ -87,7 +95,7 @@ const MyArticlesPage = ({ isAdmin = true }: MyArticlesPageProps) => {
                       Articles
                     </Typography>
                   </Button>
-                  <Button variant="text" onClick={() => handleSectionClick("draft")} size="small" sx={{
+                  <Button variant="text" onClick={() => setSection("draft")} size="small" sx={{
                     flex: "flex",
                     alignItems: "center",
                     color: `${section === 'draft' ? "#27ae60" : "#000000"}`
@@ -119,7 +127,11 @@ const MyArticlesPage = ({ isAdmin = true }: MyArticlesPageProps) => {
           </Button>
         </div>
 
-        <ArticleSearchModule mode="user"/>
+        {/*<ArticleSearchModule mode="user"/>*/}
+        <ArticleSearchForm ref={searchFormRef} type={section} viewerType="self" onSubmit={(data) => {
+          console.log("搜索表单提交 -> ")
+          console.log(data)
+        }}/>
       </div>
   );
 };
