@@ -1,10 +1,10 @@
 import MuiRichTextEditor, { handleRichTextEditorData } from "@/components/mui/RichTextEditor/MuiRichTextEditor.tsx";
 import { MenuControlsContainer } from "mui-tiptap";
 import EditorMenuControls from "@/components/mui/RichTextEditor/EditorMenuControls.tsx";
-import { categories, exampleContentHtml, exampleContentJson, tags } from "@/lib/dummyData.ts";
+import { categories, exampleContentHtml, tags } from "@/lib/dummyData.ts";
 import { Box, TextField } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState, useCallback } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { ArticleComment } from "@/types.ts";
 import {
   articleModificationFormSchema,

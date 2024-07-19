@@ -62,6 +62,7 @@ export type CompleteArticleData = {
   subtitle?: string;
   tags: string[];
   category: string;
+  type: "article" | "announcement" | "draft";
   contentHtml: string;
   contentText?: string;
   contentJson?: string;

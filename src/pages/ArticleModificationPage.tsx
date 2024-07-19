@@ -15,7 +15,8 @@ import Article from "@/components/Article.tsx";
 import { v4 as uuidv4 } from "uuid";
 import Cookies from 'js-cookie';
 import { ArticleModificationFormZodDataType } from "@/forms/schemas/ArticleModificationFormSchema.ts";
-import { useCreateArticle, useSaveDraft, useUpdateArticle } from "@/api/ArticleApi.ts";
+import { useCreateArticle, useUpdateArticle } from "@/api/ArticleApi.ts";
+import { useSaveDraft } from "@/api/DraftApi.ts";
 
 const ArticleModificationPage = () => {
   const location = useLocation();
@@ -100,6 +101,7 @@ const ArticleModificationPage = () => {
         contentJson: currentFormData.contentJson || "",
         coverImageLink: undefined,
         rate: 9.0,
+        type: 'article',
         comments: [],
         likes: "0",
         views: "1",
@@ -143,7 +145,8 @@ const ArticleModificationPage = () => {
         category: formData.category || undefined,
         tags: formData.tagList || undefined,
         attachmentLink: formData.attachmentLink || undefined,
-        status: "published"
+        status: "published",
+        type: 'article'
       };
       if (mode === "create") {
         publishedArticle = await publishArticle(requestParam);

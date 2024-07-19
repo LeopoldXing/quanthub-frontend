@@ -10,6 +10,7 @@ type SearchContentRequestProps = {
   sortStrategy: "publish_date" | "update_date" | "recommended";
   sortDirection: "desc" | "asc" | "none";
   contentType: "article" | "announcement";
+  type?: "article" | "announcement" | "draft";
 }
 const useSearchContent = () => {
   const searchContentRequest = async (data: SearchContentRequestProps) => {
@@ -51,12 +52,14 @@ type CreateArticleRequestProps = {
   category?: string;
   tags?: string[];
   attachmentLink?: string;
+  type: "article" | "announcement" | "draft";
 }
 const useCreateArticle = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   const createArticleRequest = async (data: CreateArticleRequestProps) => {
     const accessToken = await getAccessTokenSilently();
+    data = { ...data, type: "article" };
     console.log("create article - data ->")
     console.log(data)
     const response = await fetch(`${BASE_URL}/api/article/publish`, {
@@ -90,12 +93,16 @@ type UpdateArticleRequestProps = {
   category?: string;
   tags?: string[];
   attachmentLink?: string;
+  type: "article" | "announcement" | "draft";
 }
 const useUpdateArticle = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   const updateArticleRequest = async (data: UpdateArticleRequestProps) => {
     const accessToken = await getAccessTokenSilently();
+    data = { ...data, type: "article" };
+    console.log("update article - data ->")
+    console.log(data)
     const response = await fetch(`${BASE_URL}/api/article/update`, {
       method: "PUT",
       headers: {
@@ -132,39 +139,6 @@ const useGetArticle = () => {
   return { getArticle, isLoading, isError, isSuccess };
 }
 
-type SaveDraftRequestProps = {
-  authorId: string;
-  title: string;
-  subTitle?: string;
-  contentHtml: string;
-  contentText?: string;
-  coverImageLink?: string;
-  category?: string;
-  tags?: string[];
-  attachmentLink?: string;
-}
-const useSaveDraft = () => {
-  const { getAccessTokenSilently } = useAuth0();
-
-  const saveDraftRequest = async (data: SaveDraftRequestProps) => {
-    const accessToken = await getAccessTokenSilently();
-    const response = await fetch(`${BASE_URL}/api/article/draft`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`
-      },
-      body: JSON.stringify(data)
-    });
-    if (!response.ok) {
-      throw new Error("Failed to save draft");
-    }
-  }
-
-  const { mutateAsync: saveDraft, isLoading, isError, isSuccess } = useMutation(saveDraftRequest);
-  return { saveDraft, isLoading, isError, isSuccess };
-}
-
 const useDeleteArticle = () => {
   const { getAccessTokenSilently } = useAuth0();
 
@@ -185,4 +159,4 @@ const useDeleteArticle = () => {
   return { deleteArticle, isLoading, isError, isSuccess };
 }
 
-export { useCreateArticle, useUpdateArticle, useGetArticle, useSaveDraft, useSearchContent, useDeleteArticle }
+export { useCreateArticle, useUpdateArticle, useGetArticle, useSearchContent, useDeleteArticle }
