@@ -9,7 +9,7 @@ const RenderHtmlContent = ({ contentHtml }: ArticleProps) => {
   const sanitizedHtml = DOMPurify.sanitize(contentHtml);
 
   return (
-    <MuiRichTextEditor initialContent={sanitizedHtml} mode="display"/>
+    <MuiRichTextEditor value={sanitizedHtml} mode="display"/>
   );
 };
 

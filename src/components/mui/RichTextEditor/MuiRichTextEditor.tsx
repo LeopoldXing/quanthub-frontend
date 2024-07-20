@@ -31,28 +31,28 @@ export interface handleRichTextEditorData {
   getText: () => string;
   getJson: () => string;
   /*getFileList: () => File[];*/
-  getFileList: () => void;
+  getImageList: () => void;
 }
 
 type MuiRichTextEditorProps = {
-  initialContent?: string;
   variant?: "standard" | "outlined";
   renderControls?: () => import("react/jsx-runtime").JSX.Element;
   onSaveDraft?: () => void;
   onCancel?: () => void;
   isSavingDraft?: boolean;
   mode?: "edit" | "display";
-  onUpdate?: (content: { contentText: string, contentJson: string, contentHtml: string }) => void;
+  onChange?: (content: { contentText: string, contentHtml: string }) => void;
+  value: string;
 }
 
 const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditorProps>(({
-                                                                                          initialContent,
                                                                                           mode = "edit",
                                                                                           variant = "standard",
                                                                                           renderControls,
                                                                                           onSaveDraft,
                                                                                           isSavingDraft = false,
-                                                                                          onUpdate
+                                                                                          onChange,
+                                                                                          value
                                                                                         }, ref) => {
   const extensions = useExtensions({
     placeholder: "Add your own content here...",
@@ -72,7 +72,7 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
     getJson() {
       return JSON.parse(JSON.stringify(rteRef.current?.editor?.getJSON())) ?? "";
     },
-    getFileList() {
+    getImageList() {
       console.log();
     }
   }))
@@ -179,16 +179,13 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
         <RichTextEditor
             ref={rteRef}
             extensions={extensions}
-            content={initialContent}
+            content={value}
             editable={mode === "edit" ? isEditable : false}
             onUpdate={(e) => {
-              if (onUpdate) {
-                onUpdate({
-                  contentText: e.editor.getText(),
-                  contentHtml: e.editor.getHTML(),
-                  contentJson: JSON.stringify(e.editor.getJSON())
-                })
-              }
+              onChange && onChange({
+                contentText: e.editor.getText(),
+                contentHtml: e.editor.getHTML(),
+              })
             }}
             editorProps={{
               handleDrop: handleDrop,
@@ -264,16 +261,6 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
                             <DraftsIcon fontSize="small"/>
                           </LoadingButton>
                         </div>
-                        {/*                    <Button
-                        variant="contained"
-                        color="error"
-                        size="small"
-                        onClick={onCancel}>
-                      <div className="flex justify-center items-center md:gap-2">
-                        <DeleteIcon fontSize="small"/>
-                        <span className="hidden md:block">Delete and Leave</span>
-                      </div>
-                    </Button>*/}
                       </Stack>
                   ),
                   RichTextContentProps: {

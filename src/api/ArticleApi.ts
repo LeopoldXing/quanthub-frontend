@@ -41,12 +41,12 @@ const useSearchContent = () => {
   return { searchContent, isLoading, isError, isSuccess };
 }
 
-type CreateArticleRequestProps = {
+type CreateArticleRequestParam = {
   authorId: string;
   title: string;
   subTitle?: string;
   contentHtml: string;
-  contentText?: string;
+  contentText: string;
   coverImageLink?: string;
   category?: string;
   tags?: string[];
@@ -56,7 +56,7 @@ type CreateArticleRequestProps = {
 const useCreateArticle = () => {
   const { getAccessTokenSilently } = useAuth0();
 
-  const createArticleRequest = async (data: CreateArticleRequestProps) => {
+  const createArticleRequest = async (data: CreateArticleRequestParam) => {
     const accessToken = await getAccessTokenSilently();
     data = { ...data, type: "article" };
     console.log("create article - data ->")
@@ -69,6 +69,8 @@ const useCreateArticle = () => {
       },
       body: JSON.stringify(data)
     });
+    console.log("response")
+    console.log(response)
     if (!response.ok) {
       throw new Error("Failed to create article");
     } else {

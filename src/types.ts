@@ -68,6 +68,7 @@ export type CompleteArticleData = {
   contentText?: string;
   contentJson?: string;
   coverImageLink?: string;
+  attachmentLink?: string;
   rate: number;
   comments: ArticleComment[],
   likes: string;
@@ -115,6 +116,70 @@ export type ArticleModificationFormData = {
   attachmentLink?: string;
   selectedTagList?: string[];
   coverImageLink?: string;
+}
+
+export type ConfirmBoxConfig = {
+  title: string;
+  description: string;
+  option1Text?: string;
+  option2Text?: string;
+  option3Text?: string;
+  option1Variant: 'text' | 'outlined' | 'contained';
+  option2Variant: 'text' | 'outlined' | 'contained';
+  option3Variant: 'text' | 'outlined' | 'contained';
+  option1Color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+  option2Color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+  option3Color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+  option1StartIcon?: React.ReactNode;
+  option2StartIcon?: React.ReactNode;
+  option3StartIcon?: React.ReactNode;
+  option1EndIcon?: React.ReactNode;
+  option2EndIcon?: React.ReactNode;
+  option3EndIcon?: React.ReactNode;
+  option1Action?: () => Promise<void>;
+  option2Action?: () => Promise<void>;
+  option3Action?: () => Promise<void>;
+  option1LoadingPosition?: 'start' | 'end' | 'center';
+  option2LoadingPosition?: 'start' | 'end' | 'center';
+  option3LoadingPosition?: 'start' | 'end' | 'center';
+}
+
+export const confirmBoxDefaultConfig: ConfirmBoxConfig = {
+  title: '',
+  description: '',
+  option1Text: 'cancel',
+  option2Text: undefined,
+  option3Text: 'confirm',
+  option1Variant: 'text',
+  option2Variant: 'outlined',
+  option3Variant: 'contained',
+  option1Color: 'error',
+  option2Color: 'info',
+  option3Color: 'success',
+  option1StartIcon: undefined,
+  option2StartIcon: undefined,
+  option3StartIcon: undefined,
+  option1EndIcon: undefined,
+  option2EndIcon: undefined,
+  option3EndIcon: undefined,
+  option1LoadingPosition: 'center',
+  option2LoadingPosition: 'center',
+  option3LoadingPosition: 'center',
+}
+
+export type ContentModificationFormDataType = {
+  authorId: string;
+  title: string;
+  subTitle?: string;
+  content: {
+    contentHtml: string;
+    contentText: string;
+  }
+  coverImageLink?: string;
+  category?: string;
+  tags?: string[];
+  attachmentLink?: string;
+  type: "article" | "announcement" | "draft";
 }
 
 export type ButtonStyleType = {

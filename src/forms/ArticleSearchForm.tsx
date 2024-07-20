@@ -67,7 +67,7 @@ const ArticleSearchForm = React.forwardRef(({
   const { shuffleTags, isLoading: isFetchingTags } = useShuffleTags();
   const handleRefreshTags = async () => {
     try {
-      let res = [];
+      let res: string[];
       if (viewerType === 'public') {
         res = await shuffleTags(30);
       } else {
@@ -100,7 +100,7 @@ const ArticleSearchForm = React.forwardRef(({
   /*  fetch initial data  */
   const fetchTags = async () => {
     try {
-      let res: string[] = [];
+      let res: string[];
       if (viewerType === 'public') {
         res = await shuffleTags(30);
       } else {
@@ -161,7 +161,7 @@ const ArticleSearchForm = React.forwardRef(({
         {getValues('tagList') && getValues('tagList').length > 0 && (
             <div className="lg:hidden w-full mt-6">
               <TagPool control={control} onChange={tags => setValue('tagList', tags)}
-                       onDelete={tag => handleSubmit(submit)()} onDeleteAll={tag => handleSubmit(submit)()}/>
+                       onDelete={() => handleSubmit(submit)()} onDeleteAll={() => handleSubmit(submit)()}/>
             </div>
         )}
         {/*  sorting  */}
@@ -198,7 +198,7 @@ const ArticleSearchForm = React.forwardRef(({
             {/*  tag pool  */}
             <div className="hidden lg:block w-full">
               <TagPool control={control} onChange={tags => setValue('tagList', tags)}
-                       onDelete={tag => handleSubmit(submit)()} onDeleteAll={tag => handleSubmit(submit)()}/>
+                       onDelete={() => handleSubmit(submit)()} onDeleteAll={() => handleSubmit(submit)()}/>
             </div>
             {/*  sorting  */}
             <div className="hidden mt-7 lg:block">
@@ -215,7 +215,7 @@ const ArticleSearchForm = React.forwardRef(({
               />
             </div>
             {/*  search result  */}
-            <div className="w-full mt-8">
+            <div className="w-full">
               {!isSearching ? (
                   articleOverviewList.length > 0 ? (
                       /*  we have the search result  */
@@ -252,7 +252,7 @@ const ArticleSearchForm = React.forwardRef(({
                   )
               ) : (
                   /*  loading  */
-                  <ul style={{ minHeight: '70vh' }} className="w-full flex flex-col justify-start items-start gap-8">
+                  <ul style={{ minHeight: '70vh' }} className="w-full mt-8 flex flex-col justify-start items-start gap-8">
                     {Array.from({ length: 10 }, () => Math.floor(Math.random() * 10000) + 1).map((_, index) => (
                         <li key={_} className="w-full p-0 m-0">
                           <Box width={"100%"}>
@@ -333,7 +333,7 @@ const ArticleSearchForm = React.forwardRef(({
                   render={({ field: { onChange, value } }) => (
                       <div className="mt-8">
                         <AvailableTagPool isFetchingTags={isFetchingTags || isGettingMyTags} value={value}
-                                          availableTagList={availableTags} control={control} onDelete
+                                          availableTagList={availableTags} control={control}
                                           onChange={tagList => {
                                             onChange(tagList);
                                             handleSubmit(submit)();

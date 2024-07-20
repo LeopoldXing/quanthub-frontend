@@ -203,7 +203,7 @@ const ArticleModificationForm = forwardRef<HandleArticleModificationFormSubmissi
               ref={textEditorRef}
               onSaveDraft={onSaveDraft}
               onCancel={onCancel}
-              onUpdate={handleEditorUpdate}
+              onChange={handleEditorUpdate}
               isSavingDraft={isSavingDraft}
           />
         </div>
