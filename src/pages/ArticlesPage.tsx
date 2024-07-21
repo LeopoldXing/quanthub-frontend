@@ -7,9 +7,12 @@ import AddIcon from '@mui/icons-material/Add';
 import "@/global.css";
 import { useNavigate } from "react-router-dom";
 import ArticleSearchForm, { ArticleSearchFormInterface } from "@/forms/ArticleSearchForm.tsx";
+import Cookies from "js-cookie";
+import { useNotification } from "@/contexts/NotificationContext.tsx";
 
 const ArticlesPage = () => {
   const navigate = useNavigate();
+  const { showNotification } = useNotification();
 
   /*  update what type of content user is querying  */
   const searchFormRef = useRef<ArticleSearchFormInterface>();
@@ -26,8 +29,22 @@ const ArticlesPage = () => {
   }, [section]);
 
   /*  create new article  */
-  const handleCreateArticleButtonClick = () => {
-    navigate("/article/create");
+  const handleWriteSomething = () => {
+    const cookie = Cookies.get("quanthub-user");
+    if (cookie) {
+      const parsedCookie = JSON.parse(cookie);
+      if (parsedCookie) {
+        navigate("/article/create");
+        return;
+      }
+    }
+    // user didn't logged in
+    showNotification({
+      vertical: 'bottom',
+      horizontal: 'left',
+      severity: 'warning',
+      message: 'Please log in first'
+    });
   }
 
   return (
@@ -65,7 +82,7 @@ const ArticlesPage = () => {
           {/*  add article  */}
           <div className="hidden lg:block w-52">
             <Button variant="contained" sx={{ paddingY: "10px", textWrap: "nowrap", fontSize: "small" }}
-                    onClick={handleCreateArticleButtonClick}>
+                    onClick={handleWriteSomething}>
               <AddIcon sx={{ mr: "5px" }} fontSize="small"/>
               <Typography sx={{ fontSize: "14px" }}>Write something</Typography>
             </Button>
@@ -74,17 +91,14 @@ const ArticlesPage = () => {
 
         {/*  add article  */}
         <div className="lg:hidden w-full mt-10 flex justify-end items-center">
-          <Button sx={{ textWrap: "nowrap", fontSize: "small" }} onClick={handleCreateArticleButtonClick}>
+          <Button sx={{ textWrap: "nowrap", fontSize: "small" }} onClick={handleWriteSomething}>
             <AddIcon sx={{ mr: "5px" }} fontSize="small"/>
             <Typography sx={{ fontSize: "14px" }}>Write something</Typography>
           </Button>
         </div>
 
-        {/*<ArticleSearchModule/>*/}
-        <ArticleSearchForm ref={searchFormRef} type={section} viewerType="public" onSubmit={(data) => {
-          console.log("搜索表单提交 -> ")
-          console.log(data)
-        }}/>
+        <ArticleSearchForm ref={searchFormRef} type={section} viewerType="public"
+                           onSubmit={(data) => console.log(data)}/>
       </div>
   );
 };

@@ -6,13 +6,14 @@ import { Dropdown } from '@mui/base/Dropdown';
 import clsx from "clsx";
 import { useAuth0 } from "@auth0/auth0-react";
 import Button from "@mui/material/Button";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
 import { CurrentUserInfo } from "@/types.ts";
 import { useGetUserProfile } from "@/api/MyUserApi.ts";
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // mobile menu
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -71,12 +72,19 @@ const Header = () => {
     };
 
     updateUserInfo();
-  }, [isAuthenticated, isLoading, user, getAccessTokenSilently]);
+  }, [isAuthenticated, isLoading, user, getAccessTokenSilently, location, getUserProfile]);
 
   const handleLogout = () => {
     Cookies.remove("quanthub-user");
     logout({ logoutParams: { returnTo: window.location.origin } });
   };
+
+  const handleLogin = () => {
+    loginWithRedirect({
+      appState: { returnTo: location.pathname }
+    });
+  };
+
 
   return (
       <header className="w-full h-20 bg-[#21305e]">
@@ -120,7 +128,7 @@ const Header = () => {
                     </Dropdown>
                 ) : (
                     <Button variant="text" sx={{ fontWeight: "bold", fontSize: "15px", color: "white" }}
-                            onClick={async () => await loginWithRedirect()}>
+                            onClick={handleLogin}>
                       Login
                     </Button>
                 )}
@@ -146,7 +154,7 @@ const Header = () => {
                   <a href="/logout" className="hover:text-pink-500" onClick={handleLogout}>Logout</a>
               ) : (
                   <a href="/login" className="hover:text-pink-500"
-                     onClick={async () => await loginWithRedirect()}>Login</a>
+                     onClick={handleLogin}>Login</a>
               )}
               <a href="/about" className="hover:text-pink-500">About</a>
               <a href="/articles" className="hover:text-pink-500">Blogs</a>

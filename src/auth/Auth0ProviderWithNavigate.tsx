@@ -21,7 +21,11 @@ const Auth0ProviderWithNavigate = ({ children }: { children: React.ReactNode }) 
   const onRedirectCallback = (appState?: AppState, user?: User) => {
     console.log("USER login callback, user -> ", user);
     console.log("USER login callback, appState -> ", appState);
-    navigate("/auth-callback");
+    navigate("/auth-callback", {
+      state: {
+        returnTo: appState?.returnTo || '/',
+      }
+    });
   }
 
   return (

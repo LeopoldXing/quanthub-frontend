@@ -2,12 +2,13 @@ import Button from "@mui/material/Button";
 import { Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
-import { useNotification } from "@/contexts/NotificationContext.tsx";
 import ArticleIcon from "@mui/icons-material/Article";
 import PublicIcon from "@mui/icons-material/Public";
 import DraftsIcon from '@mui/icons-material/Drafts';
 import { useEffect, useRef, useState } from "react";
 import ArticleSearchForm, { ArticleSearchFormInterface } from "@/forms/ArticleSearchForm.tsx";
+import { CurrentUserInfo } from "@/types.ts";
+import Cookies from "js-cookie";
 
 type MyArticlesPageProps = {
   isAdmin?: boolean;
@@ -17,7 +18,7 @@ const MyArticlesPage = ({ isAdmin = true }: MyArticlesPageProps) => {
   // navigation
   const navigate = useNavigate();
   // notification
-  const { showNotification } = useNotification();
+  /*const { showNotification } = useNotification();*/
 
   /*  update what type of content user is querying  */
   const searchFormRef = useRef<ArticleSearchFormInterface>();
@@ -38,6 +39,24 @@ const MyArticlesPage = ({ isAdmin = true }: MyArticlesPageProps) => {
     navigate("/article/create");
   }
 
+  const [currentUser, setCurrentUser] = useState<CurrentUserInfo | null>(null);
+  useEffect(() => {
+    const checkCookie = async () => {
+      const cookie = Cookies.get("quanthub-user");
+      if (cookie) {
+        try {
+          const parsedCookie = JSON.parse(cookie);
+          setCurrentUser(parsedCookie);
+        } catch (error) {
+          console.error("Error parsing cookie:", error);
+          setCurrentUser(null);
+        }
+      }
+    };
+
+    setTimeout(checkCookie, 500);
+  }, []);
+
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
         {/*  title  */}
@@ -45,7 +64,7 @@ const MyArticlesPage = ({ isAdmin = true }: MyArticlesPageProps) => {
           <div
               className="w-full flex flex-col justify-start items-center xl:flex-row xl:justify-start xl:items-end xl:gap-16">
             <div className="text-4xl font-bold">My Blogs</div>
-            {isAdmin ? (
+            {currentUser && currentUser.user.role.toLowerCase() === 'admin' ? (
                 /*  buttons  */
                 <div className="mt-8 xl:mt-0">
                   <Button variant="text" onClick={() => setSection("article")} size="small" sx={{
@@ -127,7 +146,6 @@ const MyArticlesPage = ({ isAdmin = true }: MyArticlesPageProps) => {
           </Button>
         </div>
 
-        {/*<ArticleSearchModule mode="user"/>*/}
         <ArticleSearchForm ref={searchFormRef} type={section} viewerType="self" onSubmit={(data) => {
           console.log("搜索表单提交 -> ")
           console.log(data)

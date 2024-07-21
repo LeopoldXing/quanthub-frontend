@@ -7,6 +7,7 @@ import CommentOutlinedIcon from "@mui/icons-material/CommentOutlined";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Cookies from "js-cookie";
 
 type ArticleProps = {
   articleData: CompleteArticleData;
@@ -27,12 +28,18 @@ const Article = ({
                    onDelete,
                    onEdit,
                  }: ArticleProps) => {
+  const cookie = Cookies.get("quanthub-user");
+  let parsedCookie = null;
+  if (cookie) {
+    parsedCookie = JSON.parse(cookie);
+  }
+
   return (
       <div className="w-full">
         {/*  title  */}
         <div className={`w-full ${!isPreview && 'flex justify-start items-center'}`}>
           <div className="text-4xl font-bold">{articleData.title}</div>
-          {!isPreview && (
+          {!isPreview && (parsedCookie?.user.role.toLowerCase() === 'admin' || parsedCookie?.user.id === articleData.author.id) && (
               <div className="ml-4 flex justify-start items-center gap-4">
                 <IconButton onClick={() => onEdit && onEdit(articleData.id)}>
                   <EditIcon/>
@@ -67,14 +74,20 @@ const Article = ({
             {/*  like comment view  */}
             <div className="flex justify-center items-center gap-4">
               <div className="flex justify-center items-center gap-1">
+                {/*eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
+                {/*@ts-expect-error*/}
                 <VisibilityOutlinedIcon fontSize="14px" sx={{ color: "#9CA3AF" }}/>
                 <Typography fontSize="13px" color="#9CA3AF">{views}</Typography>
               </div>
               <div className="flex justify-center items-center gap-1">
+                {/*eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
+                {/*@ts-expect-error*/}
                 <CommentOutlinedIcon fontSize="14px" sx={{ color: "#9CA3AF" }}/>
                 <Typography fontSize="13px" color="#9CA3AF">{commentCount}</Typography>
               </div>
               <div className="flex justify-center items-center gap-1">
+                {/*eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
+                {/*@ts-expect-error*/}
                 <ThumbUpOutlinedIcon fontSize="14px" sx={{ color: "#9CA3AF" }}/>
                 <Typography fontSize="13px" color="#9CA3AF">{likes}</Typography>
               </div>

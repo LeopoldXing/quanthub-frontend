@@ -14,7 +14,7 @@ const Notification = forwardRef<HandleNotificationOpen, NotificationProps>(({
                                                                               severity = "info",
                                                                               variant = "filled"
                                                                             }, ref) => {
-  const [notificationOpen, setNotificationOpen] = useState<boolean>(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
 
   useImperativeHandle(ref, () => ({
     openNotification(indicator: boolean = true) {

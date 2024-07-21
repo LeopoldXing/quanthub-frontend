@@ -125,10 +125,10 @@ export type ConfirmBoxConfig = {
   option2Text?: string;
   option3Text?: string;
   option1Variant: 'text' | 'outlined' | 'contained';
-  option2Variant: 'text' | 'outlined' | 'contained';
+  option2Variant?: 'text' | 'outlined' | 'contained';
   option3Variant: 'text' | 'outlined' | 'contained';
   option1Color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
-  option2Color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+  option2Color?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
   option3Color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
   option1StartIcon?: React.ReactNode;
   option2StartIcon?: React.ReactNode;

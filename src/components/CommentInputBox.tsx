@@ -6,9 +6,10 @@ import { useEffect, useRef, useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
+import { useAuth0 } from "@auth0/auth0-react";
 
 type CommentInputSectionProps = {
-  onSubmitted: (content: string) => Promise<void>;
+  onSubmit: (content: string) => Promise<void>;
   onDeActivate?: () => void;
   mode?: "create" | "edit";
   initialContent?: string;
@@ -16,7 +17,7 @@ type CommentInputSectionProps = {
 
 const CommentInputBox = ({
                            onDeActivate,
-                           onSubmitted,
+                           onSubmit,
                            mode = "create",
                            initialContent = ""
                          }: CommentInputSectionProps) => {
@@ -32,7 +33,7 @@ const CommentInputBox = ({
   const handleCommentSubmission = async () => {
     try {
       setLoading(true);
-      await onSubmitted(input);
+      await onSubmit(input);
     } finally {
       setLoading(false);
       setInput("");
@@ -47,13 +48,19 @@ const CommentInputBox = ({
     onDeActivate && onDeActivate();
   }
 
-  const handleEmojiSelect = (emoji: any) => {
+  const handleEmojiSelect = (emoji: unknown) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const cursorPosition = inputRef.current?.selectionStart || 0;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const newText = input.slice(0, cursorPosition) + emoji.native + input.slice(cursorPosition);
     setInput(newText);
 
     setTimeout(() => {
       if (inputRef.current) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         inputRef.current.setSelectionRange(cursorPosition + emoji.native.length, cursorPosition + emoji.native.length);
         inputRef.current.focus();
       }
@@ -90,6 +97,8 @@ const CommentInputBox = ({
     if (mode === "edit" && inputRef.current) {
       inputRef.current.focus();
       const length = input.length;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       inputRef.current.setSelectionRange(length, length);
     }
 
@@ -106,6 +115,9 @@ const CommentInputBox = ({
     };
   }, []);
 
+  // determine if the user is logged in
+  const { isAuthenticated } = useAuth0();
+
   return (
       <div className="w-full flex justify-start items-start gap-5">
         <Avatar alt="user avatar" src={avatar}
@@ -117,8 +129,9 @@ const CommentInputBox = ({
               value={input}
               onChange={e => setInput(e.target.value)}
               inputRef={inputRef}
-              label={mode === "create" ? "Add a comment..." : undefined}
+              label={isAuthenticated ? "Add a comment..." : "Sign in to leave a comment"}
               multiline
+              disabled={!isAuthenticated}
               autoFocus={mode === "edit"}
               variant="standard"
               fullWidth

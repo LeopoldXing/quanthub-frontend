@@ -11,11 +11,7 @@ const ArticleOverviewListItem = ({ articleOverviewInfo }: {
 }) => {
   const navigate = useNavigate();
   const handleNavigate = () => {
-    navigate("/article/detail", {
-      state: {
-        articleId: articleOverviewInfo!.id
-      }
-    })
+    navigate(`/article/detail/${articleOverviewInfo!.id}`);
   }
 
   return (
@@ -57,14 +53,20 @@ const ArticleOverviewListItem = ({ articleOverviewInfo }: {
               {/*  like comment view  */}
               <div className="flex justify-center items-center gap-4">
                 <div className="flex justify-center items-center gap-1">
+                  {/*eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
+                  {/*@ts-expect-error*/}
                   <VisibilityOutlinedIcon fontSize="14px" sx={{ color: "#9CA3AF" }}/>
                   <Typography fontSize="13px" color="#9CA3AF">{articleOverviewInfo!.views}</Typography>
                 </div>
                 <div className="flex justify-center items-center gap-1">
+                  {/*eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
+                  {/*@ts-expect-error*/}
                   <CommentOutlinedIcon fontSize="14px" sx={{ color: "#9CA3AF" }}/>
                   <Typography fontSize="13px" color="#9CA3AF">{articleOverviewInfo!.commentsCount}</Typography>
                 </div>
                 <div className="flex justify-center items-center gap-1">
+                  {/*eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
+                  {/*@ts-expect-error*/}
                   <ThumbUpOutlinedIcon fontSize="14px" sx={{ color: "#9CA3AF" }}/>
                   <Typography fontSize="13px" color="#9CA3AF">{articleOverviewInfo!.likes}</Typography>
                 </div>

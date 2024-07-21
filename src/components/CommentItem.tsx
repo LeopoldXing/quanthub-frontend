@@ -1,15 +1,17 @@
-import React, { useState } from "react";
-import { ArticleComment } from "@/types.ts";
-import { Avatar, Menu, MenuItem, IconButton, ListItemIcon } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { ArticleComment, CurrentUserInfo } from "@/types.ts";
+import { Avatar, Menu, MenuItem, IconButton, ListItemIcon, Modal, Paper } from "@mui/material";
 import defaultAvatar from "@/assets/default_avarta.png";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ListItemText from "@mui/material/ListItemText";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from "@mui/icons-material/Delete";
 import CommentInputBox from "@/components/CommentInputBox.tsx";
-import { sleep } from "@/utils/GlobalUtils.ts";
-import MuiConfirmBox from "@/components/mui/MuiConfirmBox.tsx";
-import { useNotification } from "@/contexts/NotificationContext.tsx";
+import ConfirmBox from "@/components/ConfirmBox.tsx";
+import Cookies from "js-cookie";
+import ReportIcon from '@mui/icons-material/Report';
+import Button from "@mui/material/Button";
+import { useGetUserProfile } from "@/api/MyUserApi.ts";
 
 type CommentItemProps = {
   comment: ArticleComment;
@@ -18,8 +20,6 @@ type CommentItemProps = {
 }
 
 const CommentItem = ({ comment, onEdit, onDelete }: CommentItemProps) => {
-  /*  notification  */
-  const { showNotification } = useNotification();
   /*  dialog  */
   const [confirmBoxOpen, setConfirmBoxOpen] = useState<boolean>(false);
   /*  emoji  */
@@ -34,11 +34,10 @@ const CommentItem = ({ comment, onEdit, onDelete }: CommentItemProps) => {
   };
 
   const [isEditing, setIsEditing] = useState(false);
-  const handleEdit = async () => {
+  const handleEdit = async (content: string) => {
     try {
       handleMenuClose();
-      onEdit && await onEdit(comment);
-      await sleep(1000);
+      onEdit && await onEdit({ ...comment, content: content });
     } finally {
       setIsEditing(false);
     }
@@ -50,13 +49,25 @@ const CommentItem = ({ comment, onEdit, onDelete }: CommentItemProps) => {
   const handleDelete = async () => {
     handleMenuClose();
     onDelete && await onDelete(comment);
-    showNotification({
-      message: "Comment deleted",
-      severity: "info",
-      horizontal: "right",
-      vertical: "top"
-    });
   };
+
+  const [currentUser, setCurrentUser] = useState<CurrentUserInfo | null>(null);
+  useEffect(() => {
+    const checkCookie = async () => {
+      const cookie = Cookies.get("quanthub-user");
+      if (cookie) {
+        try {
+          const parsedCookie = JSON.parse(cookie);
+          setCurrentUser(parsedCookie);
+        } catch (error) {
+          console.error("Error parsing cookie:", error);
+          setCurrentUser(null);
+        }
+      }
+    };
+
+    setTimeout(checkCookie, 1000);
+  }, []);
 
   return (
       <>
@@ -91,41 +102,57 @@ const CommentItem = ({ comment, onEdit, onDelete }: CommentItemProps) => {
                     },
                   }}
               >
-                <MenuItem onClick={() => setIsEditing(true)} sx={{ padding: '4px 8px' }}>
-                  <ListItemIcon sx={{ minWidth: '30px' }}>
-                    <EditIcon fontSize="small"/>
-                  </ListItemIcon>
-                  <ListItemText primaryTypographyProps={{ variant: 'body2' }}>Edit</ListItemText>
-                </MenuItem>
-                <MenuItem onClick={openDeleteDialog} sx={{ padding: '4px 8px' }}>
-                  <ListItemIcon sx={{ minWidth: '30px' }}>
-                    <DeleteIcon fontSize="small"/>
-                  </ListItemIcon>
-                  <ListItemText primaryTypographyProps={{ variant: 'body2' }}>Delete</ListItemText>
-                </MenuItem>
+                {currentUser && (currentUser.user.role.toLocaleLowerCase() === 'admin' || currentUser.user.id === comment.user.id) ? (
+                    /*  current user is admin or the owner of this comment  */
+                    <div>
+                      <MenuItem onClick={() => setIsEditing(true)} sx={{ padding: '4px 8px' }}>
+                        <ListItemIcon sx={{ minWidth: '30px' }}>
+                          <EditIcon fontSize="small"/>
+                        </ListItemIcon>
+                        <ListItemText primaryTypographyProps={{ variant: 'body2' }}>Edit</ListItemText>
+                      </MenuItem>
+                      <MenuItem onClick={openDeleteDialog} sx={{ padding: '4px 8px' }}>
+                        <ListItemIcon sx={{ minWidth: '30px' }}>
+                          <DeleteIcon fontSize="small"/>
+                        </ListItemIcon>
+                        <ListItemText primaryTypographyProps={{ variant: 'body2' }}>Delete</ListItemText>
+                      </MenuItem>
+                      <MenuItem sx={{ padding: '4px 8px' }}>
+                        <ListItemIcon sx={{ minWidth: '30px' }}>
+                          <ReportIcon fontSize="small"/>
+                        </ListItemIcon>
+                        <ListItemText primaryTypographyProps={{ variant: 'body2' }}>Report</ListItemText>
+                      </MenuItem>
+                    </div>
+                ) : (
+                    /*  current user is not logged in or doesn't have the authorization to modify this comment  */
+                    <MenuItem sx={{ padding: '4px 8px' }}>
+                      <ListItemIcon sx={{ minWidth: '30px' }}>
+                        <ReportIcon fontSize="small"/>
+                      </ListItemIcon>
+                      <ListItemText primaryTypographyProps={{ variant: 'body2' }}>Report</ListItemText>
+                    </MenuItem>
+                )}
               </Menu>
             </div>
         ) : (
-            <CommentInputBox onSubmitted={handleEdit} mode="edit" initialContent={comment.content} onDeActivate={() => {
+            <CommentInputBox onSubmit={handleEdit} mode="edit" initialContent={comment.content} onDeActivate={() => {
               setIsEditing(false);
               handleMenuClose();
             }}/>
         )}
-        <MuiConfirmBox open={confirmBoxOpen} handleClose={() => setConfirmBoxOpen(false)}
-                       onConfirm={async () => await handleDelete()} onCancel={handleMenuClose} buttonStyle={{
-          title: "Delete comment?",
-          description: "Delete your comment permanently?",
-          cancelOptionColor: "primary",
-          confirmOptionText: "Delete",
-          confirmOptionColor: "primary",
-          confirmOptionVariant: "text",
-          confirmOptionStartIcon: undefined,
-          confirmOptionEndIcon: undefined,
-          cancelOptionText: "Cancel",
-          cancelOptionVariant: "text",
-          cancelOptionStartIcon: undefined,
-          cancelOptionEndIcon: undefined,
-          confirmOptionLoadingPosition: "center"
+        <ConfirmBox open={confirmBoxOpen} handleClose={() => setConfirmBoxOpen(false)} config={{
+          title: 'Delete this comment?',
+          description: `This comment will be deleted permanently, no way to undo.`,
+          option1Color: 'primary',
+          option1Text: 'Cancel',
+          option1Variant: 'text',
+          option1Action: handleMenuClose,
+          option3Color: 'primary',
+          option3Text: 'Delete',
+          option3Variant: 'text',
+          option3LoadingPosition: 'center',
+          option3Action: async () => await handleDelete()
         }}/>
       </>
   );

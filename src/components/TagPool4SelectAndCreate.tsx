@@ -30,9 +30,6 @@ const TagPool4SelectAndCreate = ({
   /*  handle tag click  */
   const handleTagClick = (tag: string) => {
     const selected = currentSelectedTags.findIndex(selectedTag => selectedTag === tag) > -1;
-    console.log("selected");
-    console.log(selected);
-    console.log(currentSelectedTags);
     if (selected) {
       onChange(currentSelectedTags.filter(selectedTag => selectedTag !== tag));
       if (newTagList.findIndex(newTag => newTag === tag) > -1) {
@@ -85,9 +82,7 @@ const TagPool4SelectAndCreate = ({
         {availableTagList && availableTagList.length > 0 && (
             <div className="w-full flex items-center justify-start gap-5 flex-wrap">
               {availableTagList.map((tag: string) => {
-                console.log(currentSelectedTags)
                 const selected = currentSelectedTags?.findIndex(selectedTag => selectedTag === tag) > -1;
-                console.log("选中了？", selected);
                 return (
                     <Chip
                         key={tag}

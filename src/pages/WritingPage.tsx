@@ -95,8 +95,6 @@ const WritingPage = () => {
         publishTillToday: "a few seconds ago",
         updateTillToday: "a few seconds ago"
       });
-      console.log("preview - formData ->")
-      console.log(formData);
       setPreviewOpen(true);
     }
   }
@@ -121,15 +119,13 @@ const WritingPage = () => {
     setConfirmBoxOpen(true);
   }
   const handlePublish = async () => {
-    console.log("文章发布")
-    console.log(contentModificationFormRef.current?.getFormData());
     contentModificationFormRef.current?.triggerSubmit();
   }
 
 
   /*  handle go back  */
   const handleLeave = async () => {
-    navigate(-1);
+    navigate("/articles");
   }
   const openGoBackDialog = () => {
     setConfirmBoxData({
@@ -161,8 +157,6 @@ const WritingPage = () => {
   const { publishArticle } = useCreateArticle();
   const { updateArticle } = useUpdateArticle();
   const handleSubmit = async (data: ContentModificationFormDataType) => {
-    console.log("发布")
-    console.log(data);
     let publishedArticle;
     if (mode === 'create') {
       publishedArticle = await publishArticle({
@@ -187,9 +181,8 @@ const WritingPage = () => {
         contentText: data.content.contentText
       });
     }
-    navigate("/article/detail", {
+    navigate(`/article/detail/${publishedArticle.id}`, {
       state: {
-        articleId: publishedArticle.id,
         initialArticleData: publishedArticle
       }
     });

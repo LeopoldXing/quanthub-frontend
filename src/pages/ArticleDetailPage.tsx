@@ -1,7 +1,6 @@
-import { CompleteArticleData } from "@/types.ts";
+import { ArticleComment, CompleteArticleData } from "@/types.ts";
 import { useEffect, useRef, useState } from "react";
-import { sleep } from "@/utils/GlobalUtils.ts";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Avatar, Box, Skeleton } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import Button from "@mui/material/Button";
@@ -12,16 +11,20 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CommentIcon from '@mui/icons-material/Comment';
 import ShareIcon from '@mui/icons-material/Share';
 import CommentSection from "@/components/CommentSection.tsx";
-import MuiConfirmBox from "@/components/mui/MuiConfirmBox.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
 import { useDeleteArticle, useGetArticle } from "@/api/ArticleApi.ts";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useDeleteComment, useLeaveComment, useUpdateComment } from "@/api/CommentApi.ts";
+import ConfirmBox from "@/components/ConfirmBox.tsx";
 
 const ArticleDetailPage = () => {
+  const { articleId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { articleId, initialArticleData } = location.state || {};
+  const { initialArticleData } = location.state || {};
   const [articleData, setArticleData] = useState<CompleteArticleData>(initialArticleData);
+  const { isAuthenticated } = useAuth0();
 
   const commentSectionRef = useRef<HTMLDivElement>(null);
 
@@ -31,32 +34,21 @@ const ArticleDetailPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   // fetch complete article data
-  const [loading, setLoading] = useState<boolean>(!initialArticleData);
-  const { getArticle } = useGetArticle();
+  const { getArticle, isLoading } = useGetArticle();
   const fetchArticleData = async () => {
-    try {
-      setLoading(true);
-      console.log(`fetch article data from backend: ${articleId}`);
-      const article = await getArticle(articleId);
-      console.log(article);
-      setArticleData(article);
-    } finally {
-      setLoading(false);
-    }
+    const article = await getArticle(articleId!);
+    setArticleData(article);
   }
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchArticleData();
-    }
     if (!articleData) {
-      fetchData();
+      fetchArticleData();
     }
   }, []);
 
   /*  like this article  */
-  const [isLiking, setIsLiking] = useState<boolean>(false);
-  const [isDisliking, setIsDisliking] = useState<boolean>(false);
-  const [likes, setLikes] = useState<number>(0);
+  const [isLiking, setIsLiking] = useState(false);
+  const [isDisliking, setIsDisliking] = useState(false);
+  const [likes, setLikes] = useState(0);
 
   useEffect(() => {
     if (articleData) {
@@ -94,7 +86,7 @@ const ArticleDetailPage = () => {
   /*  delete article  */
   const { deleteArticle } = useDeleteArticle();
   const handleDeleteArticle = async () => {
-    await deleteArticle(articleId);
+    await deleteArticle(articleId!);
     console.log("delete article");
     navigate("/my/articles");
     window.scrollTo(0, 0);
@@ -112,20 +104,98 @@ const ArticleDetailPage = () => {
     }
   };
 
+  /*  handle comment  */
+  const { addComment } = useLeaveComment();
+  const createComment = async (content: string) => {
+    const response = await addComment({
+      content,
+      articleId: articleId!,
+    });
+    if (!response) {
+      // something wrong
+      showNotification({
+        horizontal: 'right',
+        vertical: 'top',
+        severity: 'error',
+        message: 'Something unexpected happened, please try again'
+      });
+    } else {
+      // comment published
+      console.log("发布成功")
+      console.log(response);
+      setArticleData(prevState => ({ ...prevState, comments: [response, ...prevState.comments] }));
+    }
+  }
+  /*  handle delete  */
+  const { deleteComment } = useDeleteComment();
+  const handleDeleteComment = async (comment: ArticleComment) => {
+    if (await deleteComment(comment.id)) {
+      // successful
+      showNotification({
+        message: "Comment deleted",
+        severity: "success",
+        horizontal: "right",
+        vertical: "top"
+      });
+      setArticleData(prevState => ({
+        ...prevState,
+        comments: prevState.comments.filter(prevComment => comment.id !== prevComment.id)
+      }));
+    } else {
+      // something wrong
+      showNotification({
+        message: "Something unexpected happened, please try again.",
+        severity: "error",
+        horizontal: "right",
+        vertical: "top"
+      });
+    }
+  }
+  /*  handle edit  */
+  const { updateComment } = useUpdateComment();
+  const handleEditComment = async (comment: ArticleComment) => {
+    const response = await updateComment(comment);
+    if (response) {
+      showNotification({
+        message: "Comment updated",
+        severity: "success",
+        horizontal: "right",
+        vertical: "top"
+      });
+      setArticleData(prevState => ({
+        ...prevState,
+        comments: prevState.comments.map(prevComment => {
+          if (prevComment.id === comment.id) {
+            return comment;
+          }
+          return prevComment;
+        })
+      }))
+    } else {
+      // something wrong
+      showNotification({
+        message: "Something unexpected happened, please try again.",
+        severity: "error",
+        horizontal: "right",
+        vertical: "top"
+      });
+    }
+  }
+
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
         <Button startIcon={<ArrowBackIosIcon fontSize="small"/>}
                 sx={{ fontWeight: "bold", color: "black" }}
                 onClick={() => {
                   if (!initialArticleData) {
-                    navigate(-1);
+                    navigate("/articles");
                   } else {
                     navigate("/my/articles");
                   }
                 }}>
           Back
         </Button>
-        {!loading ? (
+        {!isLoading && articleData ? (
             <div className="w-full mt-8 flex flex-col justify-start items-start">
               {/*  article content  */}
               <Article articleData={articleData} likes={likes} commentCount={0} views={1}
@@ -136,11 +206,13 @@ const ArticleDetailPage = () => {
                 <Button startIcon={<ThumbUpIcon fontSize="large"/>}
                         variant={isLiking ? "contained" : "outlined"}
                         sx={{ minWidth: "85px", borderRadius: "20px" }}
-                        onClick={toggleLikingButton}
+                        onClick={toggleLikingButton} disabled={!isAuthenticated}
                         color={isLiking ? "success" : "primary"}>{likes}</Button>
                 <Button color={isDisliking ? "warning" : "primary"} variant={isDisliking ? "contained" : "outlined"}
-                        sx={{ minWidth: "40px", borderRadius: "20px" }} onClick={toggleDislikingButton}><ThumbDownIcon
-                    fontSize="medium"/></Button>
+                        sx={{ minWidth: "40px", borderRadius: "20px" }} disabled={!isAuthenticated}
+                        onClick={toggleDislikingButton}>
+                  <ThumbDownIcon fontSize="medium"/>
+                </Button>
                 <Button startIcon={<CommentIcon fontSize="large"/>} variant="outlined"
                         sx={{ minWidth: "80px", borderRadius: "20px" }}
                         onClick={handleScrollToComments}>{articleData.comments?.length || 0}</Button>
@@ -170,10 +242,8 @@ const ArticleDetailPage = () => {
               </div>
               {/*  comment area  */}
               <div className="w-full mt-10" ref={commentSectionRef}>
-                <CommentSection comments={articleData.comments} onComment={async (content) => {
-                  console.log("comment: ", content)
-                  await sleep(1000);
-                }}/>
+                <CommentSection comments={articleData.comments} onComment={createComment}
+                                onDelete={handleDeleteComment} onUpdate={handleEditComment}/>
               </div>
             </div>
         ) : (
@@ -240,22 +310,19 @@ const ArticleDetailPage = () => {
               </Box>
             </Box>
         )}
-        <MuiConfirmBox open={dialogOpen} handleClose={() => setDialogOpen(false)} onConfirm={handleDeleteArticle}
-                       buttonStyle={{
-                         title: "Delete this article?",
-                         description: "Are you sure to permanently delete this article?",
-                         cancelOptionColor: "primary",
-                         confirmOptionText: "Delete",
-                         confirmOptionColor: "error",
-                         confirmOptionStartIcon: <DeleteIcon/>,
-                         confirmOptionEndIcon: undefined,
-                         cancelOptionText: "Cancel",
-                         cancelOptionVariant: "text",
-                         confirmOptionVariant: "contained",
-                         cancelOptionStartIcon: undefined,
-                         cancelOptionEndIcon: undefined,
-                         confirmOptionLoadingPosition: "start"
-                       }}/>
+        <ConfirmBox open={dialogOpen} handleClose={() => setDialogOpen(false)} config={{
+          title: 'Delete this article?',
+          description: "This article will be delete permanently, no way to undo.",
+          option1Color: 'primary',
+          option1Text: 'Cancel',
+          option1Variant: 'text',
+          option3Text: 'Delete',
+          option3Color: 'error',
+          option3StartIcon: <DeleteIcon/>,
+          option3Variant: 'contained',
+          option3LoadingPosition: 'start',
+          option3Action: handleDeleteArticle
+        }}/>
       </div>
   );
 };
