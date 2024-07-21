@@ -21,7 +21,6 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ initialData, onSubmit
   const handleFormSubmission = async (data: UserProfileFormZodDataType) => {
     try {
       setLoading(true);
-      console.log(data);
       onSubmit && await onSubmit(data);
     } finally {
       setLoading(false);

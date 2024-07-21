@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ArticleComment, CurrentUserInfo } from "@/types.ts";
-import { Avatar, Menu, MenuItem, IconButton, ListItemIcon, Modal, Paper } from "@mui/material";
+import { Avatar, Menu, MenuItem, IconButton, ListItemIcon } from "@mui/material";
 import defaultAvatar from "@/assets/default_avarta.png";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ListItemText from "@mui/material/ListItemText";
@@ -10,8 +10,6 @@ import CommentInputBox from "@/components/CommentInputBox.tsx";
 import ConfirmBox from "@/components/ConfirmBox.tsx";
 import Cookies from "js-cookie";
 import ReportIcon from '@mui/icons-material/Report';
-import Button from "@mui/material/Button";
-import { useGetUserProfile } from "@/api/MyUserApi.ts";
 
 type CommentItemProps = {
   comment: ArticleComment;

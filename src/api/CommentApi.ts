@@ -80,12 +80,6 @@ const useUpdateComment = () => {
 
   const updateCommentRequest = async (data: ArticleComment) => {
     const accessToken = await getAccessTokenSilently();
-    console.log("要更新评论了 ->")
-    console.log({
-      id: data.id,
-      content: data.content,
-      operatorId: user!.sub!
-    });
     const response = await fetch(`${BASE_URL}/api/comment/update`, {
       method: "PUT",
       headers: {
@@ -99,9 +93,7 @@ const useUpdateComment = () => {
       })
     });
     if (response.ok) {
-      const res = await response.json();
-      console.log(res);
-      return res;
+      return await response.json();
     }
   }
 

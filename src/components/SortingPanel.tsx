@@ -1,5 +1,5 @@
 import Button from "@mui/material/Button";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
@@ -45,7 +45,6 @@ const SortingPanel = ({
       setUpdateIcon(undefined);
     }
   }, [updateSortDirectionPointer]);
-  // @ts-ignore
   return (
       <div
           className="w-full flex justify-start items-center gap-5 border-b-[1px] border-gray-300">
@@ -81,10 +80,14 @@ const SortingPanel = ({
                   color: "black",
                   fontWeight: `${value.strategy === "publish_date" ? "bold" : ""}`
                 }}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
                 endIcon={publishIcon}
                 onClick={() => {
                   onChange({
                     strategy: "publish_date",
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
                     direction: directionChangeSequence[publishSortDirectionPointer === 0 ? 1 : 0]
                   });
                   setPublishSortDirectionPointer(prevState => prevState === 0 ? 1 : 0);
@@ -105,10 +108,14 @@ const SortingPanel = ({
                 color: "black",
                 fontWeight: `${value.strategy === "update_date" ? "bold" : ""}`
               }}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-expect-error
               endIcon={updateIcon}
               onClick={() => {
                 onChange({
                   strategy: "update_date",
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-expect-error
                   direction: directionChangeSequence[updateSortDirectionPointer === 0 ? 1 : 0]
                 });
                 setUpdateSortDirectionPointer(prevState => prevState === 0 ? 1 : 0);

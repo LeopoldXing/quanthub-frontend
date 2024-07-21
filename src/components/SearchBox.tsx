@@ -20,7 +20,7 @@ const SearchBox = forwardRef(({
           onBlur={onBlur}
           ref={ref}
           type="text"
-          placeholder={`search articles / titles ${viewerType === 'public' ? "/ authors" : ""}`}
+          placeholder={`search articles / titles ${viewerType === 'public' ? "/ authors " : ""}/ tags`}
           className="w-full h-12 text-lg border-none bg-transparent placeholder:font-thin focus:outline-none"
       />
   );

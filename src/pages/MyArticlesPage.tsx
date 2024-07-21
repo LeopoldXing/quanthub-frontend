@@ -10,15 +10,9 @@ import ArticleSearchForm, { ArticleSearchFormInterface } from "@/forms/ArticleSe
 import { CurrentUserInfo } from "@/types.ts";
 import Cookies from "js-cookie";
 
-type MyArticlesPageProps = {
-  isAdmin?: boolean;
-}
-
-const MyArticlesPage = ({ isAdmin = true }: MyArticlesPageProps) => {
+const MyArticlesPage = () => {
   // navigation
   const navigate = useNavigate();
-  // notification
-  /*const { showNotification } = useNotification();*/
 
   /*  update what type of content user is querying  */
   const searchFormRef = useRef<ArticleSearchFormInterface>();

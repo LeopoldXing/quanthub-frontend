@@ -15,9 +15,7 @@ const useSearchContent = () => {
   const searchContentRequest = async (data: SearchContentRequestProps) => {
     const queryParams = new URLSearchParams(data as any).toString();
     console.log("searchContentRequest");
-    console.log("query params");
-    console.log(data);
-    console.log("url");
+    console.log("searchContentRequest - url");
     console.log(`${BASE_URL}/api/article/search?${queryParams}`)
     const response = await fetch(`${BASE_URL}/api/article/search?${queryParams}`, {
       method: "GET",
@@ -25,12 +23,12 @@ const useSearchContent = () => {
         "Content-Type": "application/json"
       }
     });
-    console.log("response")
+    console.log("searchContentRequest - response")
     console.log(response)
     if (!response.ok) {
       throw new Error("Failed to search article");
     } else {
-      console.log("response body")
+      console.log("searchContentRequest - res")
       const res = await response.json();
       console.log(res);
       return res;
@@ -52,6 +50,8 @@ type CreateArticleRequestParam = {
   tags?: string[];
   attachmentLink?: string;
   type: "article" | "announcement" | "draft";
+  referenceId?: string;
+  draftId?: string;
 }
 const useCreateArticle = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -95,27 +95,36 @@ type UpdateArticleRequestProps = {
   tags?: string[];
   attachmentLink?: string;
   type: "article" | "announcement" | "draft";
+  draftId?: string;
 }
 const useUpdateArticle = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   const updateArticleRequest = async (data: UpdateArticleRequestProps) => {
     const accessToken = await getAccessTokenSilently();
-    data = { ...data, type: "article" };
     console.log("update article - data ->")
     console.log(data)
+    console.log("update article - url ->")
+    console.log(`${BASE_URL}/api/article/update`)
     const response = await fetch(`${BASE_URL}/api/article/update`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify({
+        ...data,
+        type: "article",
+        content: ""
+      })
     });
     if (!response.ok) {
       throw new Error("Failed to update article");
     } else {
-      return await response.json();
+      console.log("update article - res")
+      const res = await response.json();
+      console.log(res);
+      return res;
     }
   }
 
@@ -131,8 +140,7 @@ const useGetArticle = () => {
     if (!response.ok) {
       throw new Error("Failed to get article");
     } else {
-      const responsedata = await response.json();
-      return responsedata;
+      return await response.json();
     }
   }
 

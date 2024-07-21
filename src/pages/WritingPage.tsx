@@ -17,9 +17,9 @@ import { useRef, useState } from "react";
 import ConfirmBox from "@/components/ConfirmBox.tsx";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
-import { sleep } from "@/utils/GlobalUtils.ts";
 import { useCreateArticle, useUpdateArticle } from "@/api/ArticleApi.ts";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
+import { useSaveDraft } from "@/api/DraftApi.ts";
 
 const WritingPage = () => {
   const navigate = useNavigate();
@@ -146,10 +146,26 @@ const WritingPage = () => {
 
 
   /*  handle save draft  */
+  const [draftId, setDraftId] = useState(initialData?.draftId);
+  const { saveDraft } = useSaveDraft();
   const handleSaveDraft = async (data: ContentModificationFormDataType) => {
-    console.log("保存草稿")
-    await sleep(1000);
-    console.log(data);
+    console.log("要保存草稿了 ->")
+    console.log(draftId);
+    const savedDraft: CompleteArticleData = await saveDraft({
+      id: draftId,
+      authorId: currentUser!.user.id,
+      title: data.title,
+      subTitle: data.subTitle || "",
+      contentHtml: data.content.contentHtml,
+      contentText: data.content.contentText,
+      coverImageLink: data.coverImageLink,
+      category: data.category,
+      tags: data.tags,
+      attachmentLink: data.attachmentLink,
+      type: 'draft',
+      referenceId: initialData?.referenceId || initialData?.id
+    });
+    setDraftId(savedDraft.id);
   }
 
 
@@ -158,28 +174,48 @@ const WritingPage = () => {
   const { updateArticle } = useUpdateArticle();
   const handleSubmit = async (data: ContentModificationFormDataType) => {
     let publishedArticle;
-    if (mode === 'create') {
-      publishedArticle = await publishArticle({
-        authorId: currentUser!.user.id,
-        title: data.title,
-        subTitle: data.subTitle || "",
-        contentHtml: data.content.contentHtml,
-        contentText: data.content.contentText,
-        coverImageLink: data.coverImageLink,
-        category: data.category,
-        tags: data.tags,
-        attachmentLink: data.attachmentLink,
-        type: data.type
+    try {
+      if (mode === 'create') {
+        publishedArticle = await publishArticle({
+          authorId: currentUser!.user.id,
+          title: data.title,
+          subTitle: data.subTitle || "",
+          contentHtml: data.content.contentHtml,
+          contentText: data.content.contentText,
+          coverImageLink: data.coverImageLink,
+          category: data.category,
+          tags: data.tags,
+          attachmentLink: data.attachmentLink,
+          type: data.type,
+          draftId: draftId
+        });
+      } else {
+        console.log("准备更新")
+        console.log("mode", mode);
+        publishedArticle = await updateArticle({
+          articleId: initialData?.referenceId || initialData?.id,
+          authorId: currentUser!.user.id,
+          title: data.title,
+          subTitle: data.subTitle || "",
+          contentHtml: data.content.contentHtml,
+          contentText: data.content.contentText,
+          category: data.category,
+          coverImageLink: data.coverImageLink,
+          tags: data.tags,
+          attachmentLink: data.attachmentLink,
+          type: data.type,
+          draftId: draftId
+        });
+      }
+    } catch (e) {
+      console.error(e);
+      showNotification({
+        message: `Something unexpected happened, please try again.`,
+        severity: "error",
+        horizontal: "right",
+        vertical: "bottom"
       });
-    } else {
-      publishedArticle = await updateArticle({
-        ...data,
-        authorId: currentUser!.user.id,
-        subTitle: data.subTitle || "",
-        articleId: initialData.id,
-        contentHtml: data.content.contentHtml,
-        contentText: data.content.contentText
-      });
+      return;
     }
     navigate(`/article/detail/${publishedArticle.id}`, {
       state: {

@@ -17,6 +17,8 @@ import { useDeleteArticle, useGetArticle } from "@/api/ArticleApi.ts";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useDeleteComment, useLeaveComment, useUpdateComment } from "@/api/CommentApi.ts";
 import ConfirmBox from "@/components/ConfirmBox.tsx";
+import { useCancelLikingService, useLikingService } from "@/api/LikesApi.ts";
+import { useGetArticleDraft } from "@/api/DraftApi.ts";
 
 const ArticleDetailPage = () => {
   const { articleId } = useParams();
@@ -56,15 +58,18 @@ const ArticleDetailPage = () => {
       setLikes(Number(articleData.likes));
     }
   }, [articleData]);
-
+  const { likeThisArticle } = useLikingService();
+  const { cancelLikingThisArticle } = useCancelLikingService();
   const toggleLikingButton = () => {
     if (isLiking) {
       setLikes(likes - 1);
+      cancelLikingThisArticle(articleId!);
     } else {
       setIsDisliking(false);
       setLikes(likes + 1);
+      likeThisArticle({ articleId: articleId!, type: true });
     }
-    setIsLiking(!isLiking);
+    setIsLiking(prevState => !prevState);
   };
 
   const toggleDislikingButton = () => {
@@ -72,14 +77,34 @@ const ArticleDetailPage = () => {
       setIsLiking(false);
       setLikes(likes - 1);
     }
-    setIsDisliking(!isDisliking);
+    if (isDisliking) {
+      cancelLikingThisArticle(articleId!);
+    } else {
+      likeThisArticle({ articleId: articleId!, type: false });
+    }
+    setIsDisliking(prevState => !prevState);
   };
 
+
   /*  edit article  */
-  const handleEditArticle = () => {
+  const { getDraftByArticleId } = useGetArticleDraft();
+  const handleEditArticle = async () => {
+    let navigationData = articleData;
+
+    // check if there are any drafts
+    const res = await getDraftByArticleId(articleData.id);
+    if (res && Object.keys(res).length > 0) {
+      console.log("有草稿")
+      console.log(res);
+      navigationData = res;
+    }
+
+    console.log("编辑页面的初始数据：")
+    console.log(navigationData);
+
     navigate("/article/create", {
       state: {
-        articleData: articleData
+        articleData: navigationData
       }
     })
   }
@@ -121,8 +146,6 @@ const ArticleDetailPage = () => {
       });
     } else {
       // comment published
-      console.log("发布成功")
-      console.log(response);
       setArticleData(prevState => ({ ...prevState, comments: [response, ...prevState.comments] }));
     }
   }
@@ -198,10 +221,11 @@ const ArticleDetailPage = () => {
         {!isLoading && articleData ? (
             <div className="w-full mt-8 flex flex-col justify-start items-start">
               {/*  article content  */}
-              <Article articleData={articleData} likes={likes} commentCount={0} views={1}
+              <Article articleData={articleData} likes={likes} commentCount={articleData.comments?.length || 0}
+                       views={1}
                        onDelete={() => setDialogOpen(true)}
                        onEdit={handleEditArticle}/>
-              {/*  like comment share  */}
+              {/*  like / comment / share  */}
               <div className="w-full mt-10 flex justify-start items-center gap-4">
                 <Button startIcon={<ThumbUpIcon fontSize="large"/>}
                         variant={isLiking ? "contained" : "outlined"}

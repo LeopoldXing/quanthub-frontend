@@ -49,7 +49,7 @@ export type ArticleOverviewInfo = {
   rate: number;
   type: 'article' | 'announcement' | 'draft';
   commentsCount: number;
-  likes: string;
+  likes: number;
   views: string;
   publishTimestamp: bigint;
   updateTimestamp: bigint;
@@ -80,6 +80,8 @@ export type CompleteArticleData = {
     role: string;
     avatarLink?: string;
   };
+  referenceId?: string;
+  draftId?: string;
   publishTimestamp: bigint;
   updateTimestamp: bigint;
   publishTillToday: string;

@@ -4,6 +4,7 @@ import { useMutation } from "react-query";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 type SaveDraftRequestProps = {
+  id?: string;
   authorId: string;
   title: string;
   subTitle?: string;
@@ -14,6 +15,7 @@ type SaveDraftRequestProps = {
   tags?: string[];
   attachmentLink?: string;
   type: "draft";
+  referenceId?: string;
 }
 const useSaveDraft = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -21,7 +23,7 @@ const useSaveDraft = () => {
   const saveDraftRequest = async (data: SaveDraftRequestProps) => {
     data = { ...data, type: "draft" };
     const accessToken = await getAccessTokenSilently();
-    const response = await fetch(`${BASE_URL}/api/article/draft`, {
+    const response = await fetch(`${BASE_URL}/api/draft/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,6 +33,8 @@ const useSaveDraft = () => {
     });
     if (!response.ok) {
       throw new Error("Failed to save draft");
+    } else {
+      return await response.json();
     }
   }
 
@@ -38,4 +42,31 @@ const useSaveDraft = () => {
   return { saveDraft, isLoading, isError, isSuccess };
 }
 
-export { useSaveDraft };
+const useGetArticleDraft = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const getArticleDraftRequest = async (articleId: string) => {
+    const accessToken = getAccessTokenSilently();
+
+    const response = await fetch(`${BASE_URL}/api/draft/${articleId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error("Failed to get draft");
+    } else {
+      const res = await response.json();
+      console.log("获取的草稿:")
+      console.log(res)
+      return res;
+    }
+  }
+
+  const { mutateAsync: getDraftByArticleId, isLoading, isError, isSuccess } = useMutation(getArticleDraftRequest);
+  return { getDraftByArticleId, isLoading, isError, isSuccess };
+}
+
+export { useSaveDraft, useGetArticleDraft };
