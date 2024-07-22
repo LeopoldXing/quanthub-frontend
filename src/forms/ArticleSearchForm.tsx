@@ -8,7 +8,7 @@ import TagPool from "@/components/TagPool.tsx";
 import SortingPanel from "@/components/SortingPanel.tsx";
 import LoopIcon from "@mui/icons-material/Loop";
 import { useGetMyTags, useShuffleTags } from "@/api/TagApi.ts";
-import React, { useEffect, useImperativeHandle, useState } from "react";
+import React, { useCallback, useEffect, useImperativeHandle, useState } from "react";
 import AvailableTagPool from "@/components/AvailableTagPool.tsx";
 import { SearchContentRequestProps, useSearchContent } from "@/api/ArticleApi.ts";
 import ArticleOverviewList from "@/components/ArticleOverviewList.tsx";
@@ -47,7 +47,7 @@ const ArticleSearchForm = React.forwardRef(({
 
   /*  handle submit  */
   const { searchContent, isLoading: isSearching } = useSearchContent();
-  const submit = async (data: NewArticleSearchParamType) => {
+  const submit = useCallback(async (data: NewArticleSearchParamType) => {
     onSubmit(data);
     const requestParam: SearchContentRequestProps = {
       ...data,
@@ -56,7 +56,7 @@ const ArticleSearchForm = React.forwardRef(({
     }
     const overviewList = await searchContent(requestParam);
     setArticleOverviewList(overviewList);
-  }
+  }, []);
 
   /*  search result  */
   const [articleOverviewList, setArticleOverviewList] = useState<Array<ArticleOverviewInfo>>([]);
@@ -98,7 +98,7 @@ const ArticleSearchForm = React.forwardRef(({
 
 
   /*  fetch initial data  */
-  const fetchTags = async () => {
+  const fetchTags = useCallback(async () => {
     try {
       let res: string[];
       if (viewerType === 'public') {
@@ -110,7 +110,7 @@ const ArticleSearchForm = React.forwardRef(({
     } catch (error) {
       console.error(error);
     }
-  }
+  }, []);
   useEffect(() => {
     fetchTags();
     submit(getValues());
@@ -198,7 +198,10 @@ const ArticleSearchForm = React.forwardRef(({
             {/*  tag pool  */}
             <div className="hidden lg:block w-full">
               <TagPool control={control} onChange={tags => setValue('tagList', tags)}
-                       onDelete={() => handleSubmit(submit)()} onDeleteAll={() => handleSubmit(submit)()}/>
+                       onDelete={() => handleSubmit(submit)()} onDeleteAll={() => {
+                setValue('tagList', []);
+                handleSubmit(submit)();
+              }}/>
             </div>
             {/*  sorting  */}
             <div className="hidden mt-7 lg:block">
@@ -252,7 +255,8 @@ const ArticleSearchForm = React.forwardRef(({
                   )
               ) : (
                   /*  loading  */
-                  <ul style={{ minHeight: '70vh' }} className="w-full mt-8 flex flex-col justify-start items-start gap-8">
+                  <ul style={{ minHeight: '70vh' }}
+                      className="w-full mt-8 flex flex-col justify-start items-start gap-8">
                     {Array.from({ length: 10 }, () => Math.floor(Math.random() * 10000) + 1).map((_, index) => (
                         <li key={_} className="w-full p-0 m-0">
                           <Box width={"100%"}>

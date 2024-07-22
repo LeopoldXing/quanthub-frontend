@@ -14,8 +14,9 @@ export type SearchContentRequestProps = {
 const useSearchContent = () => {
   const searchContentRequest = async (data: SearchContentRequestProps) => {
     const queryParams = new URLSearchParams(data as any).toString();
-    console.log("searchContentRequest");
-    console.log("searchContentRequest - url");
+    console.log("search - params");
+    console.log(data);
+    console.log("search - url");
     console.log(`${BASE_URL}/api/article/search?${queryParams}`)
     const response = await fetch(`${BASE_URL}/api/article/search?${queryParams}`, {
       method: "GET",
@@ -59,8 +60,6 @@ const useCreateArticle = () => {
   const createArticleRequest = async (data: CreateArticleRequestParam) => {
     const accessToken = await getAccessTokenSilently();
     data = { ...data, type: "article" };
-    console.log("create article - data ->")
-    console.log(data)
     const response = await fetch(`${BASE_URL}/api/article/publish`, {
       method: "POST",
       headers: {
@@ -69,8 +68,6 @@ const useCreateArticle = () => {
       },
       body: JSON.stringify(data)
     });
-    console.log("response")
-    console.log(response)
     if (!response.ok) {
       throw new Error("Failed to create article");
     } else {
@@ -102,10 +99,6 @@ const useUpdateArticle = () => {
 
   const updateArticleRequest = async (data: UpdateArticleRequestProps) => {
     const accessToken = await getAccessTokenSilently();
-    console.log("update article - data ->")
-    console.log(data)
-    console.log("update article - url ->")
-    console.log(`${BASE_URL}/api/article/update`)
     const response = await fetch(`${BASE_URL}/api/article/update`, {
       method: "PUT",
       headers: {
@@ -121,10 +114,7 @@ const useUpdateArticle = () => {
     if (!response.ok) {
       throw new Error("Failed to update article");
     } else {
-      console.log("update article - res")
-      const res = await response.json();
-      console.log(res);
-      return res;
+      return await response.json();
     }
   }
 

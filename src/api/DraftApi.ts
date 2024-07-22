@@ -23,6 +23,8 @@ const useSaveDraft = () => {
   const saveDraftRequest = async (data: SaveDraftRequestProps) => {
     data = { ...data, type: "draft" };
     const accessToken = await getAccessTokenSilently();
+    console.log("正在保存草稿")
+    console.log(data);
     const response = await fetch(`${BASE_URL}/api/draft/create`, {
       method: "POST",
       headers: {

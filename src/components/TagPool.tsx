@@ -23,7 +23,7 @@ const TagPool = ({ control, onChange, onDelete, onDeleteAll }: TagPoolProps) => 
             {currentTagList.length > 0 && (
                 <button className="ml-3 text-nowrap text-[13px]" onClick={() => {
                   onDeleteAll && onDeleteAll();
-                  onChange([]);
+                  /*onChange([]);*/
                 }}>
                   Cancel all
                 </button>
