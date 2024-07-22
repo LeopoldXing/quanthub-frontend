@@ -99,6 +99,11 @@ const useUpdateArticle = () => {
 
   const updateArticleRequest = async (data: UpdateArticleRequestProps) => {
     const accessToken = await getAccessTokenSilently();
+    console.log("发送更新文章请求：")
+    console.log({
+      ...data,
+      content: ""
+    });
     const response = await fetch(`${BASE_URL}/api/article/update`, {
       method: "PUT",
       headers: {
@@ -107,7 +112,6 @@ const useUpdateArticle = () => {
       },
       body: JSON.stringify({
         ...data,
-        type: "article",
         content: ""
       })
     });

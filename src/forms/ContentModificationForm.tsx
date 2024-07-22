@@ -39,7 +39,8 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
         contentHtml: mode === "create" ? exampleContentHtml : initialData?.content.contentHtml || exampleContentHtml,
         contentText: mode === "create" ? exampleContentText : initialData?.content.contentText || exampleContentText
       },
-      tags: initialData?.tags || []
+      tags: initialData?.tags || [],
+      type: initialData?.type || 'article',
     }
   });
 

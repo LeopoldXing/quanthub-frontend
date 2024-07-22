@@ -48,9 +48,9 @@ const useGetArticleDraft = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   const getArticleDraftRequest = async (articleId: string) => {
-    const accessToken = getAccessTokenSilently();
+    const accessToken = await getAccessTokenSilently();
 
-    const response = await fetch(`${BASE_URL}/api/draft/${articleId}`, {
+    const response = await fetch(`${BASE_URL}/api/draft/article/${articleId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -71,4 +71,31 @@ const useGetArticleDraft = () => {
   return { getDraftByArticleId, isLoading, isError, isSuccess };
 }
 
-export { useSaveDraft, useGetArticleDraft };
+const useGetDraft = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const getDraftRequest = async (draftId: string) => {
+    const accessToken = await getAccessTokenSilently();
+
+    const response = await fetch(`${BASE_URL}/api/draft/get/${draftId}`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error("Failed to get draft");
+    } else {
+      const res = await response.json();
+      console.log("获取的草稿:")
+      console.log(res)
+      return res;
+    }
+  }
+
+  const { mutateAsync: getDraftById, isLoading, isError, isSuccess } = useMutation(getDraftRequest);
+  return { getDraftById, isLoading, isError, isSuccess };
+}
+
+export { useSaveDraft, useGetArticleDraft, useGetDraft };

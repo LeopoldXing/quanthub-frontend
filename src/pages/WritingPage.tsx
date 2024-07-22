@@ -42,7 +42,7 @@ const WritingPage = () => {
       type: initialData.type
     };
   }
-  const mode = !initialData ? "create" : "update";
+  const mode = !initialData ? "create" : (initialData.referenceId ? "update" : "create");
   const contentModificationFormRef = useRef<ContentModificationFormInterface>(null);
   const { showNotification } = useNotification();
 
@@ -241,7 +241,7 @@ const WritingPage = () => {
         {/*  title  */}
         <div className="w-full mt-10 space-y-10 md:space-y-0 md:flex justify-between items-center">
           <div
-              className="text-4xl font-bold">{mode === "create" ? "Create" : "Update"} {initialData ? (initialData.type === "article" ? "Article" : "Announcement") : ("Article")}</div>
+              className="text-4xl font-bold">{mode === "create" ? "Create" : "Update"} {initialData ? (initialData.type === "announcement" ? "Announcement" : "Article") : ("Article")}</div>
           <div className="flex flex-nowrap justify-start md:justify-center items-center gap-4">
             <Button variant="outlined" onClick={handlePreview} color="secondary">Preview</Button>
             {mode === "create" ? (

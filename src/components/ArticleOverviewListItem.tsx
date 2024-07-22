@@ -3,22 +3,38 @@ import { Typography } from "@mui/material";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
+import CreateIcon from '@mui/icons-material/Create';
 import { ArticleOverviewInfo } from "@/types.ts";
 import { useNavigate } from "react-router-dom";
+import Button from "@mui/material/Button";
+import { useGetDraft } from "@/api/DraftApi.ts";
 
 const ArticleOverviewListItem = ({ articleOverviewInfo }: {
   articleOverviewInfo?: ArticleOverviewInfo
 }) => {
   const navigate = useNavigate();
-  const handleNavigate = () => {
-    navigate(`/article/detail/${articleOverviewInfo!.id}`);
+
+  const { getDraftById } = useGetDraft();
+  const handleNavigate = async () => {
+    if (articleOverviewInfo?.type !== 'draft') {
+      navigate(`/article/detail/${articleOverviewInfo!.id}`);
+    } else {
+      const draftData = await getDraftById(articleOverviewInfo.id);
+      console.log("要编辑草稿了 -> ");
+      console.log(draftData);
+      navigate(`/article/create`, {
+        state: {
+          articleData: draftData
+        }
+      })
+    }
   }
 
   return (
       <div className="w-full">
         {/*  title  */}
-        <a onClick={handleNavigate}
-           className="w-full flex flex-col 2xl:flex-row justify-start items-start 2xl:justify-between 2xl:items-center gap-2 2xl:gap-0 cursor-pointer">
+        <span onClick={articleOverviewInfo?.type !== 'draft' ? handleNavigate : () => {}}
+              className={`w-full flex flex-col 2xl:flex-row justify-start items-start 2xl:justify-between 2xl:items-center gap-2 2xl:gap-0 ${articleOverviewInfo?.type !== 'draft' ? 'cursor-pointer' : ''}`}>
           <div
               className="text-xl font-bold truncate max-w-md md:max-w-2xl lg:max-w-lg xl:max-w-lg 2xl:max-w-2xl">{articleOverviewInfo!.title}</div>
           {/*  author & update time  */}
@@ -27,7 +43,7 @@ const ArticleOverviewListItem = ({ articleOverviewInfo }: {
             <Typography fontSize="20px">·</Typography>
             <Typography fontSize="13px">{articleOverviewInfo!.updateTillToday}</Typography>
           </div>
-        </a>
+        </span>
         {/*  content  */}
         <div className="w-full mt-3 flex justify-between items-center gap-6">
           {/*  left  */}
@@ -36,10 +52,27 @@ const ArticleOverviewListItem = ({ articleOverviewInfo }: {
             <div className="w-full">
               <TagBar tagList={articleOverviewInfo!.tags}/>
             </div>
-            {/*  description  */}
-            <a className="block w-full text-wrap cursor-pointer" onClick={handleNavigate}>
-              {articleOverviewInfo!.description}
-            </a>
+            {articleOverviewInfo?.type !== 'draft' ? (
+                /*  description  */
+                <a className="block w-full text-wrap cursor-pointer" onClick={handleNavigate}>
+                  {articleOverviewInfo!.description}
+                </a>
+            ) : (
+                /*  keep writing button  */
+                <div className="relative w-full h-full">
+                  <div className="w-full text-wrap rounded-lg filter blur-sm">
+                    {articleOverviewInfo!.description}
+                  </div>
+                  <div className="absolute transform top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <Button variant="contained"
+                            size="small"
+                            sx={{ textWrap: "nowrap" }}
+                            endIcon={<CreateIcon fontSize={'small'}/>}
+                            onClick={handleNavigate}
+                    >Keep Writing</Button>
+                  </div>
+                </div>
+            )}
             {/*  meta data  */}
             <div className="w-full flex justify-start items-center gap-3">
               {/*  category  */}
