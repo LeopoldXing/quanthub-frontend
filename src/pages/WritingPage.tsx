@@ -42,7 +42,16 @@ const WritingPage = () => {
       type: initialData.type
     };
   }
-  const mode = !initialData ? "create" : (initialData.referenceId ? "update" : "create");
+  let mode = 'create';
+  if (initialData) {
+    if (initialData.type === 'draft') {
+      if (initialData.referenceId) {
+        mode = 'update';
+      }
+    } else {
+      mode = 'update';
+    }
+  }
   const contentModificationFormRef = useRef<ContentModificationFormInterface>(null);
   const { showNotification } = useNotification();
 
@@ -151,6 +160,11 @@ const WritingPage = () => {
   const handleSaveDraft = async (data: ContentModificationFormDataType) => {
     console.log("要保存草稿了 ->")
     console.log(draftId);
+    // determine referenceId
+    let referenceId = initialData?.referenceId;
+    if (data.type !== 'draft') {
+      referenceId = initialData?.id;
+    }
     const savedDraft: CompleteArticleData = await saveDraft({
       id: draftId,
       authorId: currentUser!.user.id,
@@ -163,7 +177,7 @@ const WritingPage = () => {
       tags: data.tags,
       attachmentLink: data.attachmentLink,
       type: 'draft',
-      referenceId: initialData?.referenceId || initialData?.id
+      referenceId: referenceId
     });
     setDraftId(savedDraft.id);
   }
