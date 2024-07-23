@@ -40,8 +40,8 @@ const UserProfilePage = () => {
     showNotification({
       message: "Profile updated!",
       severity: "success",
-      horizontal: "right",
-      vertical: "top"
+      horizontal: "left",
+      vertical: "bottom"
     })
   }
 

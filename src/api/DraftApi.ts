@@ -14,6 +14,7 @@ type SaveDraftRequestProps = {
   category?: string;
   tags?: string[];
   attachmentLink?: string;
+  attachmentName?: string;
   type: "draft";
   referenceId?: string;
 }

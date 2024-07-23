@@ -50,6 +50,7 @@ type CreateArticleRequestParam = {
   category?: string;
   tags?: string[];
   attachmentLink?: string;
+  attachmentName?: string;
   type: "article" | "announcement" | "draft";
   referenceId?: string;
   draftId?: string;
@@ -60,6 +61,9 @@ const useCreateArticle = () => {
   const createArticleRequest = async (data: CreateArticleRequestParam) => {
     const accessToken = await getAccessTokenSilently();
     data = { ...data, type: "article" };
+
+    console.log("发布文章");
+    console.log(data);
     const response = await fetch(`${BASE_URL}/api/article/publish`, {
       method: "POST",
       headers: {
@@ -91,6 +95,7 @@ type UpdateArticleRequestProps = {
   category?: string;
   tags?: string[];
   attachmentLink?: string;
+  attachmentName?: string;
   type: "article" | "announcement" | "draft";
   draftId?: string;
 }

@@ -10,6 +10,7 @@ export const articleModificationFormSchema = z.object({
   category: z.string().nullable(),
   pictureLinkList: z.array(z.string().url()).nullable(),
   attachmentLink: z.string().url().nullable(),
+  attachmentName: z.string().url().nullable(),
   tagList: z.array(z.string()).nullable()
 });
 

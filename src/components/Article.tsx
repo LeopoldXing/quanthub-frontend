@@ -1,10 +1,11 @@
 import { CompleteArticleData } from "@/types.ts";
 import RenderHtmlContent from "@/components/RenderHtmlContent.tsx";
 import TagBar from "@/components/TagBar.tsx";
-import { IconButton, Typography } from "@mui/material";
+import { IconButton, Typography, Link } from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import CommentOutlinedIcon from "@mui/icons-material/CommentOutlined";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Cookies from "js-cookie";
@@ -98,9 +99,19 @@ const Article = ({
         <div className="w-full mt-10">
           <RenderHtmlContent contentHtml={articleData.contentHtml}/>
         </div>
+        {/*  attachment  */}
+        {articleData.attachmentName && articleData.attachmentLink && (
+            <div className="ml-2 mt-8 flex justify-start items-center gap-1">
+              <span className="text-nowrap">Attachment:</span>
+              <Link href={articleData.attachmentLink} sx={{ display: "flex", alignItems: "center" }}>
+                <AttachFileIcon/>
+                <span>{articleData.attachmentName}</span>
+              </Link>
+            </div>
+        )}
         {/*  tags  */}
         {articleData.tags && (
-            <div className="mt-8">
+            <div>
               <TagBar tagList={articleData.tags} multiLine={true} size={"medium"} variant="filled" gap={4}/>
             </div>
         )}

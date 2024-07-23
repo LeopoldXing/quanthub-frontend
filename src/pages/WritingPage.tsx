@@ -39,6 +39,7 @@ const WritingPage = () => {
       category: (initialData.category === 'unknown' || !initialData.category) ? "" : initialData.category,
       tags: initialData.tags,
       attachmentLink: initialData.attachmentLink,
+      attachmentName: initialData.attachmentName,
       type: initialData.type
     };
   }
@@ -99,6 +100,8 @@ const WritingPage = () => {
           role: currentUser!.user.role,
           avatarLink: currentUser!.user.avatarLink,
         },
+        attachmentLink: formData.attachmentLink,
+        attachmentName: formData.attachmentName,
         publishTimestamp: BigInt(Date.now()),
         updateTimestamp: BigInt(Date.now()),
         publishTillToday: "a few seconds ago",
@@ -148,6 +151,10 @@ const WritingPage = () => {
       option2Action: handleLeave,
       option3Text: "Save and Leave",
       option3Color: "primary",
+      option3Action: async () => {
+        await handleSaveDraft(contentModificationFormRef.current!.getFormData());
+        await handleLeave();
+      },
       option3LoadingPosition: "center"
     });
     setConfirmBoxOpen(true);
@@ -158,8 +165,6 @@ const WritingPage = () => {
   const [draftId, setDraftId] = useState(initialData?.draftId);
   const { saveDraft } = useSaveDraft();
   const handleSaveDraft = async (data: ContentModificationFormDataType) => {
-    console.log("要保存草稿了 ->")
-    console.log(draftId);
     // determine referenceId
     let referenceId = initialData?.referenceId;
     if (data.type !== 'draft') {
@@ -176,10 +181,17 @@ const WritingPage = () => {
       category: data.category,
       tags: data.tags,
       attachmentLink: data.attachmentLink,
+      attachmentName: data.attachmentName,
       type: 'draft',
       referenceId: referenceId
     });
     setDraftId(savedDraft.id);
+    showNotification({
+      horizontal: 'left',
+      vertical: 'bottom',
+      severity: 'success',
+      message: 'Draft saved!'
+    });
   }
 
 
@@ -200,12 +212,11 @@ const WritingPage = () => {
           category: data.category,
           tags: data.tags,
           attachmentLink: data.attachmentLink,
+          attachmentName: data.attachmentName,
           type: data.type,
           draftId: draftId
         });
       } else {
-        console.log("准备更新")
-        console.log("mode", mode);
         publishedArticle = await updateArticle({
           articleId: initialData?.referenceId || initialData?.id,
           authorId: currentUser!.user.id,
@@ -217,6 +228,7 @@ const WritingPage = () => {
           coverImageLink: data.coverImageLink,
           tags: data.tags,
           attachmentLink: data.attachmentLink,
+          attachmentName: data.attachmentName,
           type: data.type,
           draftId: draftId
         });
@@ -239,7 +251,7 @@ const WritingPage = () => {
     showNotification({
       message: `Your article is ${mode === 'create' ? 'published' : 'updated'}.`,
       severity: "success",
-      horizontal: "right",
+      horizontal: "left",
       vertical: "bottom"
     });
     window.scrollTo(0, 0);

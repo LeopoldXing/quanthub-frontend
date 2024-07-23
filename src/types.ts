@@ -69,6 +69,7 @@ export type CompleteArticleData = {
   contentJson?: string;
   coverImageLink?: string;
   attachmentLink?: string;
+  attachmentName?: string;
   rate: number;
   comments: ArticleComment[],
   likes: string;
@@ -181,6 +182,7 @@ export type ContentModificationFormDataType = {
   category?: string;
   tags?: string[];
   attachmentLink?: string;
+  attachmentName?: string;
   type: "article" | "announcement" | "draft";
 }
 

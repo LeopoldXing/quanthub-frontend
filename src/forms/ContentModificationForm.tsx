@@ -1,6 +1,6 @@
 import { Controller, useForm } from "react-hook-form";
 import { ContentModificationFormDataType } from "@/types.ts";
-import { Box, Skeleton, TextField } from "@mui/material";
+import { Box, IconButton, Input, Modal, Skeleton, TextField, Typography } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import MuiRichTextEditor from "@/components/mui/RichTextEditor/MuiRichTextEditor.tsx";
 import { MenuControlsContainer } from "mui-tiptap";
@@ -11,6 +11,10 @@ import FileUploadButton from "@/components/mui/FileUploadButton.tsx";
 import CategorySingleSelectBox from "@/components/CategorySingleSelectBox.tsx";
 import TagPool4SelectAndCreate from "@/components/TagPool4SelectAndCreate.tsx";
 import { useShuffleTags } from "@/api/TagApi.ts";
+import { deleteFile, uploadFile } from "@/utils/S3BucketUtil.ts";
+import CloseIcon from '@mui/icons-material/Close';
+import AddIcon from '@mui/icons-material/Add';
+import Button from "@mui/material/Button";
 
 export interface ContentModificationFormInterface {
   getFormData: () => ContentModificationFormDataType;
@@ -32,7 +36,9 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
   const {
     control,
     handleSubmit,
-    getValues
+    getValues,
+    setValue,
+    watch
   } = useForm<ContentModificationFormDataType>({
     defaultValues: {
       content: {
@@ -41,6 +47,8 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
       },
       tags: initialData?.tags || [],
       type: initialData?.type || 'article',
+      attachmentName: initialData?.attachmentName,
+      attachmentLink: initialData?.attachmentLink,
     }
   });
 
@@ -64,8 +72,34 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
 
 
   /*  handle file upload  */
-  const handleFileUpload = async () => {
-
+  const [progress, setProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const attachmentName = watch("attachmentName");
+  const attachmentLink = watch("attachmentLink");
+  const handleProgressUpdate = (n: number) => {
+    setProgress(prevProgress => {
+      console.log(`updating progress from ${prevProgress} to ${n}`);
+      return n;
+    });
+  }
+  const handleFileUpload = async (file: File) => {
+    setValue('attachmentName', file.name);
+    setIsUploading(true);
+    setProgress(0);
+    try {
+      const url = await uploadFile({ file: file, onProgressUpdate: handleProgressUpdate });
+      setValue('attachmentLink', url);
+      console.log(file);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsUploading(false);
+    }
+  }
+  const handleDeleteAttachment = () => {
+    deleteFile(getValues('attachmentLink') || '');
+    setValue('attachmentLink', undefined);
+    setValue('attachmentName', undefined);
   }
 
 
@@ -94,6 +128,18 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
       window.document.getElementById("submit_button")?.click();
     }
   }));
+
+
+  /*  handle create new category  */
+  const [newCategoryModalOpen, setNewCategoryModalOpen] = useState(false);
+  const [newCategory, setNewCategory] = useState("");
+  const handleCreateCategory = () => {
+    setNewCategoryModalOpen(false);
+
+  }
+  const openCreateCategoryModal = () => {
+    setNewCategoryModalOpen(true);
+  }
 
   return (
       <Box width="100%" component="form" noValidate autoComplete="off" onSubmit={handleSubmit(submit)}>
@@ -170,7 +216,10 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
           <div className="w-full hidden md:flex justify-between items-center gap-8">
             <div className="w-full min-h-24 flex flex-col justify-start items-start gap-4">
               {/*  category  */}
-              <div className="text-nowrap text-xl font-bold">Category</div>
+              <div className="w-full flex justify-start items-center gap-3">
+                <div className="text-nowrap text-xl font-bold">Category</div>
+                <IconButton size="small" onClick={openCreateCategoryModal}><AddIcon fontSize="small"/></IconButton>
+              </div>
               <Controller
                   name="category"
                   control={control}
@@ -189,17 +238,25 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
                 <span className="ml-3 text-nowrap text-sm font-light text-gray-400">(File size limit: 100MB)</span>
               </div>
               <div
-                  className="w-full flex flex-1 justify-center items-center border border-dashed border-gray-300"
-                  onClick={handleFileUpload}>
-                <FileUploadButton/>
-                <div/>
+                  className="w-full flex flex-1 justify-center items-center gap-2 border border-dashed border-gray-300">
+                {attachmentName && attachmentLink ? (
+                    <div className="w-full pl-8 flex justify-start items-center gap-2">
+                      <IconButton size="small"
+                                  onClick={handleDeleteAttachment}><CloseIcon/></IconButton>{attachmentName}
+                    </div>
+                ) : (
+                    <FileUploadButton onUpload={handleFileUpload}/>
+                )}
               </div>
             </div>
           </div>
           {/*  small screen  */}
           <div className="w-full md:hidden flex flex-col justify-start items-start gap-4">
             {/*  category  */}
-            <div className="text-nowrap text-xl font-bold">Category</div>
+            <div className="w-full flex justify-start items-center gap-3">
+              <div className="text-nowrap text-xl font-bold">Category</div>
+              <IconButton size="small" onClick={openCreateCategoryModal}><AddIcon fontSize="small"/></IconButton>
+            </div>
             <Controller
                 name="category"
                 control={control}
@@ -218,9 +275,14 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
               <span className="ml-3 text-nowrap text-sm font-light text-gray-400">(File size limit: 100MB)</span>
             </div>
             <div
-                className="w-full flex flex-1 justify-center items-center gap-2 border border-dashed border-gray-300"
-                onClick={handleFileUpload}>
-              <FileUploadButton/>
+                className="w-full flex flex-1 justify-center items-center gap-2 border border-dashed border-gray-300">
+              {attachmentName && attachmentLink ? (
+                  <div className="w-full pl-8 flex justify-start items-center gap-2">
+                    <IconButton size="small" onClick={handleDeleteAttachment}><CloseIcon/></IconButton>{attachmentName}
+                  </div>
+              ) : (
+                  <FileUploadButton onUpload={handleFileUpload}/>
+              )}
             </div>
           </div>
           {/*  tags  */}
@@ -250,6 +312,37 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
             </div>
           </div>
         </div>
+
+        {/*  create new category  */}
+        <Modal
+            open={newCategoryModalOpen}
+            onClose={() => setNewCategoryModalOpen(false)}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+          <Box square={false} sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            px: 4,
+            pt: 4,
+            pb: 6,
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "none",
+            boxShadow: 24,
+            overflow: "hidden"
+          }}>
+            <Typography variant='h6' component='h2'>Enter new category name: </Typography>
+            <TextField id="standard-basic" component="text" label="New Category" variant="standard" margin="normal"
+                       sx={{ marginTop: 4 }} fullWidth onChange={e => setNewCategory(e.target.value)}/>
+            <div className="w-full mt-6 flex justify-end items-center gap-5">
+              <Button size="small" onClick={() => setNewCategoryModalOpen(false)}>Cancel</Button>
+              <Button variant="contained" size="small">Confirm</Button>
+            </div>
+          </Box>
+        </Modal>
       </Box>
   );
 });

@@ -118,7 +118,7 @@ const ArticleDetailPage = () => {
     showNotification({
       message: "Article Deleted",
       severity: "success",
-      horizontal: "right",
+      horizontal: "left",
       vertical: "bottom"
     });
   }
@@ -139,8 +139,8 @@ const ArticleDetailPage = () => {
     if (!response) {
       // something wrong
       showNotification({
-        horizontal: 'right',
-        vertical: 'top',
+        horizontal: 'left',
+        vertical: 'bottom',
         severity: 'error',
         message: 'Something unexpected happened, please try again'
       });
@@ -157,8 +157,8 @@ const ArticleDetailPage = () => {
       showNotification({
         message: "Comment deleted",
         severity: "success",
-        horizontal: "right",
-        vertical: "top"
+        horizontal: "left",
+        vertical: "bottom"
       });
       setArticleData(prevState => ({
         ...prevState,
@@ -182,8 +182,8 @@ const ArticleDetailPage = () => {
       showNotification({
         message: "Comment updated",
         severity: "success",
-        horizontal: "right",
-        vertical: "top"
+        horizontal: "left",
+        vertical: "bottom"
       });
       setArticleData(prevState => ({
         ...prevState,
@@ -199,8 +199,8 @@ const ArticleDetailPage = () => {
       showNotification({
         message: "Something unexpected happened, please try again.",
         severity: "error",
-        horizontal: "right",
-        vertical: "top"
+        horizontal: "left",
+        vertical: "bottom"
       });
     }
   }
@@ -213,7 +213,7 @@ const ArticleDetailPage = () => {
                   if (!initialArticleData) {
                     navigate("/articles");
                   } else {
-                    navigate("/my/articles");
+                    navigate(-1);
                   }
                 }}>
           Back
