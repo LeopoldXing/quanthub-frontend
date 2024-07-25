@@ -2,7 +2,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import SystemUpdateAltOutlinedIcon from "@mui/icons-material/SystemUpdateAltOutlined";
-import { Modal, Paper } from "@mui/material";
+import { IconButton, Modal, Paper } from "@mui/material";
 import Article from "@/components/Article.tsx";
 import ContentModificationForm, { ContentModificationFormInterface } from "@/forms/ContentModificationForm.tsx";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -20,11 +20,14 @@ import { v4 as uuidv4 } from "uuid";
 import { useCreateArticle, useUpdateArticle } from "@/api/ArticleApi.ts";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
 import { useSaveDraft } from "@/api/DraftApi.ts";
+import PublicIcon from "@mui/icons-material/Public";
+import ArticleIcon from '@mui/icons-material/Article';
 
 const WritingPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const initialData: CompleteArticleData = location.state?.articleData;
+  const [isAnnouncement, setIsAnnouncement] = useState(initialData?.isAnnouncement || false);
   let initialFormData: ContentModificationFormDataType | undefined = undefined;
   if (initialData) {
     initialFormData = {
@@ -40,7 +43,8 @@ const WritingPage = () => {
       tags: initialData.tags,
       attachmentLink: initialData.attachmentLink,
       attachmentName: initialData.attachmentName,
-      type: initialData.type
+      type: initialData.type,
+      isAnnouncement: isAnnouncement
     };
   }
   let mode = 'create';
@@ -137,7 +141,11 @@ const WritingPage = () => {
 
   /*  handle go back  */
   const handleLeave = async () => {
-    navigate("/articles");
+    if (initialData.type === 'draft') {
+      navigate('/my/articles');
+    } else {
+      navigate('/articles');
+    }
   }
   const openGoBackDialog = () => {
     setConfirmBoxData({
@@ -170,6 +178,8 @@ const WritingPage = () => {
     if (data.type !== 'draft') {
       referenceId = initialData?.id;
     }
+    console.log("准备保存草稿，表单数据：")
+    console.log(data);
     const savedDraft: CompleteArticleData = await saveDraft({
       id: draftId,
       authorId: currentUser!.user.id,
@@ -180,6 +190,7 @@ const WritingPage = () => {
       coverImageLink: data.coverImageLink,
       category: data.category,
       tags: data.tags,
+      isAnnouncement: data.isAnnouncement || false,
       attachmentLink: data.attachmentLink,
       attachmentName: data.attachmentName,
       type: 'draft',
@@ -214,7 +225,8 @@ const WritingPage = () => {
           attachmentLink: data.attachmentLink,
           attachmentName: data.attachmentName,
           type: data.type,
-          draftId: draftId
+          draftId: draftId,
+          isAnnouncement: isAnnouncement
         });
       } else {
         publishedArticle = await updateArticle({
@@ -230,7 +242,8 @@ const WritingPage = () => {
           attachmentLink: data.attachmentLink,
           attachmentName: data.attachmentName,
           type: data.type,
-          draftId: draftId
+          draftId: draftId,
+          isAnnouncement: isAnnouncement
         });
       }
     } catch (e) {
@@ -257,6 +270,14 @@ const WritingPage = () => {
     window.scrollTo(0, 0);
   }
 
+  /*  change type  */
+  const handleChangeType = () => {
+    if (contentModificationFormRef.current) {
+      contentModificationFormRef.current.articleOrAnnouncement(isAnnouncement ? 'article' : 'announcement');
+      setIsAnnouncement(prevState => !prevState);
+    }
+  }
+
   return (
       <div className="w-full mx-auto pb-16 flex flex-col items-start justify-start">
         <Button startIcon={<ArrowBackIosIcon fontSize="small"/>}
@@ -266,8 +287,19 @@ const WritingPage = () => {
         </Button>
         {/*  title  */}
         <div className="w-full mt-10 space-y-10 md:space-y-0 md:flex justify-between items-center">
-          <div
-              className="text-4xl font-bold">{mode === "create" ? "Create" : "Update"} {initialData ? (initialData.type === "announcement" ? "Announcement" : "Article") : ("Article")}</div>
+          <div className="w-full flex justify-start items-center gap-4">
+            <div
+                className="text-4xl font-bold">
+              {mode === "create" ? "Create" : "Update"} {isAnnouncement ? "Announcement" : "Article"}
+            </div>
+            {currentUser?.user.role.toLowerCase() === 'admin' && (
+                isAnnouncement ? (
+                    <IconButton onClick={handleChangeType}><ArticleIcon/></IconButton>
+                ) : (
+                    <IconButton onClick={handleChangeType}><PublicIcon/></IconButton>
+                )
+            )}
+          </div>
           <div className="flex flex-nowrap justify-start md:justify-center items-center gap-4">
             <Button variant="outlined" onClick={handlePreview} color="secondary">Preview</Button>
             {mode === "create" ? (

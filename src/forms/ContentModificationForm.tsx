@@ -1,6 +1,6 @@
 import { Controller, useForm } from "react-hook-form";
 import { ContentModificationFormDataType } from "@/types.ts";
-import { Box, IconButton, Input, Modal, Skeleton, TextField, Typography } from "@mui/material";
+import { Box, IconButton, Modal, Skeleton, TextField, Typography } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import MuiRichTextEditor from "@/components/mui/RichTextEditor/MuiRichTextEditor.tsx";
 import { MenuControlsContainer } from "mui-tiptap";
@@ -19,6 +19,7 @@ import Button from "@mui/material/Button";
 export interface ContentModificationFormInterface {
   getFormData: () => ContentModificationFormDataType;
   triggerSubmit: () => void;
+  articleOrAnnouncement: (type: 'article' | 'announcement') => void;
 }
 
 type ContentModificationFormProps = {
@@ -49,9 +50,11 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
       type: initialData?.type || 'article',
       attachmentName: initialData?.attachmentName,
       attachmentLink: initialData?.attachmentLink,
+      isAnnouncement: initialData?.isAnnouncement || false
     }
   });
 
+  console.log("表单, isAnnouncement", getValues('isAnnouncement'))
 
   /*  handle submit  */
   const submit = async (data: ContentModificationFormDataType) => {
@@ -126,6 +129,9 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
     },
     triggerSubmit() {
       window.document.getElementById("submit_button")?.click();
+    },
+    articleOrAnnouncement(type: 'article' | 'announcement') {
+      type === 'article' ? setValue('isAnnouncement', false) : setValue('isAnnouncement', true);
     }
   }));
 

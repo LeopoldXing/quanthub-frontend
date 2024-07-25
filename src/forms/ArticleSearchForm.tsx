@@ -1,5 +1,5 @@
 import { Controller, useForm } from "react-hook-form";
-import { ArticleOverviewInfo, NewArticleSearchParamType } from "@/types.ts";
+import { ArticleOverviewInfo, ArticleSearchParamType } from "@/types.ts";
 import SearchBox from "@/components/SearchBox.tsx";
 import SearchButton from "@/components/SearchButton.tsx";
 import CategoryMultiSelectBox from "@/components/CategoryMultiSelectBox.tsx";
@@ -22,7 +22,7 @@ export interface ArticleSearchFormInterface {
 }
 
 type ArticleSearchFormProps = {
-  onSubmit: (data: NewArticleSearchParamType) => void;
+  onSubmit: (data: ArticleSearchParamType) => void;
   viewerType: 'self' | 'public';
   type?: "article" | "announcement" | "draft";
 }
@@ -34,7 +34,7 @@ const ArticleSearchForm = React.forwardRef(({
                                             }: ArticleSearchFormProps, ref) => {
   const navigate = useNavigate();
 
-  const { formState, control, handleSubmit, getValues, setValue } = useForm<NewArticleSearchParamType>({
+  const { formState, control, handleSubmit, getValues, setValue } = useForm<ArticleSearchParamType>({
     defaultValues: {
       sort: {
         strategy: "recommended",
@@ -47,7 +47,7 @@ const ArticleSearchForm = React.forwardRef(({
 
   /*  handle submit  */
   const { searchContent, isLoading: isSearching } = useSearchContent();
-  const submit = useCallback(async (data: NewArticleSearchParamType) => {
+  const submit = useCallback(async (data: ArticleSearchParamType) => {
     onSubmit(data);
     const requestParam: SearchContentRequestProps = {
       ...data,

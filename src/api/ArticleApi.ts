@@ -54,6 +54,7 @@ type CreateArticleRequestParam = {
   type: "article" | "announcement" | "draft";
   referenceId?: string;
   draftId?: string;
+  isAnnouncement?: boolean;
 }
 const useCreateArticle = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -98,6 +99,7 @@ type UpdateArticleRequestProps = {
   attachmentName?: string;
   type: "article" | "announcement" | "draft";
   draftId?: string;
+  isAnnouncement?: boolean;
 }
 const useUpdateArticle = () => {
   const { getAccessTokenSilently } = useAuth0();

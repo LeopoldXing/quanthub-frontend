@@ -39,6 +39,8 @@ const ArticleDetailPage = () => {
   const { getArticle, isLoading } = useGetArticle();
   const fetchArticleData = async () => {
     const article = await getArticle(articleId!);
+    console.log("异步获取文章数据：")
+    console.log(article);
     setArticleData(article);
   }
   useEffect(() => {
@@ -211,9 +213,9 @@ const ArticleDetailPage = () => {
                 sx={{ fontWeight: "bold", color: "black" }}
                 onClick={() => {
                   if (!initialArticleData) {
-                    navigate("/articles");
-                  } else {
                     navigate(-1);
+                  } else {
+                    navigate("/articles");
                   }
                 }}>
           Back

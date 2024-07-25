@@ -16,6 +16,7 @@ type SaveDraftRequestProps = {
   attachmentLink?: string;
   attachmentName?: string;
   type: "draft";
+  isAnnouncement: boolean;
   referenceId?: string;
 }
 const useSaveDraft = () => {

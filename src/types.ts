@@ -64,6 +64,7 @@ export type CompleteArticleData = {
   tags: string[];
   category: string;
   type: "article" | "announcement" | "draft";
+  isAnnouncement?: boolean;
   contentHtml: string;
   contentText?: string;
   contentJson?: string;
@@ -91,14 +92,6 @@ export type CompleteArticleData = {
 
 export type ArticleSearchParamType = {
   keyword: string;
-  selectedCategoryList: Array<string>;
-  selectedTagList: string[];
-  sortStrategy: "publish_date" | "update_date" | "recommended";
-  sortDirection: "asc" | "desc" | "none";
-}
-
-export type NewArticleSearchParamType = {
-  keyword: string;
   categoryList: string[];
   tagList: string[];
   sort: {
@@ -106,19 +99,6 @@ export type NewArticleSearchParamType = {
     direction: "desc" | "asc" | "none";
   }
   type: 'article' | 'announcement' | 'draft';
-}
-
-export type ArticleModificationFormData = {
-  title: string;
-  subtitle?: string;
-  contentHtml: string;
-  contentText?: string;
-  contentJson?: string;
-  category?: string;
-  pictureLinkList?: string[];
-  attachmentLink?: string;
-  selectedTagList?: string[];
-  coverImageLink?: string;
 }
 
 export type ConfirmBoxConfig = {
@@ -184,6 +164,7 @@ export type ContentModificationFormDataType = {
   attachmentLink?: string;
   attachmentName?: string;
   type: "article" | "announcement" | "draft";
+  isAnnouncement?: boolean;
 }
 
 export type ButtonStyleType = {
