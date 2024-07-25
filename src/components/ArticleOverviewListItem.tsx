@@ -3,14 +3,18 @@ import { Typography } from "@mui/material";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
+import CloseIcon from '@mui/icons-material/Close';
 import CreateIcon from '@mui/icons-material/Create';
 import { ArticleOverviewInfo } from "@/types.ts";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { useGetDraft } from "@/api/DraftApi.ts";
+import LoadingButton from "@mui/lab/LoadingButton";
 
-const ArticleOverviewListItem = ({ articleOverviewInfo }: {
-  articleOverviewInfo?: ArticleOverviewInfo
+const ArticleOverviewListItem = ({ articleOverviewInfo, onDelete, isDeleting = false }: {
+  articleOverviewInfo?: ArticleOverviewInfo,
+  onDelete?: (id: string) => Promise<void>,
+  isDeleting?: boolean
 }) => {
   const navigate = useNavigate();
 
@@ -31,19 +35,31 @@ const ArticleOverviewListItem = ({ articleOverviewInfo }: {
     window.scrollTo(0, 0);
   }
 
+  /*  delete draft  */
+  const handleDeleteDraft = async (id: string) => {
+    onDelete && await onDelete(id);
+  }
+
   return (
       <div className="w-full">
         {/*  title  */}
         <span onClick={articleOverviewInfo?.type !== 'draft' ? handleNavigate : () => {}}
-              className={`w-full flex flex-col 2xl:flex-row justify-start items-start 2xl:justify-between 2xl:items-center gap-2 2xl:gap-0 ${articleOverviewInfo?.type !== 'draft' ? 'cursor-pointer' : ''}`}>
+              className={`w-full flex flex-col lg:flex-row justify-start items-start lg:justify-between lg:items-center gap-2 lg:gap-0 ${articleOverviewInfo?.type !== 'draft' ? 'cursor-pointer' : ''}`}>
           <div
               className="text-xl font-bold truncate max-w-md md:max-w-2xl lg:max-w-lg xl:max-w-lg 2xl:max-w-2xl">{articleOverviewInfo!.title}</div>
-          {/*  author & update time  */}
-          <div className="flex justify-center items-center gap-1">
-            <Typography fontSize="13px">{articleOverviewInfo!.author.username}</Typography>
-            <Typography fontSize="20px">·</Typography>
-            <Typography fontSize="13px">{articleOverviewInfo!.updateTillToday}</Typography>
-          </div>
+          {articleOverviewInfo?.type !== 'draft' ? (
+              /*  author & update time  */
+              <div className="flex justify-center items-center gap-1">
+                <Typography fontSize="13px">{articleOverviewInfo!.author.username}</Typography>
+                <Typography fontSize="20px">·</Typography>
+                <Typography fontSize="13px">{articleOverviewInfo!.updateTillToday}</Typography>
+              </div>
+          ) : (
+              <LoadingButton startIcon={<CloseIcon/>} loadingPosition="start" color="warning" loading={isDeleting}
+                             size="small" onClick={() => handleDeleteDraft(articleOverviewInfo?.id)}>
+                Delete
+              </LoadingButton>
+          )}
         </span>
         {/*  content  */}
         <div className="w-full mt-3 flex justify-between items-center gap-6">

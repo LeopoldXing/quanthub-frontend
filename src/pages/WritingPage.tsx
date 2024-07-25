@@ -141,7 +141,7 @@ const WritingPage = () => {
 
   /*  handle go back  */
   const handleLeave = async () => {
-    if (initialData.type === 'draft') {
+    if (initialData?.type === 'draft') {
       navigate('/my/articles');
     } else {
       navigate('/articles');

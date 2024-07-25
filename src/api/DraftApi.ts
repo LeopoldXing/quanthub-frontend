@@ -100,4 +100,26 @@ const useGetDraft = () => {
   return { getDraftById, isLoading, isError, isSuccess };
 }
 
-export { useSaveDraft, useGetArticleDraft, useGetDraft };
+const useDeleteDraft = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const deleteDraftRequest = async (draftId: string) => {
+    const accessToken = await getAccessTokenSilently();
+
+    const response = await fetch(`${BASE_URL}/api/draft/delete/${draftId}`, {
+      method: "DELETE",
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error("Failed to delete draft");
+    }
+  }
+
+  const { mutateAsync: deleteDraftById, isLoading, isError, isSuccess } = useMutation(deleteDraftRequest);
+  return { deleteDraftById, isLoading, isError, isSuccess };
+}
+
+export { useSaveDraft, useGetArticleDraft, useGetDraft, useDeleteDraft };
