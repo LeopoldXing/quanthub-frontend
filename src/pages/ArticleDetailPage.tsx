@@ -58,6 +58,7 @@ const ArticleDetailPage = () => {
     if (articleData) {
       setIsLiking(articleData.isLiking || false);
       setLikes(Number(articleData.likes));
+      setIsDisliking(articleData.disLiking || false);
     }
   }, [articleData]);
   const { likeThisArticle } = useLikingService();

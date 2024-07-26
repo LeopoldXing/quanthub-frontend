@@ -1,15 +1,5 @@
 import React from "react";
 
-export type Category = {
-  id: string;
-  name: string;
-}
-
-export type Tag = {
-  id: string;
-  name: string;
-}
-
 export type User = {
   id: string;
   auth0Id?: string;
@@ -76,6 +66,7 @@ export type CompleteArticleData = {
   comments: ArticleComment[],
   likes: string;
   isLiking?: boolean;
+  disLiking?: boolean;
   views: string;
   author: {
     id: string;
