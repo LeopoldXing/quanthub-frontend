@@ -70,8 +70,8 @@ const TagPool4SelectAndCreate = ({
       showNotification({
         message: "You can only create 10 new tags. ",
         duration: 6000,
-        horizontal: "right",
-        vertical: "top",
+        horizontal: "left",
+        vertical: "bottom",
         severity: "warning"
       });
     }

@@ -144,7 +144,7 @@ const CommentInputBox = ({
           {isInputActive ? (
               <div className="w-full mt-1 flex justify-between items-center relative">
                 <div className="relative">
-                  <button ref={emojiButtonRef} onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+                  <button ref={emojiButtonRef} onClick={() => setShowEmojiPicker(prevState => !prevState)}>
                     <EmojiEmotionsOutlinedIcon sx={{ color: "black" }}/>
                   </button>
                   {showEmojiPicker && (

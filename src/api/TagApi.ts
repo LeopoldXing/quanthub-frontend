@@ -1,7 +1,7 @@
 import { useMutation } from "react-query";
 import { useAuth0 } from "@auth0/auth0-react";
-import { sleep } from "@/utils/GlobalUtils.ts";
-import { tags } from "@/lib/dummyData.ts";
+import { useNotification } from "@/contexts/NotificationContext.tsx";
+import Cookies from "js-cookie";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -26,10 +26,17 @@ const useShuffleTags = () => {
 
 const useGetMyTags = () => {
   const { getAccessTokenSilently } = useAuth0();
+  const { showNotification } = useNotification();
 
   const getMyTagsRequest = async (tagNumber: number) => {
-    /*const accessToken = await getAccessTokenSilently();
-    const response = await fetch(`${BASE_URL}/api/my/tags/${tagNumber}`, {
+    const cookie = Cookies.get("quanthub-user");
+    let parsedCookie = null;
+    if (cookie) {
+      parsedCookie = JSON.parse(cookie);
+    }
+
+    const accessToken = await getAccessTokenSilently();
+    const response = await fetch(`${BASE_URL}/api/my/tags/${tagNumber}/${parsedCookie?.user.id}`, {
       method: 'GET',
       headers: {
         "Content-Type": "application/json",
@@ -40,12 +47,20 @@ const useGetMyTags = () => {
       throw new Error("Failed to get my tags");
     } else {
       return await response.json();
-    }*/
-    await sleep(1000);
-    return tags.map(tag => tag.name);
+    }
   }
 
-  const { mutateAsync: getMyTags, isLoading, isError, isSuccess } = useMutation(getMyTagsRequest);
+  const { mutateAsync: getMyTags, isLoading, isError, isSuccess, error } = useMutation(getMyTagsRequest);
+
+  if (error) {
+    showNotification({
+      horizontal: 'left',
+      vertical: 'bottom',
+      severity: 'error',
+      message: 'Unable to fetch tags, please try again'
+    });
+  }
+
   return { getMyTags, isLoading, isError, isSuccess };
 }
 

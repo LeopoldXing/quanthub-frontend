@@ -16,14 +16,13 @@ const TagPool = ({ control, onChange, onDelete, onDeleteAll }: TagPoolProps) => 
           <div className={`mt-6 w-full flex items-center justify-start gap-2 flex-wrap`}>
             {currentTagList.map((tag) => (
                 <Chip key={tag} label={tag} onDelete={() => {
-                  onDelete && onDelete(tag);
                   onChange(currentTagList.filter(selectedTag => selectedTag !== tag));
+                  onDelete && onDelete(tag);
                 }}/>
             ))}
             {currentTagList.length > 0 && (
                 <button className="ml-3 text-nowrap text-[13px]" onClick={() => {
                   onDeleteAll && onDeleteAll();
-                  /*onChange([]);*/
                 }}>
                   Cancel all
                 </button>
