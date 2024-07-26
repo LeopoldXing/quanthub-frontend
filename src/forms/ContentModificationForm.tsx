@@ -6,7 +6,7 @@ import MuiRichTextEditor from "@/components/mui/RichTextEditor/MuiRichTextEditor
 import { MenuControlsContainer } from "mui-tiptap";
 import EditorMenuControls from "@/components/mui/RichTextEditor/EditorMenuControls.tsx";
 import React, { useEffect, useImperativeHandle, useState } from "react";
-import { categories, exampleContentHtml, exampleContentText } from "@/lib/dummyData.ts";
+import { exampleContentHtml, exampleContentText } from "@/lib/dummyData.ts";
 import FileUploadButton from "@/components/mui/FileUploadButton.tsx";
 import CategorySingleSelectBox from "@/components/CategorySingleSelectBox.tsx";
 import TagPool4SelectAndCreate from "@/components/TagPool4SelectAndCreate.tsx";
@@ -118,12 +118,12 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
   }
 
   /*  get available categories  */
-  const { categories } = useGetAllCategories();
-  const [availableCategories, setAvailableCategories] = useState([]);
+  const { categories, isSuccess } = useGetAllCategories();
+  const [availableCategories, setAvailableCategories] = useState<string[]>(initialData?.category ? [initialData.category] : []);
 
   useEffect(() => {
     fetchAvailableTags();
-    if (categories) {
+    if (categories && isSuccess) {
       setAvailableCategories(categories);
     }
   }, [categories]);

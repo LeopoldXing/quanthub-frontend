@@ -3,7 +3,6 @@ import { ArticleOverviewInfo, ArticleSearchParamType } from "@/types.ts";
 import SearchBox from "@/components/SearchBox.tsx";
 import SearchButton from "@/components/SearchButton.tsx";
 import CategoryMultiSelectBox from "@/components/CategoryMultiSelectBox.tsx";
-import { categories } from "@/lib/dummyData.ts";
 import TagPool from "@/components/TagPool.tsx";
 import SortingPanel from "@/components/SortingPanel.tsx";
 import LoopIcon from "@mui/icons-material/Loop";
@@ -16,6 +15,7 @@ import Pagination from "@mui/material/Pagination";
 import { Box, Divider, Skeleton, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
+import { useGetAllCategories } from "@/api/CategoryApi.ts";
 
 export interface ArticleSearchFormInterface {
   changeType: (currentType: 'article' | 'announcement' | 'all', isDraft: boolean) => void;
@@ -100,9 +100,15 @@ const ArticleSearchForm = React.forwardRef(({
   }, [isFetchingTags, isSpinning]);
 
 
+  /*  get available categories  */
+  const { categories, isSuccess } = useGetAllCategories();
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+
+
   /*  fetch initial data  */
   const fetchTags = useCallback(async () => {
     try {
+      // tags
       let res: string[];
       if (viewerType === 'public') {
         res = await shuffleTags(30);
@@ -110,10 +116,15 @@ const ArticleSearchForm = React.forwardRef(({
         res = await getMyTags(30);
       }
       setAvailableTags(res);
+
+      // categories
+      if (categories && isSuccess) {
+        setAvailableCategories(categories);
+      }
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [categories]);
   useEffect(() => {
     fetchTags();
     submit(getValues());
@@ -153,7 +164,7 @@ const ArticleSearchForm = React.forwardRef(({
               control={control}
               defaultValue={[]}
               render={({ field: { onChange, onBlur, value } }) => (
-                  <CategoryMultiSelectBox categoryList={categories.map(category => category.name)} onBlur={onBlur}
+                  <CategoryMultiSelectBox categoryList={availableCategories} onBlur={onBlur}
                                           value={value} onChange={event => {
                     onChange(event);
                     handleSubmit(submit);
@@ -315,7 +326,7 @@ const ArticleSearchForm = React.forwardRef(({
                   control={control}
                   defaultValue={[]}
                   render={({ field: { onChange, onBlur, value } }) => (
-                      <CategoryMultiSelectBox categoryList={categories.map(category => category.name)} onBlur={onBlur}
+                      <CategoryMultiSelectBox categoryList={availableCategories} onBlur={onBlur}
                                               value={value} onChange={event => {
                         onChange(event);
                         handleSubmit(submit)();
