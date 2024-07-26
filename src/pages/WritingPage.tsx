@@ -47,7 +47,7 @@ const WritingPage = () => {
       isDraft: initialData.isDraft
     };
   }
-  let mode = 'create';
+  let mode: 'create' | 'update' = 'create';
   if (initialData) {
     if (initialData.isDraft) {
       if (initialData.referenceId) {

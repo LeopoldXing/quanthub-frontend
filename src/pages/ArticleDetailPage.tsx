@@ -44,10 +44,10 @@ const ArticleDetailPage = () => {
     setArticleData(article);
   }
   useEffect(() => {
-    if (!articleData) {
+    if (!articleData && !isLoading) {
       fetchArticleData();
     }
-  }, []);
+  }, [articleData, isLoading]);
 
   /*  like this article  */
   const [isLiking, setIsLiking] = useState(false);

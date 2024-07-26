@@ -145,6 +145,8 @@ const CommentItem = ({ comment, onEdit, onDelete }: CommentItemProps) => {
           option1Color: 'primary',
           option1Text: 'Cancel',
           option1Variant: 'text',
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          /*  @ts-expect-error  */
           option1Action: handleMenuClose,
           option3Color: 'primary',
           option3Text: 'Delete',

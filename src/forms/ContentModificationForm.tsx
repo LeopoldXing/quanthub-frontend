@@ -74,20 +74,21 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
 
 
   /*  handle file upload  */
-  const [progress, setProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
+  // const [progress, setProgress] = useState(0);
+  // const [isUploading, setIsUploading] = useState(false);
   const attachmentName = watch("attachmentName");
   const attachmentLink = watch("attachmentLink");
   const handleProgressUpdate = (n: number) => {
-    setProgress(prevProgress => {
-      console.log(`updating progress from ${prevProgress} to ${n}`);
-      return n;
-    });
+    console.log(n);
+    // setProgress(prevProgress => {
+    //   console.log(`updating progress from ${prevProgress} to ${n}`);
+    //   return n;
+    // });
   }
   const handleFileUpload = async (file: File) => {
     setValue('attachmentName', file.name);
-    setIsUploading(true);
-    setProgress(0);
+    // setIsUploading(true);
+    // setProgress(0);
     try {
       const url = await uploadFile({ file: file, onProgressUpdate: handleProgressUpdate });
       setValue('attachmentLink', url);
@@ -95,7 +96,7 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
     } catch (error) {
       console.error(error);
     } finally {
-      setIsUploading(false);
+      // setIsUploading(false);
     }
   }
   const handleDeleteAttachment = () => {

@@ -5,7 +5,6 @@ import { UserProfileFormZodDataType } from "@/forms/schemas/UserProfileFormSchem
 import { Avatar, IconButton } from "@mui/material";
 import defaultAvatar from "@/assets/default_avarta.png";
 import LinkedCameraIcon from '@mui/icons-material/LinkedCamera';
-import { sleep } from "@/utils/GlobalUtils.ts";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
 
 const UserProfilePage = () => {
@@ -36,7 +35,7 @@ const UserProfilePage = () => {
   };
 
   const handleFormSubmission = async (data: UserProfileFormZodDataType) => {
-    await sleep(200);
+    console.log(data);
     showNotification({
       message: "Profile updated!",
       severity: "success",
