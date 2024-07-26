@@ -6,24 +6,24 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 type SaveDraftRequestProps = {
   id?: string;
   authorId: string;
-  title: string;
+  title?: string;
   subTitle?: string;
+  type: "article" | 'announcement';
+  isDraft: boolean;
   contentHtml: string;
-  contentText?: string;
+  contentText: string;
   coverImageLink?: string;
   category?: string;
   tags?: string[];
   attachmentLink?: string;
   attachmentName?: string;
-  type: "draft";
-  isAnnouncement: boolean;
   referenceId?: string;
 }
 const useSaveDraft = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   const saveDraftRequest = async (data: SaveDraftRequestProps) => {
-    data = { ...data, type: "draft" };
+    data = { ...data, isDraft: true };
     const accessToken = await getAccessTokenSilently();
     console.log("正在保存草稿")
     console.log(data);

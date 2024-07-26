@@ -20,7 +20,7 @@ const ArticleOverviewListItem = ({ articleOverviewInfo, onDelete, isDeleting = f
 
   const { getDraftById } = useGetDraft();
   const handleNavigate = async () => {
-    if (articleOverviewInfo?.type !== 'draft') {
+    if (!articleOverviewInfo?.isDraft) {
       navigate(`/article/detail/${articleOverviewInfo!.id}`);
     } else {
       const draftData = await getDraftById(articleOverviewInfo.id);
@@ -43,11 +43,11 @@ const ArticleOverviewListItem = ({ articleOverviewInfo, onDelete, isDeleting = f
   return (
       <div className="w-full">
         {/*  title  */}
-        <span onClick={articleOverviewInfo?.type !== 'draft' ? handleNavigate : () => {}}
-              className={`w-full flex flex-col lg:flex-row justify-start items-start lg:justify-between lg:items-center gap-2 lg:gap-0 ${articleOverviewInfo?.type !== 'draft' ? 'cursor-pointer' : ''}`}>
+        <span onClick={!articleOverviewInfo?.isDraft ? handleNavigate : () => {}}
+              className={`w-full flex flex-col lg:flex-row justify-start items-start lg:justify-between lg:items-center gap-2 lg:gap-0 ${!articleOverviewInfo?.isDraft ? 'cursor-pointer' : ''}`}>
           <div
               className="text-xl font-bold truncate max-w-md md:max-w-2xl lg:max-w-lg xl:max-w-lg 2xl:max-w-2xl">{articleOverviewInfo!.title}</div>
-          {articleOverviewInfo?.type !== 'draft' ? (
+          {!articleOverviewInfo?.isDraft ? (
               /*  author & update time  */
               <div className="flex justify-center items-center gap-1">
                 <Typography fontSize="13px">{articleOverviewInfo!.author.username}</Typography>
@@ -65,11 +65,11 @@ const ArticleOverviewListItem = ({ articleOverviewInfo, onDelete, isDeleting = f
         <div className="w-full mt-3 flex justify-between items-center gap-6">
           {/*  left  */}
           <div className={`w-full ${articleOverviewInfo!.coverImageLink ? 'lg:w-2/3' : ''} flex flex-col gap-5`}>
-            {/*  taglist  */}
+            {/*  tagList  */}
             <div className="w-full">
               <TagBar tagList={articleOverviewInfo!.tags}/>
             </div>
-            {articleOverviewInfo?.type !== 'draft' ? (
+            {!articleOverviewInfo?.isDraft ? (
                 /*  description  */
                 <a className="block w-full text-wrap cursor-pointer" onClick={handleNavigate}>
                   {articleOverviewInfo!.description}

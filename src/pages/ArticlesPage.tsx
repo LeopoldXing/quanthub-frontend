@@ -14,19 +14,23 @@ const ArticlesPage = () => {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
 
+  /*  section  */
+  const [section, setSection] = useState<"article" | "announcement" | "draft">("article");
+  useEffect(() => {
+    updateType();
+  }, [section]);
+
   /*  update what type of content user is querying  */
   const searchFormRef = useRef<ArticleSearchFormInterface>();
   const updateType = () => {
     if (searchFormRef.current) {
-      searchFormRef.current.changeType(section);
+      if(section === 'draft') {
+        searchFormRef.current.changeType('all', true);
+      } else {
+        searchFormRef.current.changeType(section, false);
+      }
     }
   }
-
-  /*  section  */
-  const [section, setSection] = useState<"article" | "announcement">("article");
-  useEffect(() => {
-    updateType();
-  }, [section]);
 
   /*  create new article  */
   const handleWriteSomething = () => {
@@ -97,8 +101,8 @@ const ArticlesPage = () => {
           </Button>
         </div>
 
-        <ArticleSearchForm ref={searchFormRef} type={section} viewerType="public"
-                           onSubmit={(data) => console.log(data)}/>
+        <ArticleSearchForm ref={searchFormRef} type={section !== 'draft' ? section : 'all'} viewerType="public"
+                           isDraft={section === 'draft'} onSubmit={(data) => console.log(data)}/>
       </div>
   );
 };

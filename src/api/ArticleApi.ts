@@ -5,11 +5,12 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export type SearchContentRequestProps = {
   keyword: string;
-  categoryList: string[];
-  tagList: string[];
+  categoryList?: string[];
+  tagList?: string[];
   sortStrategy: "publish_date" | "update_date" | "recommended";
   sortDirection: "desc" | "asc" | "none";
-  type?: "article" | "announcement" | "draft";
+  type: "article" | "announcement" | "all";
+  isDraft: boolean;
 }
 const useSearchContent = () => {
   const searchContentRequest = async (data: SearchContentRequestProps) => {
@@ -44,6 +45,8 @@ type CreateArticleRequestParam = {
   authorId: string;
   title: string;
   subTitle?: string;
+  type: "article" | "announcement";
+  isDraft: boolean;
   contentHtml: string;
   contentText: string;
   coverImageLink?: string;
@@ -51,17 +54,13 @@ type CreateArticleRequestParam = {
   tags?: string[];
   attachmentLink?: string;
   attachmentName?: string;
-  type: "article" | "announcement" | "draft";
-  referenceId?: string;
   draftId?: string;
-  isAnnouncement?: boolean;
 }
 const useCreateArticle = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   const createArticleRequest = async (data: CreateArticleRequestParam) => {
     const accessToken = await getAccessTokenSilently();
-    data = { ...data, type: "article" };
 
     console.log("发布文章");
     console.log(data);
@@ -90,6 +89,8 @@ type UpdateArticleRequestProps = {
   authorId: string;
   title: string;
   subTitle?: string;
+  type: "article" | "announcement";
+  isDraft: boolean;
   contentHtml: string;
   contentText?: string;
   coverImageLink?: string;
@@ -97,9 +98,7 @@ type UpdateArticleRequestProps = {
   tags?: string[];
   attachmentLink?: string;
   attachmentName?: string;
-  type: "article" | "announcement" | "draft";
   draftId?: string;
-  isAnnouncement?: boolean;
 }
 const useUpdateArticle = () => {
   const { getAccessTokenSilently } = useAuth0();

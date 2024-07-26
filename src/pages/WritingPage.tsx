@@ -27,7 +27,7 @@ const WritingPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const initialData: CompleteArticleData = location.state?.articleData;
-  const [isAnnouncement, setIsAnnouncement] = useState(initialData?.isAnnouncement || false);
+  const [type, setType] = useState<'article' | 'announcement'>(initialData?.type || 'article');
   let initialFormData: ContentModificationFormDataType | undefined = undefined;
   if (initialData) {
     initialFormData = {
@@ -44,12 +44,12 @@ const WritingPage = () => {
       attachmentLink: initialData.attachmentLink,
       attachmentName: initialData.attachmentName,
       type: initialData.type,
-      isAnnouncement: isAnnouncement
+      isDraft: initialData.isDraft
     };
   }
   let mode = 'create';
   if (initialData) {
-    if (initialData.type === 'draft') {
+    if (initialData.isDraft) {
       if (initialData.referenceId) {
         mode = 'update';
       }
@@ -141,7 +141,7 @@ const WritingPage = () => {
 
   /*  handle go back  */
   const handleLeave = async () => {
-    if (initialData?.type === 'draft') {
+    if (initialData?.isDraft) {
       navigate('/my/articles');
     } else {
       navigate('/articles');
@@ -175,7 +175,7 @@ const WritingPage = () => {
   const handleSaveDraft = async (data: ContentModificationFormDataType) => {
     // determine referenceId
     let referenceId = initialData?.referenceId;
-    if (data.type !== 'draft') {
+    if (!data.isDraft) {
       referenceId = initialData?.id;
     }
     console.log("准备保存草稿，表单数据：")
@@ -185,15 +185,15 @@ const WritingPage = () => {
       authorId: currentUser!.user.id,
       title: data.title,
       subTitle: data.subTitle || "",
+      type: data.type,
+      isDraft: data.isDraft,
       contentHtml: data.content.contentHtml,
       contentText: data.content.contentText,
       coverImageLink: data.coverImageLink,
       category: data.category,
       tags: data.tags,
-      isAnnouncement: data.isAnnouncement || false,
       attachmentLink: data.attachmentLink,
       attachmentName: data.attachmentName,
-      type: 'draft',
       referenceId: referenceId
     });
     setDraftId(savedDraft.id);
@@ -217,16 +217,16 @@ const WritingPage = () => {
           authorId: currentUser!.user.id,
           title: data.title,
           subTitle: data.subTitle || "",
+          type: data.type,
+          isDraft: data.isDraft,
+          draftId: draftId,
           contentHtml: data.content.contentHtml,
           contentText: data.content.contentText,
           coverImageLink: data.coverImageLink,
           category: data.category,
           tags: data.tags,
           attachmentLink: data.attachmentLink,
-          attachmentName: data.attachmentName,
-          type: data.type,
-          draftId: draftId,
-          isAnnouncement: isAnnouncement
+          attachmentName: data.attachmentName
         });
       } else {
         publishedArticle = await updateArticle({
@@ -234,16 +234,16 @@ const WritingPage = () => {
           authorId: currentUser!.user.id,
           title: data.title,
           subTitle: data.subTitle || "",
+          type: data.type,
+          isDraft: data.isDraft,
+          draftId: draftId,
           contentHtml: data.content.contentHtml,
           contentText: data.content.contentText,
           category: data.category,
           coverImageLink: data.coverImageLink,
           tags: data.tags,
           attachmentLink: data.attachmentLink,
-          attachmentName: data.attachmentName,
-          type: data.type,
-          draftId: draftId,
-          isAnnouncement: isAnnouncement
+          attachmentName: data.attachmentName
         });
       }
     } catch (e) {
@@ -273,8 +273,9 @@ const WritingPage = () => {
   /*  change type  */
   const handleChangeType = () => {
     if (contentModificationFormRef.current) {
-      contentModificationFormRef.current.articleOrAnnouncement(isAnnouncement ? 'article' : 'announcement');
-      setIsAnnouncement(prevState => !prevState);
+      const newType = type === 'article' ? 'announcement' : 'article';
+      setType(newType);
+      contentModificationFormRef.current.changeType(newType);
     }
   }
 
@@ -290,10 +291,10 @@ const WritingPage = () => {
           <div className="w-full flex justify-start items-center gap-4">
             <div
                 className="text-4xl font-bold">
-              {mode === "create" ? "Create" : "Update"} {isAnnouncement ? "Announcement" : "Article"}
+              {mode === "create" ? "Create" : "Update"} {type === 'announcement' ? "Announcement" : "Article"}
             </div>
             {currentUser?.user.role.toLowerCase() === 'admin' && (
-                isAnnouncement ? (
+                type === 'announcement' ? (
                     <IconButton onClick={handleChangeType}><ArticleIcon/></IconButton>
                 ) : (
                     <IconButton onClick={handleChangeType}><PublicIcon/></IconButton>

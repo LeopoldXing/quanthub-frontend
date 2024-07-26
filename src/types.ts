@@ -47,7 +47,8 @@ export type ArticleOverviewInfo = {
   };
   coverImageLink?: string;
   rate: number;
-  type: 'article' | 'announcement' | 'draft';
+  type: 'article' | 'announcement';
+  isDraft: boolean;
   commentsCount: number;
   likes: number;
   views: string;
@@ -63,8 +64,8 @@ export type CompleteArticleData = {
   subtitle?: string;
   tags: string[];
   category: string;
-  type: "article" | "announcement" | "draft";
-  isAnnouncement?: boolean;
+  type: "article" | "announcement";
+  isDraft: boolean;
   contentHtml: string;
   contentText?: string;
   contentJson?: string;
@@ -98,7 +99,8 @@ export type ArticleSearchParamType = {
     strategy: "publish_date" | "update_date" | "recommended";
     direction: "desc" | "asc" | "none";
   }
-  type: 'article' | 'announcement' | 'draft';
+  type: 'article' | 'announcement' | 'all';
+  isDraft: boolean;
 }
 
 export type ConfirmBoxConfig = {
@@ -163,8 +165,8 @@ export type ContentModificationFormDataType = {
   tags?: string[];
   attachmentLink?: string;
   attachmentName?: string;
-  type: "article" | "announcement" | "draft";
-  isAnnouncement?: boolean;
+  type: "article" | "announcement";
+  isDraft: boolean;
 }
 
 export type ButtonStyleType = {

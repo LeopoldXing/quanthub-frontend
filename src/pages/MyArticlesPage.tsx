@@ -18,7 +18,11 @@ const MyArticlesPage = () => {
   const searchFormRef = useRef<ArticleSearchFormInterface>();
   const updateType = () => {
     if (searchFormRef.current) {
-      searchFormRef.current.changeType(section);
+      if (section === 'draft') {
+        searchFormRef.current.changeType('all', true);
+      } else {
+        searchFormRef.current.changeType(section, false);
+      }
     }
   }
 
@@ -140,7 +144,8 @@ const MyArticlesPage = () => {
           </Button>
         </div>
 
-        <ArticleSearchForm ref={searchFormRef} type={section} viewerType="self" onSubmit={(data) => {
+        <ArticleSearchForm ref={searchFormRef} type={section !== 'draft' ? section : 'all'}
+                           isDraft={section === 'draft'} viewerType="self" onSubmit={(data) => {
           console.log("搜索表单提交 -> ")
           console.log(data)
         }}/>

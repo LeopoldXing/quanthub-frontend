@@ -12,7 +12,7 @@ export const articleModificationFormSchema = z.object({
   attachmentLink: z.string().url().nullable(),
   attachmentName: z.string().url().nullable(),
   tagList: z.array(z.string()).nullable(),
-  isAnnouncement: z.boolean().default(false),
+  isDraft: z.boolean().default(false),
 });
 
 // define form data type

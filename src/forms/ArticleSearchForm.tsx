@@ -18,19 +18,21 @@ import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 
 export interface ArticleSearchFormInterface {
-  changeType: (currentType: string) => void;
+  changeType: (currentType: 'article' | 'announcement' | 'all', isDraft: boolean) => void;
 }
 
 type ArticleSearchFormProps = {
   onSubmit: (data: ArticleSearchParamType) => void;
   viewerType: 'self' | 'public';
-  type?: "article" | "announcement" | "draft";
+  type: "article" | "announcement" | "all";
+  isDraft: boolean;
 }
 
 const ArticleSearchForm = React.forwardRef(({
                                               onSubmit,
                                               viewerType = "public",
-                                              type = "article"
+                                              type = "article",
+                                              isDraft = false
                                             }: ArticleSearchFormProps, ref) => {
   const navigate = useNavigate();
 
@@ -41,7 +43,8 @@ const ArticleSearchForm = React.forwardRef(({
         direction: "none"
       },
       tagList: [],
-      type: type
+      type: type,
+      isDraft: isDraft
     }
   });
 
@@ -119,8 +122,9 @@ const ArticleSearchForm = React.forwardRef(({
 
   /*  interfaces expose to other component  */
   useImperativeHandle(ref, () => ({
-    changeType(currentType: "article" | "announcement" | "draft") {
+    changeType(currentType: "article" | "announcement" | "all", isDraft: boolean) {
       setValue('type', currentType);
+      setValue('isDraft', isDraft);
       handleSubmit(submit)();
     }
   }));

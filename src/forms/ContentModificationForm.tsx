@@ -19,7 +19,7 @@ import Button from "@mui/material/Button";
 export interface ContentModificationFormInterface {
   getFormData: () => ContentModificationFormDataType;
   triggerSubmit: () => void;
-  articleOrAnnouncement: (type: 'article' | 'announcement') => void;
+  changeType: (type: 'article' | 'announcement') => void;
 }
 
 type ContentModificationFormProps = {
@@ -50,11 +50,9 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
       type: initialData?.type || 'article',
       attachmentName: initialData?.attachmentName,
       attachmentLink: initialData?.attachmentLink,
-      isAnnouncement: initialData?.isAnnouncement || false
+      isDraft: false
     }
   });
-
-  console.log("表单, isAnnouncement", getValues('isAnnouncement'))
 
   /*  handle submit  */
   const submit = async (data: ContentModificationFormDataType) => {
@@ -130,8 +128,9 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
     triggerSubmit() {
       window.document.getElementById("submit_button")?.click();
     },
-    articleOrAnnouncement(type: 'article' | 'announcement') {
-      type === 'article' ? setValue('isAnnouncement', false) : setValue('isAnnouncement', true);
+    changeType(type: 'article' | 'announcement') {
+      console.log("类型更改为: ", type);
+      setValue('type', type);
     }
   }));
 
