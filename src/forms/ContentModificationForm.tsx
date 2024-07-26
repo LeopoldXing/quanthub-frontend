@@ -15,6 +15,7 @@ import { deleteFile, uploadFile } from "@/utils/S3BucketUtil.ts";
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import Button from "@mui/material/Button";
+import { useGetAllCategories } from "@/api/CategoryApi.ts";
 
 export interface ContentModificationFormInterface {
   getFormData: () => ContentModificationFormDataType;
@@ -115,9 +116,17 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
       console.error(error);
     }
   }
+
+  /*  get available categories  */
+  const { categories } = useGetAllCategories();
+  const [availableCategories, setAvailableCategories] = useState([]);
+
   useEffect(() => {
     fetchAvailableTags();
-  }, []);
+    if (categories) {
+      setAvailableCategories(categories);
+    }
+  }, [categories]);
 
 
   /*  expose form data  */
@@ -129,7 +138,6 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
       window.document.getElementById("submit_button")?.click();
     },
     changeType(type: 'article' | 'announcement') {
-      console.log("类型更改为: ", type);
       setValue('type', type);
     }
   }));
@@ -140,7 +148,10 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
   const [newCategory, setNewCategory] = useState("");
   const handleCreateCategory = () => {
     setNewCategoryModalOpen(false);
-
+    if (newCategory && newCategory.length > 0) {
+      setAvailableCategories(prevAvailableCategories => [...new Set([newCategory, ...prevAvailableCategories])]);
+      setValue('category', newCategory);
+    }
   }
   const openCreateCategoryModal = () => {
     setNewCategoryModalOpen(true);
@@ -230,7 +241,7 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
                   control={control}
                   defaultValue={initialData?.category}
                   render={({ field: { onChange, value, onBlur } }) => (
-                      <CategorySingleSelectBox availableCategoryList={categories.map(category => category.name)}
+                      <CategorySingleSelectBox availableCategoryList={availableCategories}
                                                initialData={initialData?.category || ""}
                                                onChange={onChange} onBlur={onBlur} value={value}/>
                   )}
@@ -267,7 +278,7 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
                 control={control}
                 defaultValue={initialData?.category}
                 render={({ field: { onChange, value, onBlur } }) => (
-                    <CategorySingleSelectBox availableCategoryList={categories.map(category => category.name)}
+                    <CategorySingleSelectBox availableCategoryList={availableCategories}
                                              initialData={initialData?.category || ""}
                                              onChange={onChange} onBlur={onBlur} value={value}/>
                 )}
@@ -325,26 +336,26 @@ const ContentModificationForm = React.forwardRef<ContentModificationFormInterfac
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-          <Box square={false} sx={{
+          <Box sx={{
             position: "absolute",
             top: "50%",
             left: "50%",
             px: 4,
             pt: 4,
-            pb: 6,
+            pb: 4,
             transform: "translate(-50%, -50%)",
+            backgroundColor: "background.paper",
             width: 400,
-            bgcolor: "background.paper",
             border: "none",
             boxShadow: 24,
             overflow: "hidden"
           }}>
             <Typography variant='h6' component='h2'>Enter new category name: </Typography>
-            <TextField id="standard-basic" component="text" label="New Category" variant="standard" margin="normal"
+            <TextField id="new_category_input" label="New Category" variant="standard" margin="normal"
                        sx={{ marginTop: 4 }} fullWidth onChange={e => setNewCategory(e.target.value)}/>
             <div className="w-full mt-6 flex justify-end items-center gap-5">
               <Button size="small" onClick={() => setNewCategoryModalOpen(false)}>Cancel</Button>
-              <Button variant="contained" size="small">Confirm</Button>
+              <Button variant="contained" size="small" onClick={handleCreateCategory}>Confirm</Button>
             </div>
           </Box>
         </Modal>

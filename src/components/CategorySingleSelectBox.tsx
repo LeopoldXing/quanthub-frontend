@@ -46,7 +46,7 @@ const CategorySingleSelectBox = ({
             value={value}
             MenuProps={MenuProps}
         >
-          {availableCategoryList && availableCategoryList.map((category) => (
+          {Array.isArray(availableCategoryList) && availableCategoryList.length > 0 && availableCategoryList.map((category) => (
               <MenuItem key={category} value={category}>
                 <ListItemText primary={category}/>
               </MenuItem>
