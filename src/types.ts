@@ -92,6 +92,8 @@ export type ArticleSearchParamType = {
   }
   type: 'article' | 'announcement' | 'all';
   isDraft: boolean;
+  current: number;
+  total: number;
 }
 
 export type ConfirmBoxConfig = {

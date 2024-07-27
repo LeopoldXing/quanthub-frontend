@@ -5,7 +5,7 @@ import HomePage from "./pages/HomePage.tsx";
 import DocsPage from "@/pages/DocsPage.tsx";
 import AboutPage from "@/pages/AboutPage.tsx";
 import SupportPage from "@/pages/SupportPage.tsx";
-import ArticlesPage from "@/pages/ArticlesPage.tsx";
+import ArticleSearchingPage from "@/pages/ArticleSearchingPage.tsx";
 import ArticleDetailPage from "@/pages/ArticleDetailPage.tsx";
 import MyArticlesPage from "@/pages/MyArticlesPage.tsx";
 import UserProfilePage from "@/pages/UserProfilePage.tsx";
@@ -20,7 +20,7 @@ const AppRoutes = () => {
         <Route path="/about" element={<Layout><AboutPage/></Layout>}/>
         <Route path="/docs" element={<Layout><DocsPage/></Layout>}/>
         <Route path="/support" element={<Layout><SupportPage/></Layout>}/>
-        <Route path="/articles" element={<Layout><ArticlesPage/></Layout>}/>
+        <Route path="/articles/search" element={<Layout><ArticleSearchingPage/></Layout>}/>
         <Route path="/article/detail/:articleId" element={<Layout><ArticleDetailPage/></Layout>}/>
         <Route path="/article/create" element={<Layout><WritingPage/></Layout>}/>
         <Route path="/my/articles" element={<Layout><MyArticlesPage/></Layout>}/>

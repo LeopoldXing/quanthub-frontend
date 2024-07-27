@@ -39,8 +39,6 @@ const ArticleDetailPage = () => {
   const { getArticle, isLoading } = useGetArticle();
   const fetchArticleData = async () => {
     const article = await getArticle(articleId!);
-    console.log("异步获取文章数据：")
-    console.log(article);
     setArticleData(article);
   }
   useEffect(() => {
@@ -97,13 +95,9 @@ const ArticleDetailPage = () => {
     // check if there are any drafts
     const res = await getDraftByArticleId(articleData.id);
     if (res && Object.keys(res).length > 0) {
-      console.log("有草稿")
-      console.log(res);
+      // draft detected
       navigationData = res;
     }
-
-    console.log("编辑页面的初始数据：")
-    console.log(navigationData);
 
     navigate("/article/create", {
       state: {
@@ -115,7 +109,6 @@ const ArticleDetailPage = () => {
   const { deleteArticle } = useDeleteArticle();
   const handleDeleteArticle = async () => {
     await deleteArticle(articleId!);
-    console.log("delete article");
     navigate("/my/articles");
     window.scrollTo(0, 0);
     showNotification({
@@ -172,8 +165,8 @@ const ArticleDetailPage = () => {
       showNotification({
         message: "Something unexpected happened, please try again.",
         severity: "error",
-        horizontal: "right",
-        vertical: "top"
+        horizontal: "bottom",
+        vertical: "left"
       });
     }
   }
@@ -216,7 +209,7 @@ const ArticleDetailPage = () => {
                   if (!initialArticleData) {
                     navigate(-1);
                   } else {
-                    navigate("/articles");
+                    navigate("/articles/search");
                   }
                 }}>
           Back

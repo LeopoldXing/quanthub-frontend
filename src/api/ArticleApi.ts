@@ -11,29 +11,21 @@ export type SearchContentRequestProps = {
   sortDirection: "desc" | "asc" | "none";
   type: "article" | "announcement" | "all";
   isDraft: boolean;
+  current: number;
 }
 const useSearchContent = () => {
   const searchContentRequest = async (data: SearchContentRequestProps) => {
-    const queryParams = new URLSearchParams(data as any).toString();
-    console.log("search - params");
-    console.log(data);
-    console.log("search - url");
-    console.log(`${BASE_URL}/api/article/search?${queryParams}`)
-    const response = await fetch(`${BASE_URL}/api/article/search?${queryParams}`, {
+    const queryParams = new URLSearchParams({ ...data } as never).toString();
+    const response = await fetch(`${BASE_URL}/api/articles/search?${queryParams}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json"
       }
     });
-    console.log("searchContentRequest - response")
-    console.log(response)
     if (!response.ok) {
       throw new Error("Failed to search article");
     } else {
-      console.log("searchContentRequest - res")
-      const res = await response.json();
-      console.log(res);
-      return res;
+      return await response.json();
     }
   }
 

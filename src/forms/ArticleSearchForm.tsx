@@ -7,14 +7,14 @@ import TagPool from "@/components/TagPool.tsx";
 import SortingPanel from "@/components/SortingPanel.tsx";
 import LoopIcon from "@mui/icons-material/Loop";
 import { useGetMyTags, useShuffleTags } from "@/api/TagApi.ts";
-import React, { useCallback, useEffect, useImperativeHandle, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useImperativeHandle, useState } from "react";
 import AvailableTagPool from "@/components/AvailableTagPool.tsx";
 import { SearchContentRequestProps, useSearchContent } from "@/api/ArticleApi.ts";
 import ArticleOverviewList from "@/components/ArticleOverviewList.tsx";
 import Pagination from "@mui/material/Pagination";
 import { Box, Divider, Skeleton, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useGetAllCategories } from "@/api/CategoryApi.ts";
 
 export interface ArticleSearchFormInterface {
@@ -35,6 +35,7 @@ const ArticleSearchForm = React.forwardRef(({
                                               isDraft = false
                                             }: ArticleSearchFormProps, ref) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { formState, control, handleSubmit, getValues, setValue } = useForm<ArticleSearchParamType>({
     defaultValues: {
@@ -44,25 +45,38 @@ const ArticleSearchForm = React.forwardRef(({
       },
       tagList: [],
       type: type,
-      isDraft: isDraft
+      isDraft: isDraft,
+      current: 1,
+      total: 1
     }
   });
 
   /*  handle submit  */
   const { searchContent, isLoading: isSearching } = useSearchContent();
-  const submit = useCallback(async (data: ArticleSearchParamType) => {
+  const submit = async (data: ArticleSearchParamType) => {
     onSubmit(data);
     const requestParam: SearchContentRequestProps = {
       ...data,
       sortStrategy: data.sort.strategy,
       sortDirection: data.sort.direction,
+      current: getValues('current')
     }
-    const overviewList = await searchContent(requestParam);
-    setArticleOverviewList(overviewList);
-  }, []);
+    const res = await searchContent(requestParam);
+    setArticleOverviewList(res.data);
+    setValue('total', res.total);
+  };
 
   /*  search result  */
   const [articleOverviewList, setArticleOverviewList] = useState<Array<ArticleOverviewInfo>>([]);
+
+  /*  handle pagination  */
+  const handlePagination = (event: ChangeEvent<unknown>, currentPage: number) => {
+    if (currentPage !== getValues('current')) {
+      setValue('current', currentPage);
+      submit(getValues());
+      window.scrollTo(0, 0);
+    }
+  }
 
   /*  tags  */
   // get some tags for selection
@@ -167,6 +181,8 @@ const ArticleSearchForm = React.forwardRef(({
                   <CategoryMultiSelectBox categoryList={availableCategories} onBlur={onBlur}
                                           value={value} onChange={event => {
                     onChange(event);
+                    setValue('current', 1);
+                    setValue('total', 1);
                     handleSubmit(submit);
                   }}/>
               )}
@@ -212,8 +228,17 @@ const ArticleSearchForm = React.forwardRef(({
             />
             {/*  tag pool  */}
             <div className="hidden lg:block w-full">
-              <TagPool control={control} onChange={tags => setValue('tagList', tags)}
-                       onDelete={() => handleSubmit(submit)()} onDeleteAll={() => {
+              <TagPool control={control} onChange={tags => {
+                setValue('current', 1);
+                setValue('total', 1);
+                setValue('tagList', tags);
+              }} onDelete={() => {
+                setValue('current', 1);
+                setValue('total', 1);
+                handleSubmit(submit)()
+              }} onDeleteAll={() => {
+                setValue('current', 1);
+                setValue('total', 1);
                 setValue('tagList', []);
                 handleSubmit(submit)();
               }}/>
@@ -235,15 +260,16 @@ const ArticleSearchForm = React.forwardRef(({
             {/*  search result  */}
             <div className="w-full">
               {!isSearching ? (
-                  articleOverviewList.length > 0 ? (
+                  Array.isArray(articleOverviewList) && articleOverviewList.length > 0 ? (
                       /*  we have the search result  */
                       <div style={{ minHeight: '70vh' }} className="w-full">
                         <div className="w-full py-10">
                           <ArticleOverviewList articleOverviewInfoList={articleOverviewList}/>
                         </div>
-                        {Array.isArray(articleOverviewList) && articleOverviewList.length > 5 && (
+                        {Array.isArray(articleOverviewList) && getValues('total') > 1 && (
                             <div className="w-full flex justify-center items-center">
-                              <Pagination count={10} shape="rounded"/>
+                              <Pagination count={getValues('total')} page={getValues('current')}
+                                          onChange={handlePagination} shape="rounded"/>
                             </div>
                         )}
                       </div>
@@ -272,7 +298,7 @@ const ArticleSearchForm = React.forwardRef(({
                   /*  loading  */
                   <ul style={{ minHeight: '70vh' }}
                       className="w-full mt-8 flex flex-col justify-start items-start gap-8">
-                    {Array.from({ length: 10 }, () => Math.floor(Math.random() * 10000) + 1).map((_, index) => (
+                    {Array.from({ length: 10 }, () => Math.floor(Math.random() * 1000000) + 1).map((_, index) => (
                         <li key={_} className="w-full p-0 m-0">
                           <Box width={"100%"}>
                             {/* title */}
@@ -328,6 +354,8 @@ const ArticleSearchForm = React.forwardRef(({
                   render={({ field: { onChange, onBlur, value } }) => (
                       <CategoryMultiSelectBox categoryList={availableCategories} onBlur={onBlur}
                                               value={value} onChange={event => {
+                        setValue('current', 1);
+                        setValue('total', 1);
                         onChange(event);
                         handleSubmit(submit)();
                       }}/>
@@ -354,6 +382,8 @@ const ArticleSearchForm = React.forwardRef(({
                         <AvailableTagPool isFetchingTags={isFetchingTags || isGettingMyTags} value={value}
                                           availableTagList={availableTags} control={control}
                                           onChange={tagList => {
+                                            setValue('current', 1);
+                                            setValue('total', 1);
                                             onChange(tagList);
                                             handleSubmit(submit)();
                                           }}/>

@@ -31,7 +31,7 @@ const Footer = () => {
                 </div>
                 {/*  Item 2  */}
                 <div className="h-10 group">
-                  <a href="/articles">Blogs</a>
+                  <a href="/articles/search">Blogs</a>
                   <div className="mx-2 group-hover:border-b group-hover:border-blue-50"></div>
                 </div>
                 {/*  Item 3  */}

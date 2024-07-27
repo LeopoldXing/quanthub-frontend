@@ -144,7 +144,7 @@ const WritingPage = () => {
     if (initialData?.isDraft) {
       navigate('/my/articles');
     } else {
-      navigate('/articles');
+      navigate('/articles/search');
     }
   }
   const openGoBackDialog = () => {
@@ -178,8 +178,6 @@ const WritingPage = () => {
     if (!data.isDraft) {
       referenceId = initialData?.id;
     }
-    console.log("准备保存草稿，表单数据：")
-    console.log(data);
     const savedDraft: CompleteArticleData = await saveDraft({
       id: draftId,
       authorId: currentUser!.user.id,

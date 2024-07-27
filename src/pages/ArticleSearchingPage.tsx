@@ -10,7 +10,7 @@ import ArticleSearchForm, { ArticleSearchFormInterface } from "@/forms/ArticleSe
 import Cookies from "js-cookie";
 import { useNotification } from "@/contexts/NotificationContext.tsx";
 
-const ArticlesPage = () => {
+const ArticleSearchingPage = () => {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
 
@@ -39,6 +39,7 @@ const ArticlesPage = () => {
       const parsedCookie = JSON.parse(cookie);
       if (parsedCookie) {
         navigate("/article/create");
+        window.scrollTo(0, 0);
         return;
       }
     }
@@ -107,4 +108,4 @@ const ArticlesPage = () => {
   );
 };
 
-export default ArticlesPage;
+export default ArticleSearchingPage;
