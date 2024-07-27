@@ -32,16 +32,13 @@ const useCreateMyUser = () => {
 }
 
 
-type UpdateProfileRequest = {
-  user: User;
-}
 /**
  * custom hook to update user profile
  */
 const useUpdateProfile = () => {
   const { getAccessTokenSilently } = useAuth0();
 
-  const updateProfileRequest = async (user: UpdateProfileRequest) => {
+  const updateProfileRequest = async (user: User) => {
     const accessToken = await getAccessTokenSilently();
     const response = await fetch(`${BASE_URL}/api/profile`, {
       method: "PUT",
@@ -71,7 +68,7 @@ const useGetUserProfile = () => {
 
   const getUserProfileRequest = async (data: GetUserProfileRequest) => {
     const accessToken = await getAccessTokenSilently();
-    const queryParams = new URLSearchParams(data as any).toString();
+    const queryParams = new URLSearchParams(data as never).toString();
     const response = await fetch(`${BASE_URL}/api/profile?${queryParams}`, {
       method: "GET",
       headers: {
@@ -82,7 +79,10 @@ const useGetUserProfile = () => {
     if (!response.ok) {
       throw new Error("Failed to get profile");
     } else {
-      return await response.json();
+      const res = await response.json();
+      console.log("获取用户信息：")
+      console.log(res);
+      return res;
     }
   }
 
@@ -90,4 +90,32 @@ const useGetUserProfile = () => {
   return { getUserProfile, isLoading, isError, isSuccess };
 }
 
-export { useCreateMyUser, useUpdateProfile, useGetUserProfile };
+type UpdateAvatarRequest = {
+  id?: string;
+  auth0Id?: string;
+  avatarLink: string;
+}
+const updateAvatarLink = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const updateAvatarRequest = async (data: UpdateAvatarRequest) => {
+    const accessToken = await getAccessTokenSilently();
+    const response = await fetch(`${BASE_URL}/api/avatar`, {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update avatar");
+    }
+  }
+
+  const { mutateAsync: updateAvatar, isLoading, isError, isSuccess } = useMutation(updateAvatarRequest);
+  return { updateAvatar, isLoading, isError, isSuccess };
+}
+
+export { useCreateMyUser, useUpdateProfile, useGetUserProfile, updateAvatarLink };

@@ -22,20 +22,25 @@ type UploadFileProps = {
   onProgressUpdate: (progress: number) => void;
 };
 
-const uploadFile = async ({ file, onProgressUpdate }: UploadFileProps) => {
-  if (!(file instanceof File)) {
-    console.error('The provided value is not a File.');
-    return;
-  }
-
+const keyPathConstructor = (filename: string) => {
   const currentDate = new Date();
   const year = currentDate.getFullYear();
   const month = currentDate.toLocaleString('en-US', { month: 'short' });
   const day = currentDate.getDate();
 
   const uuid = uuidv4();
-  const newFileName = `${uuid}${file.name.substring(file.name.lastIndexOf('.'))}`;
+  const newFileName = `${uuid}${filename.substring(filename.lastIndexOf('.'))}`;
   const keyPath = `files/${year}/${month}/${day}/${newFileName}`;
+  return keyPath;
+}
+
+const uploadFile = async ({ file, onProgressUpdate }: UploadFileProps) => {
+  if (!(file instanceof File)) {
+    console.error('The provided value is not a File.');
+    return;
+  }
+
+  const keyPath = keyPathConstructor(file.name);
 
   try {
     const md5Base64 = await calculateMD5(file);
@@ -86,4 +91,42 @@ const deleteFile = async (path: string): Promise<void> => {
   }
 }
 
-export { uploadFile, deleteFile };
+const uploadPicture = async ({ file: picture, onProgressUpdate }: UploadFileProps): Promise<string> => {
+  if (!(picture instanceof File)) {
+    throw new Error('The provided value is not a File.');
+  }
+  if (!picture.name.match(/\.(jpg|jpeg|png|gif|svg)$/i)) {
+    throw new Error('The provided file is not a picture.');
+  }
+  if (picture.size > 5 * 1024 * 1024) {
+    throw new Error('The provided value is too large. (picture size limit 5MB');
+  }
+
+  const keyPath = keyPathConstructor(picture.name);
+
+  try {
+    const md5Base64 = await calculateMD5(picture);
+    const params = {
+      Body: picture,
+      Bucket: s3BucketName,
+      Key: keyPath,
+      ContentMD5: md5Base64
+    };
+
+    myBucket.putObject(params)
+        .on('httpUploadProgress', (evt) => {
+          onProgressUpdate(Math.round((evt.loaded / evt.total) * 100));
+        })
+        .send((err) => {
+          if (err) console.log(err);
+        });
+
+    return `https://${s3BucketName}.s3.${s3Region}.amazonaws.com/${keyPath}`;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    return ``;
+  }
+};
+
+
+export { uploadFile, deleteFile, uploadPicture };
