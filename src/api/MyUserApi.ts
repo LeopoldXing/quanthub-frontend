@@ -1,6 +1,8 @@
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useAuth0 } from "@auth0/auth0-react";
 import { User } from "@/types.ts";
+import * as queryString from "node:querystring";
+import { useNotification } from "@/contexts/NotificationContext.tsx";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -79,10 +81,7 @@ const useGetUserProfile = () => {
     if (!response.ok) {
       throw new Error("Failed to get profile");
     } else {
-      const res = await response.json();
-      console.log("获取用户信息：")
-      console.log(res);
-      return res;
+      return await response.json();
     }
   }
 
@@ -95,7 +94,7 @@ type UpdateAvatarRequest = {
   auth0Id?: string;
   avatarLink: string;
 }
-const updateAvatarLink = () => {
+const useUpdateAvatarLink = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   const updateAvatarRequest = async (data: UpdateAvatarRequest) => {
@@ -118,4 +117,42 @@ const updateAvatarLink = () => {
   return { updateAvatar, isLoading, isError, isSuccess };
 }
 
-export { useCreateMyUser, useUpdateProfile, useGetUserProfile, updateAvatarLink };
+const useGetUserProfileByAuth0Id = () => {
+  const { getAccessTokenSilently, user } = useAuth0();
+  const { showNotification } = useNotification();
+
+  const getUserProfileByAuth0IdRequest = async () => {
+    const accessToken = await getAccessTokenSilently();
+    const queryParams = queryString.stringify({ auth0Id: user?.sub });
+    const response = await fetch(`${BASE_URL}/api/profile?${queryParams}`, {
+      method: 'get',
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to get profile");
+    }
+    return await response.json();
+  }
+
+  const {
+    data: userProfile,
+    isLoading,
+    isSuccess,
+    isError
+  } = useQuery("fetchUserProfileByAuth0Id", getUserProfileByAuth0IdRequest);
+  if (isError) {
+    showNotification({
+      horizontal: 'left',
+      vertical: 'bottom',
+      severity: 'error',
+      message: 'Unable to fetch profile',
+    });
+  }
+  return { userProfile, isLoading, isError, isSuccess };
+}
+
+export { useCreateMyUser, useUpdateProfile, useGetUserProfile, useUpdateAvatarLink, useGetUserProfileByAuth0Id };

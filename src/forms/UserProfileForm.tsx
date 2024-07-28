@@ -14,8 +14,18 @@ type UserProfileFormProps = {
 const UserProfileForm: React.FC<UserProfileFormProps> = ({ initialData, onSubmit }) => {
   const { control, handleSubmit, formState: { errors } } = useForm<UserProfileFormZodDataType>({
     resolver: zodResolver(userProfileFormSchema),
-    defaultValues: initialData
+    defaultValues: {
+      username: initialData.username,
+      password: initialData.password || "",
+      description: initialData.description || "",
+      email: initialData.email || "",
+      phoneNumber: initialData.phoneNumber || "",
+      role: initialData.role || "Registered User"
+    }
   });
+
+  console.log("表单默认数据：")
+  console.log(initialData);
 
   const [loading, setLoading] = useState(false);
   const handleFormSubmission = async (data: UserProfileFormZodDataType) => {

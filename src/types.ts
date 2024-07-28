@@ -10,7 +10,7 @@ export type User = {
   description?: string;
   role: "Admin" | "Registered User";
   avatarLink?: string;
-  joinedDatetime?: Date;
+  joinedDatetime?: string;
 }
 
 export type ArticleComment = {
@@ -161,28 +161,6 @@ export type ContentModificationFormDataType = {
   type: "article" | "announcement";
   isDraft: boolean;
 }
-
-export type ButtonStyleType = {
-  title: string;
-  description: string;
-  cancelOptionText: string;
-  confirmOptionText: string;
-  option3Text?: string;
-  cancelOptionVariant: 'text' | 'outlined' | 'contained';
-  confirmOptionVariant: 'text' | 'outlined' | 'contained';
-  option3Variant?: 'text' | 'outlined' | 'contained';
-  cancelOptionColor: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
-  confirmOptionColor: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
-  option3Color?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
-  cancelOptionStartIcon?: React.ReactNode;
-  confirmOptionStartIcon?: React.ReactNode;
-  option3StartIcon?: React.ReactNode;
-  cancelOptionEndIcon?: React.ReactNode;
-  confirmOptionEndIcon?: React.ReactNode;
-  option3EndIcon?: React.ReactNode;
-  option3Action?: () => Promise<void>;
-  confirmOptionLoadingPosition?: 'start' | 'end' | 'center'
-};
 
 export type NotificationProps = {
   duration?: number;

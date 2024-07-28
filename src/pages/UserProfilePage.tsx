@@ -1,61 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import UserProfileForm from "@/forms/UserProfileForm.tsx";
-import { exampleUser } from "@/lib/dummyData.ts";
 import { UserProfileFormZodDataType } from "@/forms/schemas/UserProfileFormSchema.ts";
-import { Avatar, IconButton } from "@mui/material";
+import { Avatar, IconButton, Skeleton } from "@mui/material";
 import defaultAvatar from "@/assets/default_avarta.png";
 import LinkedCameraIcon from '@mui/icons-material/LinkedCamera';
 import { useNotification } from "@/contexts/NotificationContext.tsx";
-import { useGetUserProfile, useUpdateProfile } from "@/api/MyUserApi.ts";
+import { useGetUserProfile, useUpdateAvatarLink, useUpdateProfile } from "@/api/MyUserApi.ts";
 import { uploadPicture } from "@/utils/S3BucketUtil.ts";
-import { useAuth0 } from "@auth0/auth0-react";
 import { v4 as uuidv4 } from "uuid";
-import { User } from "@/types.ts";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const UserProfilePage = () => {
+  const { user } = useAuth0();
+
   // notification
   const { showNotification } = useNotification();
   const [avatarLink, setAvatarLink] = useState("");
-  const { user } = useAuth0();
 
   // get user profile
-  const [initialProfile, setInitialProfile] = useState<User>({
-    id: uuidv4(),
-    username: "",
-    password: "1111111111111111111",
-    description: '',
-    email: '',
-    phoneNumber: '',
-    role: 'Registered User',
-    joinedDatetime: new Date()
-  });
-  const { getUserProfile } = useGetUserProfile();
-  const fetchUserProfile = async () => {
-    const userProfile = await getUserProfile({ auth0Id: user?.sub });
-    console.log("后端返回的用户信息：")
-    console.log(userProfile);
-    setInitialProfile({
-      id: userProfile.id,
-      username: userProfile.username,
-      email: userProfile.email,
-      phoneNumber: userProfile.phone_number,
-      role: userProfile.role,
-      joinedDatetime: userProfile.created_at
-    });
+  const { getUserProfile, isLoading: isFetchingProfile } = useGetUserProfile();
+  const [userProfile, setUserProfile] = useState();
+  const fetchUserProfileData = async () => {
+    try {
+      const response = await getUserProfile({ auth0Id: user?.sub });
+      setUserProfile(response);
+    } catch (error) {
+      showNotification({
+        message: "Failed to fetch user profile.",
+        severity: "error",
+        horizontal: "left",
+        vertical: "bottom"
+      });
+    }
   }
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
+    if (user) {
+      fetchUserProfileData();
+    }
+  }, [user]);
 
-  const initialFormData: UserProfileFormZodDataType = {
-    username: initialProfile.username,
-    password: initialProfile.password || "",
-    description: initialProfile.description || "",
-    email: initialProfile.email || "",
-    phoneNumber: initialProfile.phoneNumber || "",
-    role: initialProfile.role || "Registered User"
-  };
-
+  /*  handle user avatar change  */
+  const { updateAvatar } = useUpdateAvatarLink();
   const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -66,7 +51,9 @@ const UserProfilePage = () => {
           try {
             const pictureLink = await uploadPicture({ file, onProgressUpdate: progress => console.log(progress) });
             setAvatarLink(pictureLink || "");
-
+            console.log("更新头像")
+            console.log(pictureLink);
+            await updateAvatar({ auth0Id: user?.sub, avatarLink: pictureLink });
           } catch (error) {
             showNotification({
               horizontal: 'left',
@@ -81,6 +68,7 @@ const UserProfilePage = () => {
     }
   };
 
+  /*  update profile  */
   const { updateProfile, isLoading: isUpdating, isError } = useUpdateProfile();
   const handleFormSubmission = async (data: UserProfileFormZodDataType) => {
     await updateProfile({ ...data, id: uuidv4(), auth0Id: user?.sub });
@@ -116,25 +104,41 @@ const UserProfilePage = () => {
             </div>
           </div>
           {/* user info */}
-          <div className="w-full flex flex-col justify-start items-start gap-2 relative">
-            <div className="text-2xl font-bold flex items-center">
-              {initialProfile.username}
-              {initialProfile.role.toLowerCase() === 'admin' && (
-                  <span className="ml-2 px-2 py-1 text-xs text-white bg-[#21305e] rounded-full">admin</span>
-              )}
-            </div>
-            {/* join date */}
-            <div className="text-gray-600">
-              Joined QuantHub since
-              <span>
-              {` ${initialProfile.joinedDatetime?.getFullYear()}-${String(exampleUser.joinedDatetime!.getMonth() + 1).padStart(2, '0')}-${String(exampleUser.joinedDatetime!.getDate()).padStart(2, '0')}`}
-            </span>
-            </div>
-          </div>
+          {!isFetchingProfile ? (
+              <div className="w-full flex flex-col justify-start items-start gap-2 relative">
+                <div className="text-2xl font-bold flex items-center">
+                  {userProfile?.username}
+                  {userProfile?.role.toLowerCase() === 'admin' && (
+                      <span className="ml-2 px-2 py-1 text-xs text-white bg-[#21305e] rounded-full">admin</span>
+                  )}
+                </div>
+                {/* join date */}
+                <div className="text-gray-600">
+                  Joined QuantHub since<span>{` ${userProfile?.joinedDatetime}`}</span>
+                </div>
+              </div>
+          ) : (
+              <div className="w-full flex flex-col justify-start items-start gap-2 relative">
+                <div className="text-2xl font-bold flex items-center">
+                  <Skeleton variant="text" width={200} height={40}/>
+                </div>
+                {/* join date */}
+                <div className="text-gray-600">
+                  <Skeleton variant="text" width={400} height={20}/>
+                </div>
+              </div>
+          )}
         </div>
-
         <div className="w-full max-w-[800px] mt-10">
-          <UserProfileForm initialData={initialFormData} onSubmit={handleFormSubmission}/>
+          {!isFetchingProfile && (
+              <UserProfileForm onSubmit={handleFormSubmission} initialData={{
+                username: userProfile?.username,
+                description: userProfile?.description,
+                email: userProfile?.email,
+                phoneNumber: userProfile?.phoneNumber,
+                role: userProfile?.role
+              }}/>
+          )}
         </div>
       </div>
   );
