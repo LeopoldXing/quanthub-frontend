@@ -24,9 +24,6 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ initialData, onSubmit
     }
   });
 
-  console.log("表单默认数据：")
-  console.log(initialData);
-
   const [loading, setLoading] = useState(false);
   const handleFormSubmission = async (data: UserProfileFormZodDataType) => {
     try {

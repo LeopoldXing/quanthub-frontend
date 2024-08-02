@@ -24,8 +24,6 @@ const ArticleOverviewListItem = ({ articleOverviewInfo, onDelete, isDeleting = f
       navigate(`/article/detail/${articleOverviewInfo!.id}`);
     } else {
       const draftData = await getDraftById(articleOverviewInfo.id);
-      console.log("要编辑草稿了 -> ");
-      console.log(draftData);
       navigate(`/article/create`, {
         state: {
           articleData: draftData

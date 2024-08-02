@@ -14,7 +14,7 @@ import ArticleOverviewList from "@/components/ArticleOverviewList.tsx";
 import Pagination from "@mui/material/Pagination";
 import { Box, Divider, Skeleton, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useGetAllCategories } from "@/api/CategoryApi.ts";
 
 export interface ArticleSearchFormInterface {
@@ -35,7 +35,6 @@ const ArticleSearchForm = React.forwardRef(({
                                               isDraft = false
                                             }: ArticleSearchFormProps, ref) => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const { formState, control, handleSubmit, getValues, setValue } = useForm<ArticleSearchParamType>({
     defaultValues: {
@@ -70,6 +69,8 @@ const ArticleSearchForm = React.forwardRef(({
   const [articleOverviewList, setArticleOverviewList] = useState<Array<ArticleOverviewInfo>>([]);
 
   /*  handle pagination  */
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   const handlePagination = (event: ChangeEvent<unknown>, currentPage: number) => {
     if (currentPage !== getValues('current')) {
       setValue('current', currentPage);

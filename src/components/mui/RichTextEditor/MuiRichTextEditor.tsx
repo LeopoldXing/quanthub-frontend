@@ -15,6 +15,7 @@ import {
   type RichTextEditorRef,
   TableBubbleMenu,
 } from "mui-tiptap";
+import { uploadPicture } from "@/utils/S3BucketUtil.ts";
 
 function fileListToImageFiles(fileList: FileList): File[] {
   // You may want to use a package like attr-accept
@@ -78,23 +79,19 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
   }))
 
   const handleNewImageFiles = useCallback(
-      (files: File[], insertPosition?: number): void => {
+      async (files: File[], insertPosition?: number) => {
         if (!rteRef.current?.editor) {
           return;
         }
 
-        // For the sake of a demo, we don't have a server to upload the files to,
-        // so we'll instead convert each one to a local "temporary" object URL.
-        // This will not persist properly in a production setting. You should
-        // instead upload the image files to your server, or perhaps convert the
-        // images to bas64 if you would like to encode the image data directly
-        // into the editor content, though that can make the editor content very
-        // large. You will probably want to use the same upload function here as
-        // for the MenuButtonImageUpload `onUploadFiles` prop.
-        const attributesForImageFiles = files.map((file) => ({
-          src: URL.createObjectURL(file),
-          alt: file.name,
-        }));
+        const attributesForImageFiles = [];
+        for (let i = 0; i < files.length; i++) {
+          const url = await uploadPicture({ file: files[i], onProgressUpdate: progress => {} });
+          attributesForImageFiles.push({
+            src: url,
+            alt: files[i].name
+          })
+        }
 
         insertImages({
           images: attributesForImageFiles,
