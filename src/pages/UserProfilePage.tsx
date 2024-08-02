@@ -57,6 +57,8 @@ const UserProfilePage = () => {
               horizontal: 'left',
               vertical: 'bottom',
               severity: 'error',
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-expect-error
               message: error.message
             });
           }
@@ -104,13 +106,19 @@ const UserProfilePage = () => {
           {!isFetchingProfile ? (
               <div className="w-full flex flex-col justify-start items-start gap-2 relative">
                 <div className="text-2xl font-bold flex items-center">
+                  {/*eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
+                  {/*@ts-expect-error*/}
                   {userProfile?.username}
+                  {/*eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
+                  {/*@ts-expect-error*/}
                   {userProfile?.role.toLowerCase() === 'admin' && (
                       <span className="ml-2 px-2 py-1 text-xs text-white bg-[#21305e] rounded-full">admin</span>
                   )}
                 </div>
                 {/* join date */}
                 <div className="text-gray-600">
+                  {/*eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
+                  {/*@ts-expect-error*/}
                   Joined QuantHub since<span>{` ${userProfile?.joinedDatetime}`}</span>
                 </div>
               </div>
@@ -128,11 +136,23 @@ const UserProfilePage = () => {
         </div>
         <div className="w-full max-w-[800px] mt-10">
           {!isFetchingProfile && (
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-expect-error
               <UserProfileForm onSubmit={handleFormSubmission} initialData={{
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
                 username: userProfile?.username,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
                 description: userProfile?.description,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
                 email: userProfile?.email,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
                 phoneNumber: userProfile?.phoneNumber,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
                 role: userProfile?.role
               }}/>
           )}

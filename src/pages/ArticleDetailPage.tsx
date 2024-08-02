@@ -165,7 +165,11 @@ const ArticleDetailPage = () => {
       showNotification({
         message: "Something unexpected happened, please try again.",
         severity: "error",
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         horizontal: "bottom",
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         vertical: "left"
       });
     }

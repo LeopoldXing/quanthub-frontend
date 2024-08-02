@@ -86,7 +86,7 @@ const MuiRichTextEditor = forwardRef<handleRichTextEditorData, MuiRichTextEditor
 
         const attributesForImageFiles = [];
         for (let i = 0; i < files.length; i++) {
-          const url = await uploadPicture({ file: files[i], onProgressUpdate: progress => {} });
+          const url = await uploadPicture({ file: files[i], onProgressUpdate: progress => console.log(progress) });
           attributesForImageFiles.push({
             src: url,
             alt: files[i].name
